@@ -1226,4 +1226,28 @@ drawSettings=function(){
 };
 })();
 </script>
-</body></html>
+<style>
+/* Accessibility: keep dashboard text readable on light cards in dark appearance. */
+:root:not([data-nc-theme="ivory"]) .nc-health-hero,
+:root:not([data-nc-theme="ivory"]) .nc-health-card,
+:root:not([data-nc-theme="ivory"]) .nc-macro-card,
+:root:not([data-nc-theme="ivory"]) .nc-easy-summary,
+:root:not([data-nc-theme="ivory"]) .nc-easy-summary>div,
+:root:not([data-nc-theme="ivory"]) .nc-easy-meal,
+:root:not([data-nc-theme="ivory"]) .nc-stock-tile{
+ background:#18263a!important;color:#f6f9ff!important;border-color:#34465c!important;
+}
+:root:not([data-nc-theme="ivory"]) .nc-health-hero *,
+:root:not([data-nc-theme="ivory"]) .nc-health-card *,
+:root:not([data-nc-theme="ivory"]) .nc-macro-card *,
+:root:not([data-nc-theme="ivory"]) .nc-easy-summary *,
+:root:not([data-nc-theme="ivory"]) .nc-easy-meal *,
+:root:not([data-nc-theme="ivory"]) .nc-stock-tile *{color:inherit}
+:root:not([data-nc-theme="ivory"]) .nc-easy-summary small,
+:root:not([data-nc-theme="ivory"]) .nc-easy-meal .sub,
+:root:not([data-nc-theme="ivory"]) .nc-health-sub{color:#c4d1e1!important}
+:root:not([data-nc-theme="ivory"]) .nc-easy-add{color:#fff!important;background:#445d86!important}
+:root:not([data-nc-theme="ivory"]) .nc-health-hero .nc-ring .track{stroke:#3b506a}
+:root:not([data-nc-theme="ivory"]) .nc-easy-summary b,
+:root:not([data-nc-theme="ivory"]) .nc-easy-meal strong{color:#fff!important}
+</style></body></html>
