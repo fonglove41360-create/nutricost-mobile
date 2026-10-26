@@ -684,14 +684,19 @@ function converter(inputId,selectId,mode){
  const anchor=input.closest('.nc-quantity-unit')||input;anchor.after(line);
  const pick=line.querySelector('select'),note=line.querySelector('.nc-convert-note');
  function refresh(){const f=food(sel.value);if(!f)return;const prev=pick.value;pick.innerHTML=units.filter(x=>ratio(f,x[0])!==null).map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join('');pick.value=Array.from(pick.options).some(x=>x.value===prev)?prev:f.unit;note.textContent=pick.value===f.unit?'บันทึกเป็น '+f.unit:'แปลงเป็น '+f.unit}
- sel.addEventListener('change',refresh);pick.addEventListener('change',()=>{const f=food(sel.value);note.textContent='แปลงเป็น '+f?.unit});refresh();
+ sel.addEventListener('change',refresh);pick.addEventListener('change',refreshNote);input.addEventListener('input',refreshNote);refresh();function refreshNote(){const f=food(sel.value),mult=ratio(f,pick.value),v=Number(input.value);note.textContent=f&&mult!==null&&input.value!==''&&v>0?'≈ '+num(v*mult)+' '+f.unit+' ในคลัง':'บันทึกเป็น '+(f?.unit||'หน่วย')}refreshNote();
  // Core functions read the original quantity input, so temporarily normalize before submit.
  const action=mode==='meal'?'addDraft':'addLot',original=window[action];
  if(typeof original==='function'&&!window['ncWrapped'+action]){
  window['ncWrapped'+action]=true;
  window[action]=function(){const selected=document.querySelector(mode==='meal'?'#meals .nc-convert-unit':'#inventory .nc-convert-unit');const quantity=document.getElementById(inputId),chosen=food(document.getElementById(selectId)?.value);
- if(selected&&quantity&&chosen){const mult=ratio(chosen,selected.value);if(mult===null)return alert('หน่วยนี้ยังแปลงไม่ได้ กรุณาตั้งค่าน้ำหนักต่อหน่วย');quantity.value=String(Number(quantity.value)*mult)}
- return original.apply(this,arguments)};
+ if(!selected||!quantity||!chosen)return original.apply(this,arguments);
+ const mult=ratio(chosen,selected.value);if(mult===null)return alert('หน่วยนี้ยังแปลงไม่ได้ กรุณาตั้งค่าน้ำหนักต่อหน่วย');
+ const raw=quantity.value,amount=Number(raw);if(!raw.trim()||!Number.isFinite(amount)||amount<=0)return alert('กรุณากรอกปริมาณมากกว่า 0');
+ const normalized=amount*mult;if(!Number.isFinite(normalized)||normalized<=0)return alert('ปริมาณที่แปลงไม่ถูกต้อง');
+ quantity.value=String(normalized);
+ try{return original.apply(this,arguments)}finally{if(quantity.isConnected)quantity.value=raw}
+ };
  }
 }
 const prevCatalog=drawCatalog;
