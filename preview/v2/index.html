@@ -180,4 +180,68 @@ const oldMeals=drawMeals;drawMeals=function(){oldMeals();const container=documen
  if(document.getElementById('dashboard')&&!document.getElementById('dashboard').classList.contains('hidden'))drawDashboard();
 })();
 </script>
-</body></html>
+<style>
+/* Clean Luxury v3: original premium visual system */
+:root[data-nc-theme=ivory]{--nc-bg:#f7f8fa;--nc-panel:#fff;--nc-panel2:#f6f7f9;--nc-border:#edf0f2;--nc-text:#18212b;--nc-muted:#929aa4;--nc-accent:#e87550}
+[data-nc-theme=ivory] body{background:#f7f8fa!important;color:#18212b}
+body{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
+header{padding:25px 23px 15px;display:flex;align-items:center;justify-content:space-between}
+header h1{font-size:23px!important;letter-spacing:-.9px!important}
+header .muted{font-size:9px!important;letter-spacing:2.5px!important}
+header .pill{display:none}
+header .nc-theme-button{position:static;margin-left:auto;width:39px;height:39px;border-radius:50%;background:#fff;color:#222b35;box-shadow:0 5px 20px #151c2b0b}
+main{padding:0 17px}
+#dashboard>.nc-health-title:first-child{margin:7px 5px 17px;font-size:27px;letter-spacing:-1.2px}
+#dashboard>.nc-health-title:first-child .sub{display:block;font-size:11px;font-weight:500;letter-spacing:.1px;margin-top:4px;color:#939ba7}
+#dashboard>.card,#dashboard>.nc-health-hero{border:1px solid #edf0f3!important;border-radius:27px!important;background:#fff!important;box-shadow:0 8px 32px #1a25350a!important}
+#dashboard>.nc-health-hero{padding:24px 21px 26px!important}
+.nc-health-top{margin-bottom:18px}
+.nc-health-top strong{font-size:17px;font-weight:700;letter-spacing:-.4px}
+.nc-health-top button{width:35px;height:35px;padding:0;border-radius:12px!important;font-size:23px;line-height:1}
+.nc-health-sub{font-size:11px}
+.nc-ring{max-width:215px}
+.nc-ring .track{stroke:#f0f1f4;stroke-width:11}
+.nc-ring .value{stroke:#f27a50;stroke-width:11}
+.nc-ring-center small{font-size:12px}
+.nc-ring-center b{font-size:clamp(29px,8.8vw,40px);font-weight:750;color:#171e29}
+.nc-ring-facts{gap:19px}
+.nc-ring-fact .nc-dot{width:8px;height:8px}
+.nc-ring-fact b{font-size:19px;font-weight:750;letter-spacing:-.5px}
+.nc-health-title{font-size:20px!important;letter-spacing:-.7px;margin:25px 5px 12px!important}
+.nc-health-macros{margin-top:0;gap:10px}
+.nc-health-macro{background:transparent;border-radius:16px;padding:6px 2px 8px}
+.nc-mini-ring{width:70px;height:70px}
+.nc-mini-ring span{font-size:24px}
+.nc-health-macro strong{font-size:13px;font-weight:700;margin-top:11px}
+.nc-health-macro small{font-size:11px;letter-spacing:-.2px}
+.nc-health-spend{padding:21px!important}
+.nc-health-spend b{font-size:30px;letter-spacing:-1px;color:#17202b}
+.nc-health-spend .btn{background:#172336;color:#fff;box-shadow:none;border-radius:15px;padding:13px}
+.nc-health-quick{gap:10px;margin:16px 0 23px}
+.nc-health-quick button{background:#fff;border:1px solid #edf0f3;border-radius:19px;padding:17px 4px 13px;font-weight:600;box-shadow:0 6px 20px #19263808}
+.nc-health-quick button span{font-size:24px;margin-bottom:7px}
+#dashboard #nc-stats .card,#dashboard #nc-favorites .card{border-radius:25px}
+#dashboard .nc-old-metrics{display:none!important}
+.tabs{left:50%;transform:translateX(-50%);width:min(100%,720px);bottom:0;background:#fffffff2!important;border-top:1px solid #eef0f4!important;box-shadow:0 -8px 30px #18263809;display:flex;align-items:center;justify-content:space-around;padding:11px 6px calc(9px + env(safe-area-inset-bottom));z-index:12}
+.tabs button{width:20%;flex:1;min-width:0;color:#a1a9b3!important;font-weight:600;border-radius:16px;padding:7px 0!important}
+.tabs button.active{background:transparent!important;color:#1c2736!important}
+.tabs button:before{font-size:24px;line-height:1.3}
+.tabs button:after{font-size:10px;margin-top:3px}
+.tabs button[data-tab=meals]{background:transparent!important}
+.tabs button[data-tab=meals]:before{content:'+';display:grid;place-items:center;margin:-12px auto 2px;background:#1b2638;color:#fff;width:45px;height:45px;border-radius:50%;font-size:32px;font-weight:400;box-shadow:0 6px 13px #19253722}
+.tabs button[data-tab=meals]:after{content:'บันทึก'}
+.tabs button[data-tab=dashboard]:before{content:'⌂'}
+.tabs button[data-tab=inventory]:before{content:'▥'}
+.tabs button[data-tab=catalog]:before{content:'▦'}
+.tabs button[data-tab=settings]:before{content:'⚙'}
+[data-nc-theme=ivory] .card:not(.nc-health-hero){background:#fff}
+@media(min-width:720px){.tabs{border-radius:22px 22px 0 0}}
+</style><script>
+(function(){
+ const key='nutricost.preview.appearance.v2';
+ try{
+ const p=JSON.parse(localStorage.getItem(key)||'null');
+ if(!p){localStorage.setItem(key,JSON.stringify({theme:'ivory',accent:'#e87550',font:'ibm',compact:false}));document.documentElement.dataset.ncTheme='ivory';document.documentElement.style.setProperty('--nc-accent','#e87550')}
+ }catch(e){}
+})();
+</script></body></html>
