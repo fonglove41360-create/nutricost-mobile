@@ -1097,4 +1097,70 @@ drawInventory=function(){
 };
 })();
 </script>
+
+<style>
+.nc-meal-v3{max-width:650px;margin:0 auto;padding-bottom:25px}
+.nc-meal-v3-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.nc-meal-v3-back{border:1px solid var(--nc-border);background:var(--nc-panel2);color:var(--nc-text);width:43px;height:43px;border-radius:15px;font-size:20px}
+.nc-meal-v3-head h2{margin:0;font-size:23px}
+.nc-meal-v3-head small{color:var(--nc-muted)}
+.nc-meal-v3-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-bottom:17px}
+.nc-meal-v3-tabs button{border:1px solid var(--nc-border);border-radius:14px;background:var(--nc-panel);color:var(--nc-text);padding:12px 3px;font-size:12px;font-weight:700}
+.nc-meal-v3-tabs button.active{background:linear-gradient(125deg,#7562eb,#9e79f1);color:#fff;border-color:transparent}
+.nc-meal-v3-card{background:var(--nc-panel);border:1px solid var(--nc-border);border-radius:23px;padding:17px;margin-bottom:13px}
+.nc-meal-v3-card label{display:block;margin:0 0 7px;font-size:13px;font-weight:700}
+.nc-meal-v3-card select,.nc-meal-v3-card input{width:100%;min-height:50px;border-radius:13px;font-size:15px}
+.nc-meal-v3-card .nc-meal-v3-hint{color:var(--nc-muted);font-size:12px;margin-top:8px}
+.nc-meal-v3-step{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:800;margin-bottom:13px}
+.nc-meal-v3-step span{display:inline-grid;place-items:center;background:var(--nc-panel2);border-radius:12px;width:31px;height:31px}
+.nc-meal-v3-add{width:100%;border:0;border-radius:15px;padding:14px;background:#7562eb;color:white;font-weight:800;margin-top:13px}
+.nc-meal-v3-line{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--nc-border);align-items:center}
+.nc-meal-v3-line:last-child{border-bottom:0}
+.nc-meal-v3-line small{display:block;color:var(--nc-muted);font-size:12px;margin-top:3px}
+.nc-meal-v3-remove{background:var(--nc-panel2);border:0;border-radius:11px;padding:9px;color:#eb7777}
+.nc-meal-v3-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:12px 0}
+.nc-meal-v3-stat{background:var(--nc-panel2);border-radius:13px;padding:11px 5px;text-align:center}
+.nc-meal-v3-stat b{display:block;font-size:15px}
+.nc-meal-v3-stat small{font-size:10px;color:var(--nc-muted)}
+.nc-meal-v3-save{width:100%;border:0;border-radius:16px;background:linear-gradient(120deg,#6556dc,#9d73ef);color:#fff;padding:16px;font-size:15px;font-weight:800}
+.nc-meal-v3-save:disabled{opacity:.4}
+.nc-meal-v3-empty{padding:15px;text-align:center;color:var(--nc-muted);font-size:13px}
+.nc-meal-v3-more summary{color:var(--nc-muted);font-size:12px;cursor:pointer}
+@media(max-width:370px){.nc-meal-v3-tabs button{font-size:11px}.nc-meal-v3-stat b{font-size:13px}}
+</style>
+<script>
+(function(){
+const previous=drawMeals;
+drawMeals=function(){
+ previous();
+ const root=document.getElementById('meals');if(!root)return;
+ const available=db.foods.filter(f=>stock(f.id)>0);
+ const current=document.getElementById('addFood')?.value||available[0]?.id;
+ const total=totals(draft.map(d=>({...d,cost:estimate(d.foodId,d.qty)})));
+ const choices=['มื้อ 1','มื้อ 2','มื้อ 3','อื่น ๆ'];
+ const active=choices.includes(mealName)?mealName:'อื่น ๆ';
+ const safe=s=>esc(String(s??''));
+ const lines=draft.map((d,i)=>{const f=food(d.foodId);return '<div class="nc-meal-v3-line"><div><b>'+safe(f?.name||'วัตถุดิบ')+'</b><small>'+num(d.qty)+' '+safe(unit(f))+' · '+num(totals([{...d,cost:0}]).k)+' kcal · '+money(estimate(d.foodId,d.qty))+'</small></div><button type="button" class="nc-meal-v3-remove" onclick="draft.splice('+i+',1);drawMeals()" aria-label="ลบรายการ">✕</button></div>'}).join('');
+ root.innerHTML='<div class="nc-meal-v3">'+
+ '<div class="nc-meal-v3-head"><button type="button" class="nc-meal-v3-back" onclick="show(\'dashboard\')">‹</button><div><h2>🍽️ เพิ่มอาหาร</h2><small>เลือกมื้อ ใส่วัตถุดิบ แล้วบันทึก</small></div></div>'+
+ '<div class="nc-meal-v3-tabs">'+choices.map((x,i)=>'<button type="button" class="'+(x===active?'active':'')+'" data-meal-tab="'+i+'">'+['☀️ มื้อ 1','🥗 มื้อ 2','🌙 มื้อ 3','✨ อื่น ๆ'][i]+'</button>').join('')+'</div>'+
+ '<div class="nc-meal-v3-card"><div class="nc-meal-v3-step"><span>1</span> เลือกวัตถุดิบ</div><select id="addFood">'+opts(available,current)+'</select><div class="nc-meal-v3-hint" id="avail"></div></div>'+
+ '<div class="nc-meal-v3-card"><div class="nc-meal-v3-step"><span>2</span> ระบุปริมาณ</div><label for="eatQty">จำนวนที่กิน</label><input id="eatQty" type="number" min="0.01" step="any" inputmode="decimal" placeholder="เช่น 100"><div class="nc-meal-v3-hint" id="nc-meal-v3-unit"></div><button type="button" class="nc-meal-v3-add" onclick="addDraft()">＋ เพิ่มลงในมื้อนี้</button></div>'+
+ '<div class="nc-meal-v3-card"><div class="nc-meal-v3-step"><span>3</span> ตรวจสอบมื้ออาหาร <small style="font-size:12px;color:var(--nc-muted)">('+draft.length+' รายการ)</small></div>'+
+ (lines||'<div class="nc-meal-v3-empty">🥣 ยังไม่มีรายการอาหาร<br>เลือกวัตถุดิบด้านบนเพื่อเริ่มได้เลย</div>')+
+ '<div class="nc-meal-v3-summary">'+[['🔥','k','kcal'],['💪','p','โปรตีน'],['🍚','c','คาร์บ'],['🥑','f','ไขมัน']].map(([e,k,label])=>'<div class="nc-meal-v3-stat"><b>'+e+' '+num(total[k])+'</b><small>'+label+'</small></div>').join('')+'</div>'+
+ '<div class="nc-meal-v3-hint" style="margin-bottom:12px">💸 ต้นทุนโดยประมาณ '+money(total.cost)+'</div>'+
+ (active==='อื่น ๆ'?'<label for="nc-custom-meal">ชื่อมื้ออาหาร</label><input id="nc-custom-meal" maxlength="70" placeholder="เช่น หลังออกกำลังกาย" value="'+safe(choices.includes(mealName)?'':mealName)+'">':'')+
+ '<button type="button" class="nc-meal-v3-save" onclick="commitMeal()" '+(!draft.length?'disabled':'')+'>✓ บันทึกมื้ออาหาร</button></div>'+
+ (!available.length?'<div class="notice">ยังไม่มีวัตถุดิบในคลัง <button class="btn small" onclick="show(\'inventory\')">ไปคลัง</button></div>':'')+
+ '<details class="nc-meal-v3-more"><summary>📅 วันที่และประวัติมื้ออาหาร</summary><label>วันที่บันทึก</label><input type="date" id="mealDate" value="'+safe(mealDate)+'"><div class="nc-meal-v3-hint">ประวัติมื้ออาหารดูได้จากหน้าภาพรวม</div></details></div>';
+ const foodSelect=root.querySelector('#addFood'),quantity=root.querySelector('#eatQty');
+ function refresh(){const f=food(foodSelect.value);root.querySelector('#avail').textContent=f?'คงเหลือในคลัง '+num(stock(f.id))+' '+unit(f):'ไม่มีวัตถุดิบพร้อมใช้';root.querySelector('#nc-meal-v3-unit').textContent=f?'หน่วยที่ใช้: '+unit(f):''}
+ foodSelect.onchange=refresh;refresh();
+ root.querySelectorAll('[data-meal-tab]').forEach(btn=>btn.onclick=()=>{const idx=Number(btn.dataset.mealTab);mealName=choices[idx]==='อื่น ๆ'?'กำหนดเอง':choices[idx];drawMeals()});
+ const date=root.querySelector('#mealDate');date.onchange=()=>mealDate=date.value;
+ const custom=root.querySelector('#nc-custom-meal');if(custom)custom.oninput=()=>{mealName=custom.value.trim()||'กำหนดเอง'};
+};
+})();
+</script>
 </body></html>
