@@ -811,4 +811,50 @@ window.ncSaveIngredient=function(){
 };
 })();
 </script>
+
+<style>
+.nc-catalog-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:8px 0 16px}
+.nc-catalog-top h2{margin:0}
+.nc-catalog-add{border:0;border-radius:14px;background:linear-gradient(125deg,#7360eb,#a079f4);color:white;font-size:13px;font-weight:750;padding:12px 14px;white-space:nowrap}
+.nc-catalog-create{display:none;margin:12px 0 18px}
+.nc-catalog-create.open{display:block}
+.nc-catalog-create>.card{margin:0}
+.nc-catalog-edit{margin:8px 0 0 auto;display:block;border:1px solid var(--nc-border);border-radius:12px;padding:8px 13px;background:var(--nc-panel2);color:var(--nc-text);font-weight:650;font-size:12px}
+.nc-catalog-editor-wrap{margin:0 0 15px}
+</style>
+<script>
+(function(){
+let createOpen=false,editorOpen=false;
+const previous=drawCatalog;
+drawCatalog=function(){
+ previous();
+ const root=document.getElementById('catalog');if(!root)return;
+ const list=root.querySelector('.list'),nameField=root.querySelector('#newName'),form=nameField?.closest('.card');
+ if(!list||!form)return;
+ const header=document.createElement('div');header.className='nc-catalog-top';
+ header.innerHTML='<h2>🥗 วัตถุดิบของฉัน</h2><button type="button" class="nc-catalog-add" id="nc-open-create">＋ เพิ่มวัตถุดิบ</button>';
+ const oldHeading=root.querySelector('h2');if(oldHeading)oldHeading.remove();
+ root.prepend(header);
+ const drawer=document.createElement('section');drawer.className='nc-catalog-create'+(createOpen?' open':'');drawer.id='nc-create-drawer';
+ form.before(drawer);drawer.appendChild(form);
+ const close=document.createElement('button');close.type='button';close.className='nc-catalog-edit';close.textContent='✕ ปิดแบบฟอร์ม';close.onclick=()=>{createOpen=false;drawer.classList.remove('open')};form.prepend(close);
+ header.querySelector('button').onclick=()=>{createOpen=!createOpen;drawer.classList.toggle('open',createOpen);if(createOpen)drawer.scrollIntoView({behavior:'smooth',block:'start'})};
+ // Make editing discoverable on every ingredient row, independently of earlier wrappers.
+ Array.from(list.querySelectorAll('.item')).forEach(card=>{
+ const name=card.querySelector('strong')?.textContent?.trim();
+ const ingredient=db.foods.find(f=>f.name===name);
+ if(!ingredient)return;
+ const originalEdit=card.querySelector('.nc-edit-btn');const openEditor=originalEdit?.onclick;card.querySelectorAll('.nc-edit-btn').forEach(b=>b.remove());
+ const btn=document.createElement('button');btn.type='button';btn.className='nc-catalog-edit';btn.textContent='✏️ แก้ไขข้อมูล';
+ btn.onclick=()=>{
+   // Existing editor uses the closure-scoped selected ID; activate its original handler via the prior render.
+   if(openEditor)openEditor();else alert('กรุณาลองเปิดหน้านี้ใหม่อีกครั้ง');
+ };
+ card.appendChild(btn);
+ });
+ // Existing editor wrapper's buttons are replaced above; keep a working edit trigger
+ // by capturing the original handlers before removal in the next pass.
+};
+})();
+</script>
 </body></html>
