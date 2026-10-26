@@ -433,4 +433,121 @@ drawDashboard=function(){
 };
 })();
 </script>
+
+<style>
+.nc-groups{display:flex;gap:8px;overflow-x:auto;padding:5px 0 15px;scrollbar-width:none}
+.nc-groups button{flex:0 0 auto;border:1px solid var(--nc-border);background:var(--nc-panel);color:var(--nc-text);border-radius:17px;padding:10px 13px;font-size:12px;font-weight:600}
+.nc-groups button.active{background:linear-gradient(120deg,#725cf5,#9977fa);color:white;border-color:transparent}
+.nc-unit-hint{font-size:11px;color:var(--nc-muted);padding-top:5px}
+.nc-category-tag{font-size:11px;color:var(--nc-muted);margin-top:5px}
+</style>
+<script>
+(function(){
+const categories=[
+ {id:'ทั้งหมด',label:'✨ ทั้งหมด'},
+ {id:'โปรตีน',label:'🥩 หมู่ 1 โปรตีน'},
+ {id:'คาร์โบไฮเดรต',label:'🍚 หมู่ 2 แป้ง'},
+ {id:'วิตามิน',label:'🥦 หมู่ 3 ผัก'},
+ {id:'ผลไม้',label:'🍎 หมู่ 4 ผลไม้'},
+ {id:'ไขมัน',label:'🥑 หมู่ 5 ไขมัน'},
+ {id:'เครื่องปรุง',label:'🧂 เครื่องปรุง'}
+];
+const subgroups={
+ 'โปรตีน':['เนื้อสัตว์','ไข่','ปลาและอาหารทะเล','ถั่วและผลิตภัณฑ์จากถั่ว','นมและผลิตภัณฑ์นม'],
+ 'คาร์โบไฮเดรต':['ข้าวและธัญพืช','หัวและอาหารประเภทแป้ง','ขนมปังและเส้น'],
+ 'วิตามิน':['ผัก'],
+ 'ผลไม้':['ผลไม้'],
+ 'ไขมัน':['น้ำมันและไขมัน','ถั่วและเมล็ดพืช'],
+ 'เครื่องปรุง':['เครื่องปรุง','ซอสและน้ำจิ้ม','เครื่องเทศ']
+};
+const guessGroup=f=>{
+ if(f?.mainGroup)return f.mainGroup;
+ const g=f?.group||'';
+ if(g.includes('เครื่องปรุง')||g.includes('ซอส')||g.includes('เครื่องเทศ'))return 'เครื่องปรุง';
+ if(['เนื้อสัตว์','ไข่','ปลาและอาหารทะเล','ถั่วและผลิตภัณฑ์จากถั่ว','นมและผลิตภัณฑ์นม'].includes(g))return 'โปรตีน';
+ if(g.includes('ข้าว')||g.includes('แป้ง')||g.includes('ธัญพืช')||g.includes('เส้น'))return 'คาร์โบไฮเดรต';
+ if(g.includes('ผัก'))return 'วิตามิน';
+ if(g.includes('ผลไม้'))return 'ผลไม้';
+ if(g.includes('น้ำมัน')||g.includes('ไขมัน'))return 'ไขมัน';
+ return 'อื่น ๆ';
+};
+const defaultUnit=g=>g==='ไข่'?'ฟอง':g==='ซอสและน้ำจิ้ม'?'ml':g==='เครื่องปรุง'?'ml':g==='น้ำมันและไขมัน'?'ml':'g';
+let mainSelected='ทั้งหมด',inventoryMain='ทั้งหมด';
+function selectMain(main){
+ const select=document.getElementById('newGroup');if(!select)return;
+ const current=select.value;
+ const optsList=subgroups[main]||['อื่น ๆ'];
+ select.innerHTML=optsList.map(g=>'<option value="'+esc(g)+'" '+(g===current?'selected':'')+'>'+esc(g)+'</option>').join('');
+ updateUnit(true);
+}
+function updateUnit(force){
+ const group=document.getElementById('newGroup'),unitSelect=document.getElementById('newUnit'),base=document.getElementById('newBase');
+ if(!group||!unitSelect)return;
+ const desired=defaultUnit(group.value);
+ if(force||!unitSelect.dataset.userChanged){
+  unitSelect.value=desired;
+  if(base&&(!base.dataset.userChanged))base.value=desired==='ฟอง'?'1':'100';
+ }
+ const hint=document.getElementById('nc-unit-hint');
+ if(hint)hint.textContent='หน่วยแนะนำ: '+(desired==='ฟอง'?'ฟอง':desired==='ml'?'มิลลิลิตร':'กรัม')+' (เปลี่ยนได้)';
+}
+const oldCatalog=drawCatalog;
+drawCatalog=function(){
+ oldCatalog();
+ const root=document.getElementById('catalog');if(!root)return;
+ const form=root.querySelector('#newName')?.closest('.card');
+ const list=root.querySelector('.list');
+ if(list){
+ const filtered=db.foods.filter(f=>mainSelected==='ทั้งหมด'||guessGroup(f)===mainSelected);
+ list.innerHTML=filtered.map(f=>'<div class="item"><div class="row"><strong>'+esc(f.name)+'</strong><span class="pill">'+num(stock(f.id))+' '+esc(f.unit)+'</span></div><div class="nc-category-tag">'+esc(guessGroup(f))+' · '+esc(f.group)+'</div><div class="sub">ต่อ '+num(f.base)+' '+esc(f.unit)+' · '+num(f.k)+' kcal · โปรตีน '+num(f.p)+'g · คาร์บ '+num(f.c)+'g · ไขมัน '+num(f.f)+'g</div>'+(f.sugar!=null||f.sodium!=null?'<div class="sub">'+(f.sugar!=null?'🍬 '+num(f.sugar)+' ก. ':'')+(f.sodium!=null?'🧂 '+num(f.sodium)+' มก.':'')+'</div>':'')+'</div>').join('')||'<div class="empty">ไม่มีวัตถุดิบในหมวดนี้</div>';
+ const filters=document.createElement('div');filters.className='nc-groups';
+ filters.innerHTML=categories.map(c=>'<button type="button" data-main-filter="'+c.id+'" class="'+(mainSelected===c.id?'active':'')+'">'+c.label+'</button>').join('');
+ list.before(filters);
+ filters.querySelectorAll('button').forEach(b=>b.onclick=()=>{mainSelected=b.dataset.mainFilter;drawCatalog()});
+ const oldChips=root.querySelector('.chips');if(oldChips)oldChips.style.display='none';
+ }
+ if(form){
+ const group=form.querySelector('#newGroup');
+ if(group){
+ const wrap=document.createElement('div');
+ wrap.innerHTML='<label>อาหารหลัก 5 หมู่ / หมวดเสริม</label><select id="nc-main-group">'+categories.filter(x=>x.id!=='ทั้งหมด').map(x=>'<option value="'+x.id+'">'+x.label+'</option>').join('')+'</select>';
+ group.parentNode.insertBefore(wrap,group);
+ const main=document.getElementById('nc-main-group');
+ main.value='โปรตีน';
+ main.onchange=()=>selectMain(main.value);
+ group.onchange=()=>updateUnit(true);
+ const unitSelect=document.getElementById('newUnit');
+ unitSelect.onchange=()=>{unitSelect.dataset.userChanged='1'};
+ const base=document.getElementById('newBase');
+ base.onchange=()=>{base.dataset.userChanged='1'};
+ unitSelect.insertAdjacentHTML('afterend','<div id="nc-unit-hint" class="nc-unit-hint"></div>');
+ selectMain(main.value);
+ }
+ }
+};
+const oldAdd=addFood;
+addFood=function(){
+ const main=document.getElementById('nc-main-group')?.value||'โปรตีน';
+ const before=db.foods.length;
+ oldAdd();
+ if(db.foods.length>before){db.foods[db.foods.length-1].mainGroup=main;save();drawCatalog()}
+};
+const oldInventory=drawInventory;
+drawInventory=function(){
+ oldInventory();
+ const root=document.getElementById('inventory'),grid=root?.querySelector('.nc-stock-grid');
+ if(!grid)return;
+ const oldFilters=root.querySelector('.nc-stock-filters');
+ if(oldFilters)oldFilters.style.display='none';
+ const filter=document.createElement('div');filter.className='nc-groups';
+ filter.innerHTML=categories.map(c=>'<button type="button" data-pantry-main="'+c.id+'" class="'+(inventoryMain===c.id?'active':'')+'">'+c.label+'</button>').join('');
+ grid.before(filter);
+ const tiles=grid.querySelectorAll('.nc-stock-tile');
+ const foods=db.foods.filter(f=>stock(f.id)>0);
+ // Tiles are generated in the same order as the active stock foods.
+ tiles.forEach((tile,i)=>{const f=foods[i];if(f)tile.style.display=inventoryMain==='ทั้งหมด'||guessGroup(f)===inventoryMain?'':'none'});
+ filter.querySelectorAll('button').forEach(b=>b.onclick=()=>{inventoryMain=b.dataset.pantryMain;drawInventory()});
+};
+})();
+</script>
 </body></html>
