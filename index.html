@@ -1184,17 +1184,17 @@ const soundKey=location.pathname.includes('/preview/')?'nutricost.preview.sound.
 let enabled=localStorage.getItem(soundKey)==='true';
 let audio=null,lastPlayed=0;
 const sounds={
- dashboard:[[523.25,0,.31],[659.25,.15,.38],[783.99,.32,.49]],
- meals:[[587.33,0,.31],[739.99,.16,.38],[880,.34,.47]],
- inventory:[[392,0,.33],[493.88,.16,.40],[587.33,.35,.47]],
- catalog:[[440,0,.32],[554.37,.17,.40],[659.25,.35,.48]],
- settings:[[493.88,0,.30],[622.25,.18,.39],[739.99,.37,.46]],
- add:[[659.25,0,.30],[830.61,.16,.39],[987.77,.35,.46]],
- save:[[523.25,0,.31],[659.25,.15,.38],[783.99,.32,.41],[1046.5,.49,.54]],
- remove:[[440,0,.33],[392,.17,.40],[349.23,.36,.48]],
- select:[[659.25,0,.27],[783.99,.15,.36]],
- back:[[493.88,0,.29],[392,.17,.38]],
- tap:[[523.25,0,.27],[659.25,.15,.34]]
+ dashboard:[[376.74,0,.31],[474.66,.10.8,.38],[564.47,.23.04,.49]],
+ meals:[[422.88,0,.31],[532.79,.11.52,.38],[633.6,.24.48,.47]],
+ inventory:[[282.24,0,.33],[355.59,.11.52,.40],[422.88,.25.2,.47]],
+ catalog:[[316.8,0,.32],[399.15,.12.24,.40],[474.66,.25.2,.48]],
+ settings:[[355.59,0,.30],[448.02,.12.96,.39],[532.79,.26.64,.46]],
+ add:[[474.66,0,.30],[598.04,.11.52,.39],[711.19,.25.2,.46]],
+ save:[[376.74,0,.31],[474.66,.10.8,.38],[564.47,.23.04,.41],[753.48,.35.28,.54]],
+ remove:[[316.8,0,.33],[282.24,.12.24,.40],[251.45,.25.92,.48]],
+ select:[[474.66,0,.27],[564.47,.10.8,.36]],
+ back:[[355.59,0,.29],[282.24,.12.24,.38]],
+ tap:[[376.74,0,.27],[474.66,.10.8,.34]]
 };
 let soundBus=null;
 function ensureSoundBus(){
@@ -1224,11 +1224,11 @@ function play(kind){
  const upperGain=audio.createGain(),filter=audio.createBiquadFilter(),envelope=audio.createGain();
  voice.type='sine';voice.frequency.setValueAtTime(hz,start);
  upper.type='sine';upper.frequency.setValueAtTime(hz*2,start);
- upperGain.gain.value=.085;
- filter.type='lowpass';filter.frequency.value=1450;filter.Q.value=.3;
+ upperGain.gain.value=.018;
+ filter.type='lowpass';filter.frequency.value=850;filter.Q.value=.3;
  envelope.gain.setValueAtTime(.0001,start);
- envelope.gain.exponentialRampToValueAtTime(.070,start+.022);
- envelope.gain.exponentialRampToValueAtTime(.038,start+.11);
+ envelope.gain.exponentialRampToValueAtTime(.085,start+.035);
+ envelope.gain.exponentialRampToValueAtTime(.047,start+.15);
  envelope.gain.exponentialRampToValueAtTime(.0001,start+duration);
  voice.connect(filter);upper.connect(upperGain);upperGain.connect(filter);
  filter.connect(envelope);envelope.connect(bus.master);
