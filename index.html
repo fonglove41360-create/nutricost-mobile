@@ -982,7 +982,13 @@ drawCatalog=function(){
  action.onclick=()=>{
  menu.hidden=true;
  let modal=document.getElementById('nc-manage-modal');
- if(!modal){alert('กรุณาเปิดหน้าวัตถุดิบใหม่อีกครั้ง');return}
+ if(!modal){
+ modal=document.createElement('div');modal.id='nc-manage-modal';modal.className='nc-modal-layer';modal.hidden=true;
+ modal.innerHTML='<div class="nc-modal-sheet" role="dialog" aria-modal="true" aria-labelledby="nc-modal-heading"><div class="nc-modal-head"><strong id="nc-modal-heading"></strong><button type="button" class="nc-modal-close">✕ ปิด</button></div><div class="nc-modal-body"></div></div>';
+ document.body.appendChild(modal);
+ modal.querySelector('.nc-modal-close').onclick=()=>{modal.hidden=true;drawCatalog()};
+ modal.addEventListener('click',e=>{if(e.target===modal){modal.hidden=true;drawCatalog()}});
+ }
  const title=modal.querySelector('#nc-modal-heading'),body=modal.querySelector('.nc-modal-body');
  title.textContent='🗑️ ลบวัตถุดิบ';modal.hidden=false;
  body.replaceChildren();
