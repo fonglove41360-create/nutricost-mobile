@@ -622,4 +622,44 @@ const prevInventory=drawInventory;
 drawInventory=function(){prevInventory();decorate('lotQty','lotFood');const price=document.getElementById('lotPrice');if(price){price.placeholder='ราคาซื้อรวม (บาท)'}};
 })();
 </script>
+
+<style>
+.nc-macro-panel{background:var(--nc-panel);border:1px solid var(--nc-border);border-radius:23px;padding:17px;margin:0 0 18px;box-shadow:0 8px 24px #34305e0a}
+.nc-macro-title{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:15px}
+.nc-macro-title strong{font-size:16px}.nc-macro-title small{font-size:11px;color:var(--nc-muted)}
+.nc-macro-row{margin:12px 0 15px}.nc-macro-line{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px}
+.nc-macro-line b{font-size:14px}.nc-macro-line small{font-size:11px;color:var(--nc-muted)}
+.nc-macro-track{height:9px;background:var(--nc-panel2);border-radius:15px;overflow:hidden;margin-top:8px}
+.nc-macro-fill{height:100%;border-radius:15px;min-width:0}
+.nc-macro-note{font-size:11px;color:var(--nc-muted);line-height:1.6;margin-top:12px}
+</style>
+<script>
+(function(){
+const old=drawDashboard;
+drawDashboard=function(){
+ old();
+ const root=document.getElementById('dashboard');if(!root)return;
+ const lines=db.meals.filter(m=>m.date===localDate()).flatMap(m=>m.lines);
+ const t=totals(lines);
+ const metrics=[
+ ['💪 โปรตีน','p','g','#54c99c'],
+ ['🍚 คาร์บ','c','g','#e8ac5e'],
+ ['🥑 ไขมัน','f','g','#9877ed']
+ ];
+ const rows=metrics.map(([label,key,unit,color])=>{
+ const target=Number(db.goals?.[key])||0,amount=Number(t[key])||0;
+ const pct=target>0?amount/target*100:0;
+ const pctText=target>0?num(pct)+'%':'ยังไม่ตั้งเป้าหมาย';
+ return '<div class="nc-macro-row"><div class="nc-macro-line"><span>'+label+'</span><span><b>'+num(amount)+' '+unit+'</b> <small>/ '+(target>0?num(target)+' '+unit:'—')+'</small></span></div>'+
+ '<div class="nc-macro-track" role="progressbar" aria-label="'+label+'" aria-valuenow="'+Math.round(pct)+'" aria-valuemin="0" aria-valuemax="100"><div class="nc-macro-fill" style="width:'+Math.max(0,Math.min(100,pct))+'%;background:'+color+'"></div></div>'+
+ '<div style="text-align:right;font-size:11px;color:var(--nc-muted);margin-top:5px">'+pctText+' ของเป้าหมาย'+(pct>100?' · เกินเป้าหมาย':'')+'</div></div>';
+ }).join('');
+ const panel=document.createElement('div');panel.className='nc-macro-panel';
+ panel.innerHTML='<div class="nc-macro-title"><strong>📊 สารอาหารวันนี้</strong><small>เทียบเป้าหมายรายวัน</small></div>'+rows+'<div class="nc-macro-note">เปอร์เซ็นต์ = ปริมาณที่กิน ÷ เป้าหมายรายวัน × 100 · ปรับเป้าหมายได้ในตั้งค่า</div>';
+ const summary=root.querySelector('.nc-easy-summary');
+ if(summary){const sugar=summary.nextElementSibling;if(sugar&&sugar.classList.contains('sub')&&sugar.textContent.includes('น้ำตาล'))sugar.after(panel);else summary.after(panel)}
+ else root.prepend(panel);
+};
+})();
+</script>
 </body></html>
