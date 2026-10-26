@@ -897,7 +897,7 @@ drawCatalog=function(){
 .nc-modal-head strong{font-size:17px}
 .nc-modal-close{border:0;border-radius:12px;padding:9px 12px;background:var(--nc-panel2);color:var(--nc-text)}
 .nc-modal-body{padding:15px;overflow:auto;overscroll-behavior:contain}
-.nc-modal-body>.card,.nc-modal-body .nc-edit-panel{margin:0}.nc-modal-body .nc-edit-btn{display:inline-block!important}
+.nc-modal-body>.card,.nc-modal-body .nc-edit-panel{margin:0}
 .nc-manage-picker{width:100%;min-height:48px;margin:8px 0 12px}
 </style>
 <script>
@@ -962,6 +962,55 @@ drawCatalog=function(){
  options.querySelector('[data-action="edit"]').onclick=()=>{options.hidden=true;openEdit()};
 };
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal().hidden)close()});
+})();
+</script>
+
+<style>
+.nc-delete-action{color:#ef7777!important}
+.nc-delete-hint{font-size:12px;color:var(--nc-muted);line-height:1.7;margin:9px 0 15px}
+.nc-delete-danger{background:#bc414d;color:#fff;border:0;border-radius:12px;padding:12px 16px;font-weight:700;width:100%}
+.nc-delete-danger:disabled{opacity:.45}
+.nc-delete-select{width:100%;min-height:48px;margin:10px 0}
+</style>
+<script>
+(function(){
+const previous=drawCatalog;
+drawCatalog=function(){
+ previous();
+ const menu=document.querySelector('#catalog .nc-manage-options');if(!menu)return;
+ const action=document.createElement('button');action.type='button';action.className='nc-delete-action';action.textContent='🗑️ ลบวัตถุดิบ';menu.appendChild(action);
+ action.onclick=()=>{
+ menu.hidden=true;
+ let modal=document.getElementById('nc-manage-modal');
+ if(!modal){alert('กรุณาเปิดหน้าวัตถุดิบใหม่อีกครั้ง');return}
+ const title=modal.querySelector('#nc-modal-heading'),body=modal.querySelector('.nc-modal-body');
+ title.textContent='🗑️ ลบวัตถุดิบ';modal.hidden=false;
+ body.replaceChildren();
+ const label=document.createElement('label');label.textContent='เลือกวัตถุดิบที่ต้องการลบ';body.appendChild(label);
+ const select=document.createElement('select');select.className='nc-delete-select';body.appendChild(select);
+ const foods=db.foods.slice().sort((a,b)=>a.name.localeCompare(b.name,'th'));
+ for(const f of foods){const opt=document.createElement('option');opt.value=f.id;opt.textContent=f.name;select.appendChild(opt)}
+ const hint=document.createElement('p');hint.className='nc-delete-hint';body.appendChild(hint);
+ const del=document.createElement('button');del.type='button';del.className='nc-delete-danger';del.textContent='ลบวัตถุดิบนี้';body.appendChild(del);
+ function inspect(){
+ const id=select.value;
+ const lots=db.lots.filter(l=>l.foodId===id);
+ const mealCount=db.meals.reduce((sum,m)=>sum+m.lines.filter(l=>l.foodId===id).length,0);
+ const draftCount=Array.isArray(draft)?draft.filter(l=>l.foodId===id).length:0;
+ const blocked=lots.length>0||mealCount>0||draftCount>0;
+ del.disabled=!id||blocked;
+ hint.textContent=!id?'ไม่มีวัตถุดิบให้ลบ':blocked?'🔒 ยังลบไม่ได้ เพราะมีข้อมูลอ้างอิงอยู่ ('+lots.length+' ล็อตซื้อ, '+mealCount+' รายการมื้ออาหาร'+(draftCount?', '+draftCount+' รายการที่ยังไม่บันทึก':'')+') เพื่อป้องกันประวัติ ต้นทุน และสต็อกเสียหาย':'การลบจะนำวัตถุดิบออกจากรายการของคุณ และไม่สามารถย้อนกลับได้';
+ }
+ select.onchange=inspect;inspect();
+ del.onclick=()=>{
+ const id=select.value,f=db.foods.find(x=>x.id===id);if(!f)return;
+ const hasLinks=db.lots.some(l=>l.foodId===id)||db.meals.some(m=>m.lines.some(l=>l.foodId===id))||(Array.isArray(draft)&&draft.some(l=>l.foodId===id));
+ if(hasLinks){inspect();return}
+ if(!confirm('ยืนยันลบวัตถุดิบ "'+f.name+'"?\nการดำเนินการนี้ย้อนกลับไม่ได้'))return;
+ db.foods=db.foods.filter(x=>x.id!==id);save();modal.hidden=true;drawCatalog();
+ };
+ };
+};
 })();
 </script>
 </body></html>
