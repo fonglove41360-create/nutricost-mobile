@@ -550,4 +550,49 @@ drawInventory=function(){
 };
 })();
 </script>
+
+<style>
+.nc-unit-picker{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:9px}
+.nc-unit-choice{min-height:79px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border-radius:17px;border:1px solid var(--nc-border);background:var(--nc-panel);color:var(--nc-text);font-size:12px;font-weight:600;transition:transform .12s,border-color .12s}
+.nc-unit-choice span{font-size:23px}.nc-unit-choice.active{border:2px solid #8266f5;background:color-mix(in srgb,#8266f5 10%,var(--nc-panel));color:var(--nc-text);box-shadow:0 5px 15px #8266f51b}
+.nc-unit-choice:active{transform:scale(.97)}
+.nc-unit-preview{background:var(--nc-panel2);border-radius:14px;padding:11px 13px;font-size:12px;margin-top:12px;color:var(--nc-muted)}
+.nc-unit-preview b{color:var(--nc-text)}
+</style>
+<script>
+(function(){
+const unitChoices=[['g','⚖️','กรัม'],['ฟอง','🥚','ฟอง'],['ml','💧','มิลลิลิตร'],['ชิ้น','🍞','ชิ้น'],['ลูก','🍎','ลูก'],['ช้อนชา','🥄','ช้อนชา']];
+const prior=drawCatalog;
+function syncUnitPicker(){
+ const select=document.getElementById('newUnit'),picker=document.getElementById('nc-unit-picker');
+ if(!select||!picker)return;
+ picker.querySelectorAll('[data-nc-unit]').forEach(btn=>{const selected=btn.dataset.ncUnit===select.value;btn.classList.toggle('active',selected);btn.setAttribute('aria-pressed',String(selected))});
+ const preview=document.getElementById('nc-unit-preview'),name=document.getElementById('newName')?.value.trim()||'วัตถุดิบ',base=document.getElementById('newBase')?.value||'100';
+ if(preview)preview.textContent='ตัวอย่าง: '+name+' — '+base+' '+(unitChoices.find(x=>x[0]===select.value)?.[2]||select.value);
+}
+drawCatalog=function(){
+ prior();
+ const select=document.getElementById('newUnit');if(!select)return;
+ for(const [value,,label] of unitChoices){if(!Array.from(select.options).some(x=>x.value===value))select.add(new Option(label,value))}
+ const picker=document.createElement('div');picker.id='nc-unit-picker';picker.className='nc-unit-picker';
+ picker.innerHTML=unitChoices.map(([value,emoji,label])=>'<button type="button" class="nc-unit-choice" data-nc-unit="'+value+'" aria-pressed="false"><span aria-hidden="true">'+emoji+'</span>'+label+'</button>').join('');
+ const title=document.createElement('label');title.textContent='เลือกหน่วยที่ใช้บันทึก';
+ select.before(title);select.after(picker);
+ // Keep the native selector as an accessible fallback, but emphasize the tap targets.
+ select.style.position='absolute';select.style.width='1px';select.style.height='1px';select.style.opacity='0';select.style.pointerEvents='none';select.tabIndex=-1;
+ const preview=document.createElement('div');preview.id='nc-unit-preview';preview.className='nc-unit-preview';picker.after(preview);
+ picker.querySelectorAll('button').forEach(btn=>btn.onclick=()=>{
+   select.value=btn.dataset.ncUnit;select.dataset.userChanged='1';
+   const base=document.getElementById('newBase');if(base&&!base.dataset.userChanged)base.value=select.value==='ฟอง'?'1':'100';
+   syncUnitPicker();
+ });
+ select.addEventListener('change',syncUnitPicker);
+ const group=document.getElementById('newGroup');if(group)group.addEventListener('change',()=>setTimeout(syncUnitPicker,0));
+ const main=document.getElementById('nc-main-group');if(main)main.addEventListener('change',()=>setTimeout(syncUnitPicker,0));
+ document.getElementById('newName')?.addEventListener('input',syncUnitPicker);
+ document.getElementById('newBase')?.addEventListener('input',syncUnitPicker);
+ syncUnitPicker();
+};
+})();
+</script>
 </body></html>
