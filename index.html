@@ -857,4 +857,27 @@ drawCatalog=function(){
 };
 })();
 </script>
+
+<script>
+(function(){
+ // Preview-safe catalog entrypoint, independent of legacy wrapper order.
+ const oldRenderCatalog=drawCatalog;
+ drawCatalog=function(){
+ oldRenderCatalog();
+ const root=document.getElementById('catalog');
+ if(!root)return;
+ const header=root.querySelector('.nc-catalog-top');
+ const list=root.querySelector('.list');
+ const form=root.querySelector('#newName')?.closest('.card');
+ if(header&&list&&form)return;
+ // Keep a visible top action even if a legacy catalog wrapper changes its structure.
+ if(!root.querySelector('#nc-fallback-create')&&form){
+ const bar=document.createElement('div');bar.className='nc-catalog-top';
+ bar.innerHTML='<strong>🥗 วัตถุดิบของฉัน</strong><button type="button" class="nc-catalog-add" id="nc-fallback-create">＋ เพิ่มวัตถุดิบ</button>';
+ root.prepend(bar);form.style.display='none';
+ bar.querySelector('button').onclick=()=>{form.style.display=form.style.display==='none'?'block':'none'};
+ }
+ };
+})();
+</script>
 </body></html>
