@@ -1184,36 +1184,56 @@ const soundKey=location.pathname.includes('/preview/')?'nutricost.preview.sound.
 let enabled=localStorage.getItem(soundKey)==='true';
 let audio=null,lastPlayed=0;
 const sounds={
- dashboard:[[523.25,0,.26],[659.25,.12,.32],[783.99,.25,.39]],
- meals:[[587.33,0,.25],[739.99,.13,.29],[880,.28,.40]],
- inventory:[[392,0,.26],[493.88,.13,.30],[587.33,.27,.38]],
- catalog:[[440,0,.24],[554.37,.13,.30],[659.25,.27,.38]],
- settings:[[493.88,0,.24],[622.25,.15,.31],[739.99,.29,.37]],
- add:[[659.25,0,.25],[830.61,.13,.30],[987.77,.28,.38]],
- save:[[523.25,0,.26],[659.25,.13,.30],[783.99,.27,.34],[1046.5,.41,.44]],
- remove:[[440,0,.24],[392,.14,.30],[349.23,.28,.34]],
- select:[[659.25,0,.22],[783.99,.12,.31]],
- back:[[493.88,0,.25],[392,.15,.34]],
- tap:[[523.25,0,.23],[659.25,.13,.29]]
+ dashboard:[[523.25,0,.31],[659.25,.15,.38],[783.99,.32,.49]],
+ meals:[[587.33,0,.31],[739.99,.16,.38],[880,.34,.47]],
+ inventory:[[392,0,.33],[493.88,.16,.40],[587.33,.35,.47]],
+ catalog:[[440,0,.32],[554.37,.17,.40],[659.25,.35,.48]],
+ settings:[[493.88,0,.30],[622.25,.18,.39],[739.99,.37,.46]],
+ add:[[659.25,0,.30],[830.61,.16,.39],[987.77,.35,.46]],
+ save:[[523.25,0,.31],[659.25,.15,.38],[783.99,.32,.41],[1046.5,.49,.54]],
+ remove:[[440,0,.33],[392,.17,.40],[349.23,.36,.48]],
+ select:[[659.25,0,.27],[783.99,.15,.36]],
+ back:[[493.88,0,.29],[392,.17,.38]],
+ tap:[[523.25,0,.27],[659.25,.15,.34]]
 };
+let soundBus=null;
+function ensureSoundBus(){
+ if(soundBus)return soundBus;
+ const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
+ audio=audio||new AC();
+ const master=audio.createGain();master.gain.value=.72;
+ const compressor=audio.createDynamicsCompressor();
+ compressor.threshold.value=-18;compressor.knee.value=18;compressor.ratio.value=3;
+ compressor.attack.value=.006;compressor.release.value=.20;
+ const delay=audio.createDelay(.5);delay.delayTime.value=.19;
+ const feedback=audio.createGain();feedback.gain.value=.17;
+ const wet=audio.createGain();wet.gain.value=.12;
+ delay.connect(feedback);feedback.connect(delay);delay.connect(wet);wet.connect(compressor);
+ master.connect(compressor);master.connect(delay);compressor.connect(audio.destination);
+ soundBus={master};return soundBus;
+}
 function play(kind){
  if(!enabled)return;
  try{
- const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
- audio=audio||new AC();if(audio.state==='suspended')audio.resume().catch(()=>{});
- const now=audio.currentTime,notes=sounds[kind]||sounds.tap;
- notes.forEach(([hz,delay,duration],i)=>{
- const start=now+delay,osc=audio.createOscillator(),harmonic=audio.createOscillator(),gain=audio.createGain(),filter=audio.createBiquadFilter(),hg=audio.createGain();
- osc.type='sine';osc.frequency.setValueAtTime(hz,start);osc.frequency.exponentialRampToValueAtTime(hz*1.003,start+duration);
- harmonic.type='sine';harmonic.frequency.setValueAtTime(hz*2,start);harmonic.frequency.exponentialRampToValueAtTime(hz*2.004,start+duration);
- filter.type='lowpass';filter.frequency.value=2400;
- gain.gain.setValueAtTime(.0001,start);
- gain.gain.exponentialRampToValueAtTime(.095,start+.035);
- gain.gain.exponentialRampToValueAtTime(.055,start+Math.min(.14,duration*.5));
- gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
- hg.gain.value=.13;
- osc.connect(filter);harmonic.connect(hg);hg.connect(filter);filter.connect(gain);gain.connect(audio.destination);
- osc.start(start);harmonic.start(start);osc.stop(start+duration+.02);harmonic.stop(start+duration+.02);
+ const bus=ensureSoundBus();if(!bus)return;
+ if(audio.state==='suspended')audio.resume().catch(()=>{});
+ const now=audio.currentTime+.008,notes=sounds[kind]||sounds.tap;
+ notes.forEach(([hz,delay,duration])=>{
+ const start=now+delay;
+ const voice=audio.createOscillator(),upper=audio.createOscillator();
+ const upperGain=audio.createGain(),filter=audio.createBiquadFilter(),envelope=audio.createGain();
+ voice.type='sine';voice.frequency.setValueAtTime(hz,start);
+ upper.type='sine';upper.frequency.setValueAtTime(hz*2,start);
+ upperGain.gain.value=.085;
+ filter.type='lowpass';filter.frequency.value=1450;filter.Q.value=.3;
+ envelope.gain.setValueAtTime(.0001,start);
+ envelope.gain.exponentialRampToValueAtTime(.070,start+.022);
+ envelope.gain.exponentialRampToValueAtTime(.038,start+.11);
+ envelope.gain.exponentialRampToValueAtTime(.0001,start+duration);
+ voice.connect(filter);upper.connect(upperGain);upperGain.connect(filter);
+ filter.connect(envelope);envelope.connect(bus.master);
+ voice.start(start);upper.start(start);
+ voice.stop(start+duration+.015);upper.stop(start+duration+.015);
  });
  }catch(e){}
 }
