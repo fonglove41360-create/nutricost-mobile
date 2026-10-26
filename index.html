@@ -749,4 +749,66 @@ drawSettings=function(){
 };
 })();
 </script>
+
+<style>
+.nc-edit-panel{margin:12px 0;padding:16px;border:1px solid var(--nc-border);border-radius:19px;background:var(--nc-panel)}
+.nc-edit-panel label{display:block;font-size:12px;margin:10px 0 5px;color:var(--nc-muted)}
+.nc-edit-panel input,.nc-edit-panel select{width:100%;min-height:43px;border-radius:12px}
+.nc-edit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.nc-edit-btn{border:1px solid var(--nc-border);border-radius:12px;padding:7px 11px;background:var(--nc-panel2);color:var(--nc-text);font-size:12px}
+.nc-edit-save{border:0;background:#7863eb;color:white;border-radius:12px;padding:12px 15px;font-weight:700}
+</style>
+<script>
+(function(){
+let editingId=null;
+const safe=(v)=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const options=(arr,value)=>arr.map(x=>'<option value="'+safe(x)+'" '+(x===value?'selected':'')+'>'+safe(x)+'</option>').join('');
+const mainGroups=['โปรตีน','คาร์โบไฮเดรต','วิตามิน','ผลไม้','ไขมัน','เครื่องปรุง','อื่น ๆ'];
+const units=['g','kg','ฟอง','ml','L','ชิ้น','ลูก','ช้อนชา'];
+function used(f){return db.lots.some(l=>l.foodId===f.id)||db.meals.some(m=>m.lines.some(l=>l.foodId===f.id))}
+function editor(f){
+ const locked=used(f);
+ return '<div class="nc-edit-panel" id="nc-edit-panel"><strong>✏️ แก้ไข '+safe(f.name)+'</strong>'+
+ '<label>ชื่อวัตถุดิบ</label><input id="nc-edit-name" maxlength="100" value="'+safe(f.name)+'">'+
+ '<div class="nc-edit-grid"><div><label>หมู่หลัก</label><select id="nc-edit-main">'+options(mainGroups,f.mainGroup||'อื่น ๆ')+'</select></div><div><label>หมวดย่อย</label><input id="nc-edit-group" maxlength="70" value="'+safe(f.group)+'"></div></div>'+
+ '<div class="nc-edit-grid"><div><label>หน่วยบันทึก</label><select id="nc-edit-unit" '+(locked?'disabled':'')+'>'+options(units,f.unit)+'</select></div><div><label>ปริมาณอ้างอิง</label><input id="nc-edit-base" type="number" min="0.01" step="any" value="'+safe(f.base)+'"></div></div>'+
+ (locked?'<p class="nc-extra-small">🔒 หน่วยถูกล็อก เพราะมีประวัติการซื้อหรือมื้ออาหารแล้ว เพื่อป้องกันข้อมูลสต็อกและต้นทุนผิดพลาด</p>':'')+
+ '<div class="nc-edit-grid">'+[['k','🔥 แคลอรี (kcal)'],['p','💪 โปรตีน (กรัม)'],['c','🍚 คาร์บ (กรัม)'],['f','🥑 ไขมัน (กรัม)'],['sugar','🍬 น้ำตาล (กรัม)'],['sodium','🧂 โซเดียม (มก.)'],['fiber','🥦 ใยอาหาร (กรัม)'],['gramsPerUnit','⚖️ กรัมต่อหน่วย']].map(([key,label])=>'<div><label>'+label+'</label><input id="nc-edit-'+key+'" type="number" min="0" step="any" placeholder="ไม่ทราบ" value="'+safe(f[key]??'')+'"></div>').join('')+'</div>'+
+ '<p class="nc-extra-small">ช่องน้ำตาล โซเดียม และใยอาหารที่เว้นว่าง = ยังไม่มีข้อมูล ไม่ใช่ศูนย์</p>'+
+ '<div class="nc-extra-row"><button type="button" class="nc-edit-save" onclick="ncSaveIngredient()">💾 บันทึกการแก้ไข</button><button type="button" class="nc-edit-btn" onclick="ncCloseIngredient()">ยกเลิก</button></div></div>';
+}
+const old=drawCatalog;
+drawCatalog=function(){
+ old();
+ const root=document.getElementById('catalog'),list=root?.querySelector('.list');if(!list)return;
+ const cards=Array.from(list.children);
+ // Match the actual rendered catalog order (may be filtered by main group).
+ cards.forEach(card=>{
+ const title=card.querySelector('strong')?.textContent;
+ const f=db.foods.find(x=>x.name===title);
+ if(!f)return;
+ const b=document.createElement('button');b.type='button';b.className='nc-edit-btn';b.textContent='✏️ แก้ไข';b.onclick=()=>{editingId=f.id;drawCatalog();document.getElementById('nc-edit-panel')?.scrollIntoView({block:'nearest',behavior:'smooth'})};
+ card.appendChild(b);
+ });
+ if(editingId){const f=db.foods.find(x=>x.id===editingId);if(f){const node=document.createElement('div');node.innerHTML=editor(f);list.before(node)}}
+};
+window.ncCloseIngredient=function(){editingId=null;drawCatalog()};
+window.ncSaveIngredient=function(){
+ const f=db.foods.find(x=>x.id===editingId);if(!f)return;
+ const get=k=>document.getElementById('nc-edit-'+k)?.value;
+ const name=(get('name')||'').trim(),group=(get('group')||'').trim(),main=get('main'),base=Number(get('base'));
+ if(!name||!group||!Number.isFinite(base)||base<=0)return alert('กรุณากรอกชื่อ หมวดหมู่ และปริมาณอ้างอิงให้ถูกต้อง');
+ if(db.foods.some(x=>x.id!==f.id&&x.name===name))return alert('มีชื่อวัตถุดิบนี้อยู่แล้ว');
+ const changes={name,group,mainGroup:main,base};
+ if(!used(f))changes.unit=get('unit');
+ for(const key of ['k','p','c','f','sugar','sodium','fiber','gramsPerUnit']){
+ const raw=get(key);if(raw==null)continue;
+ if(raw===''){if(['k','p','c','f'].includes(key))return alert('กรุณากรอกสารอาหารหลักให้ครบ');changes[key]=undefined;continue}
+ const v=Number(raw);if(!Number.isFinite(v)||v<0||(key==='gramsPerUnit'&&v===0))return alert('ตัวเลขสารอาหารไม่ถูกต้อง: '+key);
+ changes[key]=v;
+ }
+ Object.assign(f,changes);save();editingId=null;drawCatalog();alert('บันทึกข้อมูลวัตถุดิบแล้ว');
+};
+})();
+</script>
 </body></html>
