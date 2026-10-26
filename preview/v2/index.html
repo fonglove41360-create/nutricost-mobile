@@ -375,4 +375,62 @@ const originalCommit=commitMeal;
 commitMeal=function(){const before=db.meals.length;originalCommit();if(db.meals.length>before)show('dashboard')};
 })();
 </script>
-<script>(function(){const prev=drawDashboard;drawDashboard=function(){prev();const root=document.getElementById('dashboard');if(!root)return;const title=root.querySelector('.nc-health-title');if(title&&title.textContent.includes('อาหารของฉัน'))title.textContent='✨ อาหารของฉัน';const cards=root.querySelectorAll('.nc-easy-summary>div');['🔥','💪','💸'].forEach((e,i)=>{if(cards[i])cards[i].insertAdjacentHTML('afterbegin','<span class="nc-play-icon" aria-hidden="true">'+e+'</span>')});const heads=root.querySelectorAll('.nc-easy-meal h3');['☀️','🥗','🌙'].forEach((e,i)=>{if(heads[i])heads[i].insertAdjacentHTML('afterbegin','<span class="nc-meal-emoji" aria-hidden="true">'+e+'</span>')});root.querySelectorAll('.nc-easy-add').forEach(b=>b.textContent='＋ เพิ่ม');};})();</script></body></html>
+<script>(function(){const prev=drawDashboard;drawDashboard=function(){prev();const root=document.getElementById('dashboard');if(!root)return;const title=root.querySelector('.nc-health-title');if(title&&title.textContent.includes('อาหารของฉัน'))title.textContent='✨ อาหารของฉัน';const cards=root.querySelectorAll('.nc-easy-summary>div');['🔥','💪','💸'].forEach((e,i)=>{if(cards[i])cards[i].insertAdjacentHTML('afterbegin','<span class="nc-play-icon" aria-hidden="true">'+e+'</span>')});const heads=root.querySelectorAll('.nc-easy-meal h3');['☀️','🥗','🌙'].forEach((e,i)=>{if(heads[i])heads[i].insertAdjacentHTML('afterbegin','<span class="nc-meal-emoji" aria-hidden="true">'+e+'</span>')});root.querySelectorAll('.nc-easy-add').forEach(b=>b.textContent='＋ เพิ่ม');};})();</script>
+<style>
+.nc-stock-header{display:flex;align-items:center;justify-content:space-between;margin:12px 0 16px}.nc-stock-header h2{font-size:25px;margin:0}.nc-stock-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.nc-stock-tile{background:var(--nc-panel);border:1px solid var(--nc-border);border-radius:22px;padding:17px 13px;box-shadow:0 8px 24px #34305e0a}.nc-stock-tile .emoji{font-size:28px;display:block;margin-bottom:10px}.nc-stock-tile strong{display:block;font-size:14px}.nc-stock-tile small{display:block;color:var(--nc-muted);font-size:11px;margin-top:5px}.nc-stock-tile b{font-size:18px}.nc-stock-progress{height:7px;background:var(--nc-border);border-radius:9px;margin:13px 0 7px;overflow:hidden}.nc-stock-progress i{display:block;height:100%;background:linear-gradient(90deg,#61c9b0,#7765ee);border-radius:9px}.nc-stock-filters{display:flex;gap:7px;overflow-x:auto;padding:3px 0 14px}.nc-stock-filters button{white-space:nowrap;border:1px solid var(--nc-border);background:var(--nc-panel);color:var(--nc-text);border-radius:20px;padding:9px 12px;font-size:12px}.nc-stock-filters button.active{background:#735cf4;color:white;border-color:#735cf4}.nc-stock-add{background:var(--nc-panel);border-radius:23px;border:1px solid var(--nc-border);padding:18px;margin-top:19px}.nc-stock-add summary{font-weight:700;cursor:pointer}.nc-stock-warning{color:#d17a37!important}.nc-extra-nutrients{margin-top:12px;padding:12px;background:var(--nc-panel2);border-radius:14px}.nc-extra-nutrients label{font-size:12px}
+</style>
+<script>
+(function(){
+let stockFilter='ทั้งหมด';
+const groupsForStock=['ทั้งหมด','เนื้อสัตว์','ไข่','ผัก','หัวและอาหารประเภทแป้ง','เครื่องปรุง'];
+function stockEmoji(f){const g=f?.group||'',name=f?.name||'';if(g.includes('เครื่องปรุง')||/ซอส|น้ำปลา|ซีอิ๊ว|เกลือ|น้ำตาล/.test(name))return '🧂';if(g.includes('เนื้อ'))return '🥩';if(g.includes('ไข่'))return '🥚';if(g.includes('ผัก'))return '🥦';if(g.includes('แป้ง')||g.includes('ข้าว'))return '🍚';if(g.includes('ผลไม้'))return '🍎';if(g.includes('ปลา'))return '🐟';return '🛒'}
+const previousInventory=drawInventory;
+drawInventory=function(){
+ previousInventory();
+ const root=document.getElementById('inventory');
+ const original=root.innerHTML;
+ const active=db.foods.filter(f=>stock(f.id)>0&&(stockFilter==='ทั้งหมด'||f.group===stockFilter));
+ const tiles=active.map(f=>{
+ const lots=db.lots.filter(l=>l.foodId===f.id&&remaining(l)>0);
+ const total=lots.reduce((s,l)=>s+remaining(l),0),purchased=lots.reduce((s,l)=>s+l.qty,0);
+ const pct=Math.max(0,Math.min(100,purchased?total/purchased*100:0));
+ const nearest=lots.map(l=>l.expiry).filter(Boolean).sort()[0];
+ return '<div class="nc-stock-tile"><span class="emoji">'+stockEmoji(f)+'</span><strong>'+esc(f.name)+'</strong><small>คงเหลือ</small><b>'+num(total)+' '+esc(unit(f))+'</b><div class="nc-stock-progress"><i style="width:'+pct+'%"></i></div><small'+(nearest&&nearest<localDate()?' class="nc-stock-warning"':'')+'>'+(nearest?'📅 หมดอายุ '+esc(nearest):'📦 '+lots.length+' ล็อต')+'</small></div>';
+ }).join('');
+ root.innerHTML='<div class="nc-stock-header"><div><h2>🧺 คลังของฉัน</h2><div class="sub">วัตถุดิบที่มีอยู่ในบ้าน</div></div><button class="btn small" onclick="document.getElementById(\'nc-stock-form\').open=true;document.getElementById(\'nc-stock-form\').scrollIntoView({behavior:\'smooth\'})">＋ ซื้อเพิ่ม</button></div>'+
+ '<div class="nc-stock-filters">'+groupsForStock.map(g=>'<button data-nc-stock-filter="'+esc(g)+'" class="'+(g===stockFilter?'active':'')+'">'+esc(g)+'</button>').join('')+'</div>'+
+ '<div class="nc-stock-grid">'+(tiles||'<div class="sub">ยังไม่มีวัตถุดิบในหมวดนี้</div>')+'</div>'+
+ '<details class="nc-stock-add" id="nc-stock-form"><summary>🛍️ เพิ่มวัตถุดิบที่ซื้อ</summary><div id="nc-stock-original"></div></details>';
+ const target=root.querySelector('#nc-stock-original');target.innerHTML=original;
+ const originalHeading=target.querySelector('h2');if(originalHeading)originalHeading.remove();
+ target.querySelectorAll('[id]').forEach(el=>{if(el.id==='nc-stock-original')return;});
+ root.querySelectorAll('[data-nc-stock-filter]').forEach(b=>b.onclick=()=>{stockFilter=b.dataset.ncStockFilter;drawInventory()});
+};
+const oldCatalog=drawCatalog;
+drawCatalog=function(){
+ oldCatalog();
+ const root=document.getElementById('catalog'),form=root.querySelector('#newName')?.closest('.card');
+ if(!form)return;
+ const group=form.querySelector('#newGroup');if(group&&!Array.from(group.options).some(o=>o.value==='เครื่องปรุง'))group.add(new Option('เครื่องปรุง','เครื่องปรุง'));
+ const block=document.createElement('div');block.className='nc-extra-nutrients';block.innerHTML='<strong>🧂 สารอาหารเพิ่มเติม</strong><div class="sub">กรอกตามฉลากต่อปริมาณอ้างอิงด้านบน (ไม่ทราบให้เว้นว่าง)</div><div class="grid"><div><label>น้ำตาล (กรัม)</label><input id="newSugar" type="number" min="0" step="any" placeholder="ไม่ทราบ"></div><div><label>โซเดียม (มก.)</label><input id="newSodium" type="number" min="0" step="any" placeholder="ไม่ทราบ"></div></div>';form.insertBefore(block,form.querySelector('button'));
+ root.querySelectorAll('.item').forEach(el=>{const name=el.querySelector('strong')?.textContent;const foodItem=db.foods.find(f=>f.name===name);if(!foodItem)return;const v=[];if(foodItem.sugar!=null)v.push('🍬 น้ำตาล '+num(foodItem.sugar)+' ก.');if(foodItem.sodium!=null)v.push('🧂 โซเดียม '+num(foodItem.sodium)+' มก.');if(v.length)el.insertAdjacentHTML('beforeend','<div class="sub">'+v.join(' · ')+'</div>')});
+};
+const oldAddFood=addFood;
+addFood=function(){
+ const s=document.getElementById('newSugar'),na=document.getElementById('newSodium');
+ const sugar=s?.value.trim(),sodium=na?.value.trim();
+ if((sugar&&(!Number.isFinite(Number(sugar))||Number(sugar)<0))||(sodium&&(!Number.isFinite(Number(sodium))||Number(sodium)<0)))return alert('น้ำตาลหรือโซเดียมไม่ถูกต้อง');
+ const before=db.foods.length;oldAddFood();
+ if(db.foods.length>before){const f=db.foods[db.foods.length-1];if(sugar!=='')f.sugar=Number(sugar);if(sodium!=='')f.sodium=Number(sodium);save();drawCatalog()}
+};
+const prevHome=drawDashboard;
+drawDashboard=function(){
+ prevHome();
+ const root=document.getElementById('dashboard'),today=db.meals.filter(m=>m.date===localDate());
+ let sugar=0,sodium=0,unknownSugar=false,unknownSodium=false;
+ for(const m of today)for(const l of m.lines){const f=food(l.foodId);if(!f||!f.base)continue;const factor=Number(l.qty)/Number(f.base);if(f.sugar==null)unknownSugar=true;else sugar+=Number(f.sugar)*factor;if(f.sodium==null)unknownSodium=true;else sodium+=Number(f.sodium)*factor}
+ const cards=root.querySelector('.nc-easy-summary');if(cards)cards.insertAdjacentHTML('afterend','<div class="sub" style="padding:4px 5px 10px">🍬 น้ำตาล '+num(sugar)+' ก.'+(unknownSugar?' (ข้อมูลไม่ครบ)':'')+'　·　🧂 โซเดียม '+num(sodium)+' มก.'+(unknownSodium?' (ข้อมูลไม่ครบ)':'')+'</div>');
+};
+})();
+</script>
+</body></html>
