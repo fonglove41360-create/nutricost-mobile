@@ -1335,4 +1335,60 @@ drawDashboard=function(){
  }
 };
 })();
+</script><style id="nc-sunlit-design">
+/* NutriCost Sunlit Kitchen: selected visual direction. */
+:root{--nc-bg:#fff8ed;--nc-panel:#fff;--nc-panel2:#f2faf5;--nc-border:#e6e9e3;--nc-text:#14233e;--nc-muted:#52617a;--nc-accent:#23b982}
+html,body{background:#f9f2e7!important;color:#14233e!important}
+body{background:radial-gradient(ellipse at 8% 4%,#e6f6d9 0,transparent 32%),radial-gradient(ellipse at 95% 9%,#ffdec0 0,transparent 35%),radial-gradient(ellipse at 12% 60%,#f7e7d9 0,transparent 34%),linear-gradient(145deg,#fff9ee,#f1f9f1 65%,#fff6ee)!important;background-attachment:fixed!important}
+header,main{position:relative}
+header{color:#14233e!important}
+header .brand{color:#14aa7a!important}
+main>section>h2,main>section .nc-health-title{color:#14233e!important;text-shadow:none!important}
+#dashboard .card,#dashboard .nc-health-hero,#dashboard .nc-health-spend,#dashboard .nc-health-macro,#dashboard .nc-health-quick button,#dashboard .nc-easy-meal,#dashboard .nc-easy-summary>div,#dashboard #nc-stats .card,#dashboard #nc-favorites .card{
+background:#fffefa!important;border:1px solid #e9e9e5!important;color:#14233e!important;border-radius:25px!important;box-shadow:0 12px 30px #40564a13!important}
+#dashboard .card :is(h1,h2,h3,h4,b,strong,small,span,div,p,label),#dashboard .nc-health-hero :is(b,strong,small,span,div,p),#dashboard .nc-health-macro :is(b,strong,small,span,div,p),#dashboard .nc-health-quick button,#dashboard .nc-health-quick button :is(span,small,strong),#dashboard .nc-easy-meal :is(h3,b,strong,small,span,div,p){
+color:#14233e!important;-webkit-text-fill-color:#14233e!important;opacity:1!important}
+#dashboard .nc-health-sub,#dashboard .nc-health-macro small,#dashboard .nc-health-spend small,#dashboard .nc-easy-meal .sub{color:#52617a!important;-webkit-text-fill-color:#52617a!important}
+#dashboard .nc-health-quick{gap:11px!important}
+#dashboard .nc-health-quick button{min-height:100px!important;font-weight:800!important;font-size:13px!important;line-height:1.5!important}
+#dashboard .nc-health-quick button:nth-child(1){background:linear-gradient(145deg,#fff2f7,#fffdfa)!important}
+#dashboard .nc-health-quick button:nth-child(2){background:linear-gradient(145deg,#fff5e4,#fffdfa)!important}
+#dashboard .nc-health-quick button:nth-child(3){background:linear-gradient(145deg,#e8fcf4,#fffdfa)!important}
+#dashboard .nc-health-quick button span{font-size:29px!important}
+#dashboard .nc-health-spend .btn,#dashboard .nc-easy-add,#dashboard .nc-sunlit-cta{background:linear-gradient(135deg,#6658f3,#8664ed)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border:0!important;border-radius:16px!important;padding:13px 18px!important;box-shadow:0 7px 18px #6d5ceb2b!important;font-weight:800!important}
+#dashboard .nc-health-spend b{font-size:clamp(28px,5vw,36px)!important;color:#14233e!important;-webkit-text-fill-color:#14233e!important}
+#dashboard .nc-health-macro strong{font-size:16px!important;color:#14233e!important;-webkit-text-fill-color:#14233e!important}
+#dashboard .nc-health-hero .nc-ring-center b{font-size:clamp(29px,6vw,40px)!important}
+#dashboard .nc-easy-summary{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#dashboard .nc-sunlit-empty{background:#fffefa;border:1px solid #e9e9e5;border-radius:25px;padding:28px 16px;margin:14px 0;text-align:center;box-shadow:0 12px 30px #40564a13;color:#14233e}
+#dashboard .nc-sunlit-empty .illustration{font-size:46px;margin-bottom:10px}
+#dashboard .nc-sunlit-empty strong{display:block;font-size:19px;margin-bottom:6px}
+#dashboard .nc-sunlit-empty p{font-size:13px;color:#52617a;line-height:1.6}
+#dashboard .nc-sunlit-empty button{margin-top:7px}
+#dashboard .nc-sunlit-empty .nc-sunlit-cta{display:inline-block}
+#dashboard #nc-stats .metric,#dashboard #nc-stats select{background:#f1f8f4!important;color:#14233e!important;-webkit-text-fill-color:#14233e!important;border:1px solid #dceae3!important}
+#dashboard #nc-stats .metric *,#dashboard #nc-stats .metric :is(small,b,span,div){color:#14233e!important;-webkit-text-fill-color:#14233e!important;opacity:1!important}
+#dashboard #nc-stats .metric b{font-size:clamp(20px,4vw,28px)!important}
+.tabs{background:#ffffffed!important;border:1px solid #e6ece7!important;box-shadow:0 -6px 26px #243e3414!important;border-radius:25px 25px 0 0!important}
+.tabs button{color:#52617a!important;-webkit-text-fill-color:#52617a!important}
+.tabs button.active{background:#c9f7df!important;color:#087a59!important;-webkit-text-fill-color:#087a59!important;border-radius:18px!important}
+@media(max-width:440px){#dashboard .nc-health-quick button{font-size:11px!important;padding:13px 3px!important}#dashboard .nc-health-quick button span{font-size:25px!important}#dashboard .nc-sunlit-empty{padding:24px 13px}}
+</style>
+<script>
+(function(){
+ const previous=drawDashboard;
+ drawDashboard=function(){
+  previous();
+  const root=document.getElementById('dashboard');if(!root)return;
+  const summary=root.querySelector('.nc-easy-summary');
+  if(summary){const protein=Array.from(summary.children).find(x=>x.textContent.includes('โปรตีน'));if(protein)protein.remove()}
+  const empty=Array.from(root.querySelectorAll('.empty')).find(x=>x.textContent.includes('ยังไม่มีมื้ออาหาร'));
+  if(empty&&!empty.closest('.nc-sunlit-empty')){
+   const panel=document.createElement('div');panel.className='nc-sunlit-empty';
+   panel.innerHTML='<div class="illustration" aria-hidden="true">🥗</div><strong>ยังไม่มีมื้ออาหารวันนี้</strong><p>เริ่มบันทึกมื้อแรก เพื่อดูสารอาหารและค่าใช้จ่ายที่นี่</p><button type="button" class="nc-sunlit-cta">＋ เพิ่มมื้ออาหาร</button>';
+   panel.querySelector('button').onclick=()=>show('meals');
+   empty.replaceWith(panel);
+  }
+ };
+})();
 </script></body></html>
