@@ -1180,49 +1180,64 @@ drawMeals=function(){
 </style>
 <script>
 (function(){
-const soundKey='nutricost.sound.enabled.v1';
+const soundKey=location.pathname.includes('/preview/')?'nutricost.preview.sound.enabled.v1':'nutricost.sound.enabled.v1';
 let enabled=localStorage.getItem(soundKey)==='true';
-let context=null;
-function tone(kind){
+let audio=null,lastPlayed=0;
+const sounds={
+ dashboard:[[523.25,0,.11],[659.25,.065,.13]],
+ meals:[[587.33,0,.12],[783.99,.09,.19]],
+ inventory:[[392,0,.12],[523.25,.10,.16]],
+ catalog:[[440,0,.12],[659.25,.095,.17]],
+ settings:[[493.88,0,.09],[587.33,.09,.14]],
+ add:[[659.25,0,.09],[880,.08,.17]],
+ save:[[523.25,0,.11],[659.25,.09,.12],[783.99,.18,.22]],
+ remove:[[440,0,.10],[349.23,.10,.19]],
+ select:[[659.25,0,.075]],
+ back:[[493.88,0,.11],[392,.08,.14]],
+ tap:[[523.25,0,.09]]
+};
+function play(kind){
  if(!enabled)return;
  try{
  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
- context=context||new AC();
- if(context.state==='suspended')context.resume().catch(()=>{});
- const t=context.currentTime;
- const notes=kind==='save'?[659.25,880]:kind==='remove'?[330]:[560];
- notes.forEach((hz,i)=>{
- const oscillator=context.createOscillator(),gain=context.createGain(),start=t+i*.075;
- oscillator.type='sine';oscillator.frequency.setValueAtTime(hz,start);
+ audio=audio||new AC();if(audio.state==='suspended')audio.resume().catch(()=>{});
+ const now=audio.currentTime,notes=sounds[kind]||sounds.tap;
+ notes.forEach(([hz,delay,duration],i)=>{
+ const start=now+delay,osc=audio.createOscillator(),gain=audio.createGain(),filter=audio.createBiquadFilter();
+ osc.type='sine';osc.frequency.setValueAtTime(hz,start);osc.frequency.exponentialRampToValueAtTime(hz*1.005,start+duration);
+ filter.type='lowpass';filter.frequency.value=1800;
  gain.gain.setValueAtTime(.0001,start);
- gain.gain.exponentialRampToValueAtTime(.055,start+.012);
- gain.gain.exponentialRampToValueAtTime(.0001,start+.12);
- oscillator.connect(gain);gain.connect(context.destination);oscillator.start(start);oscillator.stop(start+.13);
+ gain.gain.exponentialRampToValueAtTime(.028,start+.018);
+ gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
+ osc.connect(filter);filter.connect(gain);gain.connect(audio.destination);osc.start(start);osc.stop(start+duration+.01);
  });
  }catch(e){}
 }
-function toggle(){
- enabled=!enabled;localStorage.setItem(soundKey,String(enabled));
- const btn=document.querySelector('#nc-sound-switch');
- if(btn){btn.textContent=enabled?'🔊 เปิดเสียงอยู่':'🔇 ปิดเสียงอยู่';btn.setAttribute('aria-pressed',String(enabled))}
- if(enabled)tone('save');
+function kindFor(el){
+ const nav=el.closest('[data-tab]');if(nav){const tab=nav.getAttribute('data-tab');if(sounds[tab])return tab}
+ const action=el.getAttribute('data-action')||'',id=el.id||'',label=(el.textContent||'').trim();
+ if(/delete|remove|ลบ|ตัดออก/.test(action+' '+id+' '+label))return 'remove';
+ if(/save|commit|บันทึก|ยืนยัน/.test(action+' '+id+' '+label))return 'save';
+ if(/add|เพิ่ม|＋|\+/.test(action+' '+id+' '+label))return 'add';
+ if(/back|กลับ|ปิด|‹/.test(action+' '+id+' '+label))return 'back';
+ if(el.closest('.nc-meal-v3-tabs')||el.tagName==='OPTION')return 'select';
+ return 'tap';
 }
 document.addEventListener('click',event=>{
- const target=event.target.closest('button,[role="button"],.nc-meal-v3-tabs button');
- if(!target||target.id==='nc-sound-switch'||target.disabled)return;
- if(target.closest('#nc-manage-modal')&&target.classList.contains('nc-delete-danger'))tone('remove');
- else if(/บันทึก|เพิ่มลง|ยืนยัน/.test(target.textContent||''))tone('save');
- else if(/ลบ|ตัดออก/.test(target.textContent||''))tone('remove');
- else tone('tap');
+ const target=event.target.closest('button,[role="button"],.tabs button');
+ if(!target||target.disabled||target.id==='nc-sound-switch')return;
+ const now=performance.now();if(now-lastPlayed<55)return;lastPlayed=now;
+ play(kindFor(target));
 },true);
-const oldSettings=drawSettings;
+const previous=drawSettings;
 drawSettings=function(){
- oldSettings();
+ previous();
  const root=document.getElementById('settings');if(!root)return;
- const box=document.createElement('div');box.className='nc-sound-toggle';
- box.innerHTML='<div><strong>🎵 เสียงตอบรับการกดปุ่ม</strong><small>เสียงเบา ๆ เมื่อแตะ เพิ่ม บันทึก หรือจัดการรายการ · ปิดไว้เป็นค่าเริ่มต้น</small></div><button id="nc-sound-switch" type="button" aria-pressed="'+enabled+'">'+(enabled?'🔊 เปิดเสียงอยู่':'🔇 ปิดเสียงอยู่')+'</button>';
- box.querySelector('button').onclick=toggle;
- root.prepend(box);
+ root.querySelectorAll('.nc-sound-toggle').forEach(x=>x.remove());
+ const panel=document.createElement('div');panel.className='nc-sound-toggle';
+ panel.innerHTML='<div><strong>🎶 เสียงสัมผัสแบบนุ่มนวล</strong><small>เสียงเฉพาะเมนูและการกระทำแต่ละแบบ · ระดับเสียงเบา</small></div><button id="nc-sound-switch" type="button" aria-pressed="'+enabled+'">'+(enabled?'🔊 เปิดเสียงอยู่':'🔇 ปิดเสียงอยู่')+'</button>';
+ panel.querySelector('button').onclick=()=>{enabled=!enabled;localStorage.setItem(soundKey,String(enabled));const b=panel.querySelector('button');b.textContent=enabled?'🔊 เปิดเสียงอยู่':'🔇 ปิดเสียงอยู่';b.setAttribute('aria-pressed',String(enabled));if(enabled)play('save')};
+ root.prepend(panel);
 };
 })();
 </script>
