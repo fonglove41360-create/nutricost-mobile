@@ -43,4 +43,37 @@ input,select{background:var(--nc-panel);color:var(--nc-text);border:1px solid #4
  }
  apply();const header=document.querySelector('header');if(header){const b=document.createElement('button');b.className='nc-theme-button';b.type='button';b.textContent='✦';b.setAttribute('aria-label','ปรับแต่งธีมและฟอนต์');b.onclick=open;header.append(b)}
 })();
-</script></body></html>
+</script>
+<style>
+.nc-stat-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.nc-stat-head select{width:auto;min-width:132px}.nc-bars{display:flex;align-items:flex-end;gap:7px;height:155px;padding:16px 0 0;border-bottom:1px solid var(--nc-border)}.nc-bar-col{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:7px}.nc-bar{width:100%;max-width:35px;min-height:3px;background:linear-gradient(180deg,var(--nc-accent),color-mix(in srgb,var(--nc-accent) 45%,var(--nc-panel)));border-radius:8px 8px 2px 2px}.nc-bar-col small{font-size:10px;color:var(--nc-muted)}.nc-fav{font-size:13px}.nc-fav-row{display:flex;align-items:center;justify-content:space-between;gap:10px}.nc-fav-row .btn{flex-shrink:0}.nc-kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.nc-kpi{background:var(--nc-panel2);padding:14px;border-radius:14px}.nc-kpi b{display:block;font-size:21px}.nc-kpi small{color:var(--nc-muted)}
+</style>
+<script>
+(function(){
+const FKEY='nutricost.favorites.v1';
+function favs(){try{return JSON.parse(localStorage.getItem(FKEY)||'[]')}catch(e){return []}}
+function putFavs(x){try{localStorage.setItem(FKEY,JSON.stringify(x))}catch(e){alert('บันทึกรายการโปรดไม่สำเร็จ')}}
+function dateKey(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
+function aggregate(meals){let cost=0,k=0,p=0,c=0,f=0;for(const m of meals){for(const l of m.lines||[]){cost+=Number(l.cost)||0;const item=food(l.foodId);if(!item||!Number(item.base))continue;let factor=Number(l.qty)/Number(item.base);k+=factor*Number(item.k||0);p+=factor*Number(item.p||0);c+=factor*Number(item.c||0);f+=factor*Number(item.f||0)}}return {cost,k,p,c,f}}
+let period='week';
+function stats(){
+const el=document.getElementById('nc-stats');if(!el)return;
+const now=new Date(),days=period==='week'?7:30,items=[];
+for(let i=days-1;i>=0;i--){let d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i),key=dateKey(d);let meals=db.meals.filter(m=>m.date===key);items.push({key,label:days===7?d.toLocaleDateString('th-TH',{weekday:'short'}):String(d.getDate()),...aggregate(meals),count:meals.length})}
+const sum=items.reduce((a,x)=>({cost:a.cost+x.cost,k:a.k+x.k,p:a.p+x.p,c:a.c+x.c,f:a.f+x.f,count:a.count+x.count}),{cost:0,k:0,p:0,c:0,f:0,count:0});
+const max=Math.max(1,...items.map(x=>x.cost));const display=days===7?items:items.filter((_,i)=>i%3===0||i===29);
+el.innerHTML='<div class="card"><div class="nc-stat-head"><strong>สถิติการกินและค่าอาหาร</strong><select id="nc-period" aria-label="ช่วงเวลาสถิติ"><option value="week">7 วันล่าสุด</option><option value="month">30 วันล่าสุด</option></select></div><div class="nc-kpis" style="margin-top:16px"><div class="nc-kpi"><small>ค่าอาหารรวม</small><b>'+money(sum.cost)+'</b></div><div class="nc-kpi"><small>เฉลี่ยต่อวัน</small><b>'+money(sum.cost/days)+'</b></div><div class="nc-kpi"><small>แคลอรีเฉลี่ย/วัน</small><b>'+num(sum.k/days)+'</b></div><div class="nc-kpi"><small>จำนวนมื้อ</small><b>'+sum.count+'</b></div></div><div class="muted" style="margin-top:18px">ค่าอาหารรายวัน (บาท)</div><div class="nc-bars">'+display.map(x=>'<div class="nc-bar-col" title="'+x.key+': '+money(x.cost)+'"><div class="nc-bar" style="height:'+Math.max(3,x.cost/max*116)+'px"></div><small>'+x.label+'</small></div>').join('')+'</div><div class="sub" style="margin-top:12px">โปรตีนเฉลี่ย '+num(sum.p/days)+'g · คาร์บ '+num(sum.c/days)+'g · ไขมัน '+num(sum.f/days)+'g / วัน</div><div class="sub">ข้อมูลจากมื้อที่บันทึกจริง ไม่มีการสมมติยอดใช้จ่าย</div></div>';
+const select=document.getElementById('nc-period');select.value=period;select.onchange=e=>{period=e.target.value;stats()};
+}
+function favorites(){
+const el=document.getElementById('nc-favorites');if(!el)return;
+let data=favs();el.innerHTML='<h2>รายการโปรด ⭐</h2><div class="card"><div class="muted">บันทึกชุดวัตถุดิบจากมื้อที่เคยกิน แล้วเพิ่มซ้ำได้ทันที</div><div class="list" style="margin-top:12px">'+(data.length?data.map((x,i)=>'<div class="item nc-fav-row"><div><strong>'+esc(x.name)+'</strong><div class="sub">'+x.lines.length+' วัตถุดิบ</div></div><div class="actions"><button class="btn small" data-load="'+i+'">เลือก</button><button class="btn danger small" data-remove="'+i+'">ลบ</button></div></div>').join(''):'<div class="empty">ยังไม่มีรายการโปรด</div>')+'</div></div>';
+el.querySelectorAll('[data-load]').forEach(b=>b.onclick=()=>{const x=favs()[Number(b.dataset.load)];if(!x)return;const req={};for(const l of x.lines)req[l.foodId]=(req[l.foodId]||0)+Number(l.qty);const missing=Object.entries(req).filter(([id,q])=>!food(id)||stock(id)+1e-7<q);if(missing.length)return alert('สต็อกไม่เพียงพอ: '+missing.map(([id])=>food(id)?.name||'วัตถุดิบที่ถูกลบ').join(', '));draft=x.lines.map(l=>({foodId:l.foodId,qty:Number(l.qty)}));mealName=x.name;show('meals');window.scrollTo(0,0)});
+el.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{if(!confirm('ลบรายการโปรดนี้?'))return;let a=favs();a.splice(Number(b.dataset.remove),1);putFavs(a);favorites()});
+}
+function saveFavorite(id){const m=db.meals.find(x=>x.id===id);if(!m)return;let a=favs();a.push({id:Date.now()+Math.random(),name:m.name,lines:m.lines.map(l=>({foodId:l.foodId,qty:l.qty}))});putFavs(a);alert('เพิ่มลงรายการโปรดแล้ว');favorites()}
+window.ncSaveFavorite=saveFavorite;
+const oldDashboard=drawDashboard;drawDashboard=function(){oldDashboard();const el=document.getElementById('dashboard');if(!document.getElementById('nc-stats')){el.insertAdjacentHTML('beforeend','<div id="nc-stats"></div><div id="nc-favorites"></div>')}stats();favorites()};
+const oldMeals=drawMeals;drawMeals=function(){oldMeals();const container=document.getElementById('meals');container.querySelectorAll('button[onclick^="deleteMeal("]').forEach(b=>{const match=b.getAttribute('onclick').match(/deleteMeal\('([^']+)'\)/);if(!match)return;const id=match[1];if(b.parentElement.querySelector('.nc-fav'))return;const star=document.createElement('button');star.className='btn secondary small nc-fav';star.textContent='☆ โปรด';star.onclick=()=>saveFavorite(id);b.parentElement.insertBefore(star,b)})};
+})();
+</script>
+</body></html>
