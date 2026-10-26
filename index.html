@@ -274,4 +274,84 @@ drawMeals=function(){
  if(history)history.insertAdjacentHTML('beforebegin',summary);
 };
 })();
-</script></body></html>
+</script>
+<style>
+.nc-easy-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:12px 0 23px}
+.nc-easy-summary>div{background:var(--nc-panel);border:1px solid var(--nc-border);border-radius:20px;padding:17px 8px;text-align:center}
+.nc-easy-summary b{display:block;font-size:clamp(16px,4.8vw,23px);letter-spacing:-.6px}
+.nc-easy-summary small{font-size:11px;color:var(--nc-muted)}
+.nc-easy-meal{border:1px solid var(--nc-border);border-radius:22px;background:var(--nc-panel);padding:18px;margin:11px 0;box-shadow:0 6px 22px #11182708}
+.nc-easy-meal-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.nc-easy-meal h3{font-size:17px;margin:0}
+.nc-easy-meal .sub{font-size:12px}
+.nc-easy-add{border:0;border-radius:14px;background:#1b2739;color:#fff;padding:11px 14px;font-size:13px;font-weight:650}
+.nc-easy-line{display:flex;justify-content:space-between;gap:12px;padding-top:12px;margin-top:12px;border-top:1px solid var(--nc-border);font-size:13px}
+.nc-easy-line small{color:var(--nc-muted)}
+.nc-easy-editor{border:1px solid var(--nc-border);border-radius:24px;padding:20px;background:var(--nc-panel)}
+.nc-easy-editor label{display:block;margin:15px 0 6px;font-size:12px;color:var(--nc-muted)}
+.nc-easy-editor select,.nc-easy-editor input{width:100%;min-height:47px;border-radius:14px}
+.nc-easy-editor .btn{border-radius:14px;min-height:45px}
+.nc-easy-draft{padding:10px 0;border-bottom:1px solid var(--nc-border)}
+.nc-easy-advanced{margin-top:16px}
+.nc-easy-advanced summary{cursor:pointer;font-size:13px;color:var(--nc-muted)}
+</style>
+<script>
+(function(){
+const previousDashboard=drawDashboard;
+function easyHome(){
+ const root=document.getElementById('dashboard');
+ if(!root)return;
+ const today=db.meals.filter(m=>m.date===localDate()),sum=totals(today.flatMap(m=>m.lines));
+ const names=['มื้อ 1','มื้อ 2','มื้อ 3'];
+ const cards=names.map((name,i)=>{
+  const meals=today.filter(m=>m.name===name);
+  const lines=meals.flatMap(m=>m.lines);
+  const t=totals(lines);
+  const entries=lines.map(l=>'<div class="nc-easy-line"><div>'+esc(food(l.foodId)?.name||'วัตถุดิบ')+' <small>'+num(l.qty)+' '+esc(unit(food(l.foodId)))+'</small></div><div>'+num(totals([l]).k)+' kcal</div></div>').join('');
+  return '<div class="nc-easy-meal"><div class="nc-easy-meal-head"><div><h3>'+name+'</h3><div class="sub">'+(lines.length?num(t.k)+' kcal · '+money(t.cost):'ยังไม่บันทึกอาหาร')+'</div></div><button class="nc-easy-add" onclick="ncEasyOpen('+i+')">+ เพิ่มอาหาร</button></div>'+entries+'</div>';
+ }).join('');
+ const other=today.filter(m=>!names.includes(m.name));
+ root.innerHTML='<div class="nc-health-title" style="margin-top:12px!important">อาหารของฉัน</div><div class="sub" style="margin-left:5px">'+localDate()+'</div>'+
+ '<div class="nc-easy-summary"><div><b>'+num(sum.k)+'</b><small>แคลอรี</small></div><div><b>'+num(sum.p)+' ก.</b><small>โปรตีน</small></div><div><b>'+money(sum.cost)+'</b><small>ค่าอาหาร</small></div></div>'+
+ '<h2 style="margin:0 4px 13px">มื้ออาหารวันนี้</h2>'+cards+
+ (other.length?'<div class="card"><strong>มื้ออื่น ๆ</strong>'+other.map(m=>'<div class="nc-easy-line"><span>'+esc(m.name)+'</span><span>'+num(totals(m.lines).k)+' kcal · '+money(totals(m.lines).cost)+'</span></div>').join('')+'</div>':'')+
+ '<button class="btn full" onclick="ncEasyOpen(3)" style="margin:12px 0 20px">+ เพิ่มมื้ออื่น</button>'+
+ '<details class="nc-easy-advanced"><summary>ดูสถิติและรายการโปรด</summary><div id="nc-stats"></div><div id="nc-favorites"></div></details>';
+ if(typeof stats==='function')stats();
+ if(typeof favorites==='function')favorites();
+}
+drawDashboard=function(){previousDashboard();easyHome()};
+window.ncEasyOpen=function(index){
+ const names=['มื้อ 1','มื้อ 2','มื้อ 3','ของว่าง'];
+ mealName=names[index]||'มื้อ 1';
+ mealDate=localDate();
+ show('meals');
+};
+const oldMeals=drawMeals;
+drawMeals=function(){
+ oldMeals();
+ const root=document.getElementById('meals');
+ if(!root)return;
+ const oldMarkup=root.innerHTML;
+ const available=db.foods.filter(f=>stock(f.id)>0);
+ const chosen=available[0]?.id;
+ const lines=draft.map((d,i)=>'<div class="nc-easy-draft">'+esc(food(d.foodId)?.name||'วัตถุดิบ')+' · '+num(d.qty)+' '+esc(unit(food(d.foodId)))+' <button class="btn danger small" style="float:right" onclick="draft.splice('+i+',1);drawMeals()">ลบ</button></div>').join('');
+ root.innerHTML='<div class="nc-easy-editor"><button class="btn secondary small" onclick="show(\'dashboard\')">‹ กลับหน้าวันนี้</button><h2 style="margin:17px 0 5px">เพิ่มอาหาร</h2><div class="sub">เลือกวัตถุดิบ ใส่ปริมาณ แล้วบันทึก</div>'+
+ '<label>มื้ออาหาร</label><select id="mealName" onchange="mealName=this.value">'+['มื้อ 1','มื้อ 2','มื้อ 3','ของว่าง','มื้อเช้า','มื้อกลางวัน','มื้อเย็น','กำหนดเอง'].map(x=>'<option '+(x===mealName?'selected':'')+'>'+x+'</option>').join('')+'</select>'+
+ '<label>ชื่อมื้ออื่น ๆ (ถ้าต้องการ)</label><input id="nc-custom-meal" maxlength="70" placeholder="เช่น หลังออกกำลังกาย">'+
+ '<label>วัตถุดิบ</label><select id="addFood" onchange="updateAvail()">'+opts(available,chosen)+'</select><div id="avail" class="sub"></div>'+
+ '<label>ปริมาณที่กิน</label><input id="eatQty" type="number" min="0.01" step="any" inputmode="decimal" placeholder="เช่น 100">'+
+ '<button class="btn secondary full" style="margin-top:12px" onclick="addDraft()">+ เพิ่มในมื้อนี้</button>'+
+ '<div style="margin:18px 0 8px"><strong>รายการที่เลือก ('+draft.length+')</strong></div>'+ (lines||'<div class="sub">ยังไม่ได้เลือกอาหาร</div>')+
+ '<button class="btn full" style="margin-top:20px" onclick="commitMeal()" '+(!draft.length?'disabled':'')+'>บันทึกมื้ออาหาร</button>'+
+ (!available.length?'<div class="notice">ไม่มีวัตถุดิบในคลัง <button class="btn small" onclick="show(\'inventory\')">เพิ่มของในคลัง</button></div>':'')+
+ '<details class="nc-easy-advanced"><summary>ดูประวัติและรายละเอียดเพิ่มเติม</summary><div id="nc-easy-original"></div></details></div>';
+ const advanced=root.querySelector('#nc-easy-original');
+ if(advanced){advanced.innerHTML=oldMarkup;advanced.querySelectorAll('[id]').forEach(el=>{el.removeAttribute('id')});}
+ updateAvail();
+};
+const originalCommit=commitMeal;
+commitMeal=function(){const before=db.meals.length;originalCommit();if(db.meals.length>before)show('dashboard')};
+})();
+</script>
+</body></html>
