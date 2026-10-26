@@ -1287,4 +1287,52 @@ drawSettings=function(){
 }
 #dashboard .nc-ring svg,#dashboard .nc-health-hero svg{visibility:visible!important}
 #dashboard .nc-easy-add{background:#304e79!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
-</style></body></html>
+</style><style id="nc-dashboard-contrast-final">
+/* White dashboard surfaces: force readable ink on every dashboard widget. */
+#dashboard .card,
+#dashboard .nc-health-hero,
+#dashboard .nc-health-macros,
+#dashboard .nc-health-macro,
+#dashboard .nc-health-spend,
+#dashboard .nc-health-quick button,
+#dashboard .nc-easy-summary>div,
+#dashboard .nc-easy-meal {
+ background:#fff!important;
+ color:#182b43!important;
+ border-color:#e3e8f0!important;
+}
+#dashboard .card :is(h1,h2,h3,h4,b,strong,p,small,span,div,label),
+#dashboard .nc-health-macro :is(h1,h2,h3,b,strong,p,small,span,div),
+#dashboard .nc-health-quick button,
+#dashboard .nc-health-quick button :is(span,small,strong),
+#dashboard .nc-easy-summary>div :is(b,small,span),
+#dashboard .nc-easy-meal :is(h3,b,strong,p,small,span,div) {
+ color:#182b43!important;
+ -webkit-text-fill-color:#182b43!important;
+ opacity:1!important;
+}
+#dashboard .nc-health-quick button{font-size:13px!important;font-weight:750!important}
+#dashboard .nc-health-macro strong{font-size:15px!important;font-weight:800!important}
+#dashboard .nc-health-macro small,
+#dashboard .nc-health-spend small{color:#52657e!important;-webkit-text-fill-color:#52657e!important}
+#dashboard .nc-health-spend .btn,
+#dashboard .nc-easy-add{color:#fff!important;-webkit-text-fill-color:#fff!important;background:#2b456d!important}
+#dashboard .nc-health-quick button span{font-size:24px!important}
+#dashboard .nc-easy-summary{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+</style>
+<script>
+(function(){
+const previous=drawDashboard;
+drawDashboard=function(){
+ previous();
+ const root=document.getElementById('dashboard');if(!root)return;
+ const summary=root.querySelector('.nc-easy-summary');
+ if(summary){
+  const cells=Array.from(summary.children);
+  const protein=cells.find(el=>el.textContent.includes('โปรตีน'));
+  if(protein)protein.remove();
+  summary.style.gridTemplateColumns='repeat(2,minmax(0,1fr))';
+ }
+};
+})();
+</script></body></html>
