@@ -1,5 +1,1229 @@
 <!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b1422"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="manifest" href="manifest.webmanifest"><title>NutriCost Mobile</title><style>
 :root{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#edf6f3;background:#0b1422}*{box-sizing:border-box}body{margin:0;padding-bottom:95px}button,input,select{font:inherit}button{cursor:pointer}header{padding:25px 18px 10px;display:flex;align-items:center;justify-content:space-between}h1{margin:0;font-size:25px}h2{font-size:19px;margin:8px 0 15px}.muted{color:#9bb0b8;font-size:13px}.brand{color:#52e3a7}main{padding:0 15px;max-width:680px;margin:auto}.card{background:#16263a;border:1px solid #273b4b;border-radius:17px;padding:16px;margin:12px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{background:#203247;padding:15px;border-radius:14px}.metric b{font-size:23px;display:block;margin:7px 0}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.row>*{min-width:0}.pill{background:#204b42;color:#6ee7b7;border-radius:20px;padding:5px 10px;font-size:12px}.btn{border:0;background:#37d49b;color:#062b20;font-weight:750;padding:13px 16px;border-radius:12px}.btn.secondary{background:#293d51;color:#e9f4f0}.btn.danger{background:#5e2c39;color:#ffced6}.btn.small{padding:8px 10px;font-size:12px}.full{width:100%}label{display:block;color:#b9c8ce;font-size:13px;margin:11px 0 5px}input,select{width:100%;border:1px solid #405469;background:#0e1d2d;color:white;padding:12px;border-radius:10px;min-height:43px}input[type=date]{color-scheme:dark}.list{display:flex;flex-direction:column;gap:9px}.item{padding:13px;background:#1b2d41;border-radius:12px}.tabs{position:fixed;bottom:0;left:0;right:0;background:#101d2d;border-top:1px solid #304354;display:flex;padding:9px 4px calc(9px + env(safe-area-inset-bottom));z-index:4}.tabs button{flex:1;border:0;background:none;color:#91a9b3;font-size:12px;padding:8px 0}.tabs button.active{color:#5fe5ac;font-weight:bold}.hidden{display:none}.progress{height:8px;background:#33495b;border-radius:10px;overflow:hidden;margin:10px 0}.progress span{display:block;height:100%;background:#37d49b}.notice{padding:12px;border-radius:12px;background:#423728;color:#ffda8a;font-size:13px;margin:10px 0}.chip{padding:8px;border:1px solid #456274;border-radius:10px;background:#20354a;color:#fff}.chip.active{background:#24684f}.chips{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.actions{display:flex;gap:8px;flex-wrap:wrap}.empty{text-align:center;color:#92a7b1;padding:25px 8px}.sub{font-size:12px;color:#9fb4bf}.divider{border-top:1px solid #31485a;margin:12px 0}summary{cursor:pointer;color:#69e8b4}strong{overflow-wrap:anywhere}
+
+/* NutriCost Premium UI v2 — visual-only layer, existing nutrition data preserved */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap');
+:root{--nc-accent:#6be3b3;--nc-bg:#080e19;--nc-panel:#131e2d;--nc-panel2:#1a293b;--nc-border:#29384a;--nc-text:#f1f6f5;--nc-muted:#9cadbc;font-family:'IBM Plex Sans Thai',-apple-system,sans-serif!important;background:var(--nc-bg)!important;color:var(--nc-text)!important}
+html{background:var(--nc-bg);scroll-behavior:smooth}body{background:radial-gradient(ellipse at 90% -10%,color-mix(in srgb,var(--nc-accent) 11%,transparent),transparent 54%),var(--nc-bg);min-height:100vh;color:var(--nc-text);padding-bottom:105px}
+header{max-width:720px;margin:auto;padding:27px 21px 19px;position:relative}header h1{font-size:29px;letter-spacing:-1.1px;font-weight:700}header .muted{font-size:10px;letter-spacing:2.2px;font-weight:700}header .pill{margin-right:42px}
+main{padding:0 18px;max-width:720px}h2{font-size:20px;letter-spacing:-.4px;font-weight:700;margin:18px 0}h1,h2,b,strong{letter-spacing:-.25px}.brand{color:var(--nc-accent)!important}.muted,.sub{color:var(--nc-muted)!important}
+.card{background:linear-gradient(150deg,var(--nc-panel),color-mix(in srgb,var(--nc-panel) 83%,var(--nc-accent) 17%));border:1px solid var(--nc-border);border-radius:23px;padding:20px;margin:14px 0;box-shadow:0 12px 35px #0000001c}
+.metric{background:var(--nc-panel);border:1px solid var(--nc-border);border-radius:20px;padding:17px;min-height:130px;box-shadow:0 8px 20px #00000016}.metric b{font-size:26px;font-weight:700;line-height:1.25}.metric .muted{font-size:12px}.metric:nth-child(2) .progress span{background:#66c9fa}.metric:nth-child(3) .progress span{background:#f8bd79}.metric:nth-child(4) .progress span{background:#b9a0fa}
+.item{background:var(--nc-panel);border:1px solid var(--nc-border);border-radius:17px;padding:16px}.list{gap:10px}.grid{gap:11px}
+.btn{background:var(--nc-accent);color:#08231d;border-radius:14px;padding:13px 17px;box-shadow:0 4px 18px color-mix(in srgb,var(--nc-accent) 17%,transparent);transition:transform .15s,filter .15s}.btn:active,.chip:active{transform:scale(.97)}.btn.secondary{background:var(--nc-panel2);color:var(--nc-text);border:1px solid var(--nc-border)}.btn.danger{background:#613341;color:#ffe2e7}
+input,select{background:var(--nc-panel);color:var(--nc-text);border:1px solid #42516a;border-radius:14px;min-height:49px;padding:12px 14px;outline:none}input:focus,select:focus{border-color:var(--nc-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--nc-accent) 13%,transparent)}label{color:var(--nc-muted);font-weight:600}
+.progress{background:var(--nc-border);height:7px;border-radius:20px}.progress span{background:var(--nc-accent);border-radius:20px}.pill{background:color-mix(in srgb,var(--nc-accent) 15%,var(--nc-panel));color:var(--nc-accent);border:1px solid color-mix(in srgb,var(--nc-accent) 30%,transparent)}.chip{border-radius:13px;background:var(--nc-panel2);border-color:var(--nc-border)}.chip.active{background:color-mix(in srgb,var(--nc-accent) 25%,var(--nc-panel));border-color:var(--nc-accent)}
+.tabs{background:color-mix(in srgb,var(--nc-bg) 92%,transparent);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--nc-border);padding:11px 5px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px #0002}.tabs button{font-family:inherit;color:var(--nc-muted);font-size:11px;line-height:1.7;border-radius:13px}.tabs button.active{color:var(--nc-accent);font-weight:700;background:color-mix(in srgb,var(--nc-accent) 9%,transparent)}
+.nc-theme-button{position:absolute;right:19px;top:30px;border:1px solid var(--nc-border);background:var(--nc-panel);color:var(--nc-text);width:38px;height:38px;border-radius:13px;font-size:19px;display:grid;place-items:center;z-index:2}
+.nc-overlay{position:fixed;inset:0;background:#0009;backdrop-filter:blur(6px);z-index:20;display:flex;align-items:flex-end;justify-content:center;padding:12px}.nc-sheet{background:var(--nc-panel);border:1px solid var(--nc-border);border-radius:26px 26px 20px 20px;padding:24px;width:min(100%,500px);box-shadow:0 30px 80px #0007;max-height:85vh;overflow:auto}.nc-sheet h2{margin:0 0 5px}.nc-options{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:13px 0 18px}.nc-option{background:var(--nc-panel2);border:1px solid var(--nc-border);color:var(--nc-text);border-radius:15px;padding:13px 5px;font:inherit;font-size:12px}.nc-option[aria-pressed=true]{border:2px solid var(--nc-accent);color:var(--nc-accent)}.nc-preview{display:block;width:26px;height:26px;border-radius:50%;margin:0 auto 7px;border:2px solid #ffffff3d}
+[data-nc-theme=ivory]{--nc-bg:#f4f3ee;--nc-panel:#fffefa;--nc-panel2:#eaece6;--nc-border:#d8ded9;--nc-text:#172a2b;--nc-muted:#667b7b} [data-nc-theme=ivory] body{background:var(--nc-bg)}[data-nc-theme=ivory] input,[data-nc-theme=ivory] select{border-color:#c7d0cb}[data-nc-theme=ivory] .btn{color:#072d21}
+[data-nc-theme=midnight]{--nc-bg:#090d1d;--nc-panel:#171b36;--nc-panel2:#232747;--nc-border:#353a5d;--nc-text:#f4f2ff;--nc-muted:#a4a6c3}
+[data-nc-font=prompt]{font-family:'Prompt',sans-serif!important}[data-nc-font=system]{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif!important}
+[data-nc-compact=true] .card{padding:13px;margin:9px 0}[data-nc-compact=true] .metric{padding:12px;min-height:106px}[data-nc-compact=true] .item{padding:10px}
+@media(min-width:720px){.tabs{left:50%;transform:translateX(-50%);width:720px;border-radius:20px 20px 0 0}.nc-overlay{align-items:center}.nc-sheet{border-radius:24px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
+</style><link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>
+:root[data-nc-theme=ivory]{--nc-bg:#f7f7fd;--nc-panel:#fff;--nc-panel2:#f5f3ff;--nc-border:#ecebf5;--nc-text:#23243a;--nc-muted:#8990a2;--nc-accent:#765cf5}
+[data-nc-theme=ivory] body{background:radial-gradient(ellipse at 10% 3%,#ece6ff,transparent 34%),radial-gradient(ellipse at 95% 22%,#e4f5ff,transparent 33%),#f7f7fd!important;color:#23243a;font-family:'Anuphan',sans-serif!important}
+[data-nc-theme=ivory] button,[data-nc-theme=ivory] input,[data-nc-theme=ivory] select{font-family:'Anuphan',sans-serif}
+[data-nc-theme=ivory] .brand{color:#765cf5!important}
+[data-nc-theme=ivory] .nc-easy-summary>div{border-radius:23px;border-color:#ecebf5;box-shadow:0 9px 24px #4e4b7d0a;padding:17px 5px}
+[data-nc-theme=ivory] .nc-easy-summary>div:nth-child(1){background:linear-gradient(145deg,#fff0e4,#fffaf5)}
+[data-nc-theme=ivory] .nc-easy-summary>div:nth-child(2){background:linear-gradient(145deg,#e4f8ed,#f8fffb)}
+[data-nc-theme=ivory] .nc-easy-summary>div:nth-child(3){background:linear-gradient(145deg,#eee7ff,#fbf9ff)}
+[data-nc-theme=ivory] .nc-easy-summary b{font-weight:800;letter-spacing:-.7px}
+[data-nc-theme=ivory] .nc-easy-meal{border-radius:25px;box-shadow:0 12px 30px #47517a0c;border-color:#ecebf5}
+[data-nc-theme=ivory] .nc-easy-meal:nth-of-type(1){background:linear-gradient(115deg,#fff,#fff8f0)}
+[data-nc-theme=ivory] .nc-easy-meal:nth-of-type(2){background:linear-gradient(115deg,#fff,#f1f8ff)}
+[data-nc-theme=ivory] .nc-easy-meal:nth-of-type(3){background:linear-gradient(115deg,#fff,#f5f1ff)}
+[data-nc-theme=ivory] .nc-easy-meal h3{font-weight:800;letter-spacing:-.5px}
+[data-nc-theme=ivory] .nc-easy-add{background:linear-gradient(120deg,#735cf4,#a27af8);box-shadow:0 7px 16px #735cf42b}
+[data-nc-theme=ivory] .tabs{background:#fffffff0!important;backdrop-filter:blur(18px);border-top-color:#ecebf5!important}
+[data-nc-theme=ivory] .tabs button.active{color:#735cf4!important}
+[data-nc-theme=ivory] .tabs button[data-tab=meals]:before{background:linear-gradient(130deg,#735cf4,#a77af7)}
+.nc-play-icon{display:block;font-size:23px;margin-bottom:5px}
+.nc-meal-emoji{display:inline-grid;place-items:center;width:36px;height:36px;margin-right:8px;border-radius:13px;background:#f0eaff;font-size:21px;vertical-align:middle}
 </style></head><body><header><div><div class="muted">PERSONAL NUTRITION</div><h1>🌿 Nutri<span class="brand">Cost</span></h1></div><span class="pill">On-device</span></header><main><section id="dashboard"></section><section id="meals" class="hidden"></section><section id="inventory" class="hidden"></section><section id="catalog" class="hidden"></section><section id="settings" class="hidden"></section></main><nav class="tabs"><button data-tab="dashboard" class="active">◫<br>ภาพรวม</button><button data-tab="meals">✚<br>มื้ออาหาร</button><button data-tab="inventory">▣<br>คลัง</button><button data-tab="catalog">⌕<br>วัตถุดิบ</button><button data-tab="settings">⚙<br>ตั้งค่า</button></nav><script>
-'use strict';const KEY='nutricost.v1';const groups=['เนื้อสัตว์','ปลาและอาหารทะเล','ไข่','ผัก','ผลไม้','ข้าวและธัญพืช','หัวและอาหารประเภทแป้ง','นมและผลิตภัณฑ์นม','ถั่วและเมล็ดพืช','น้ำมันและไขมัน','เครื่องปรุงและซอส','อื่น ๆ'];const seed=[['เนื้อวัวดรายเอจ','เนื้อสัตว์','g',100,220,20,0,15],['อกไก่ดิบ','เนื้อสัตว์','g',100,120,23,0,2.6],['ไข่ไก่','ไข่','ฟอง',1,72,6.3,.4,4.8],['ไข่เป็ด','ไข่','ฟอง',1,130,9,1,9.6],['มันฝรั่งดิบ','หัวและอาหารประเภทแป้ง','g',100,77,2,17,.1],['บรอกโคลีดิบ','ผัก','g',100,34,2.8,6.6,.4],['ข้าวสารขาว','ข้าวและธัญพืช','g',100,365,7.1,80,.7],['กล้วย','ผลไม้','g',100,89,1.1,22.8,.3],['แซลมอนดิบ','ปลาและอาหารทะเล','g',100,208,20,0,13]];const init=()=>({foods:seed.map((x,i)=>({id:'f'+i,name:x[0],group:x[1],unit:x[2],base:x[3],k:x[4],p:x[5],c:x[6],f:x[7]})),lots:[],meals:[],goals:{k:2200,p:150,c:220,f:70},version:1});let db;try{db=JSON.parse(localStorage.getItem(KEY))||init();if(!Array.isArray(db.foods)||!Array.isArray(db.lots)||!Array.isArray(db.meals))throw Error('Invalid data')}catch(e){db=init();alert('ไม่สามารถอ่านข้อมูลเดิมได้ กรุณานำเข้าไฟล์สำรองหากมี')}let tab='dashboard',selectedGroup='ทั้งหมด',draft=[],mealName='มื้อเช้า',mealDate=localDate(),filterDate=localDate();function localDate(){let d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}function uid(){return crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random()}function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){alert('บันทึกข้อมูลไม่สำเร็จ พื้นที่เก็บข้อมูลอาจเต็ม');throw e}}function esc(x){return String(x??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}const n=x=>Number(x||0),money=x=>'฿'+n(x).toFixed(2),num=x=>n(x).toLocaleString('th-TH',{maximumFractionDigits:1});const food=id=>db.foods.find(f=>f.id===id),remaining=lot=>Math.max(0,n(lot.qty)-n(lot.used));function stock(id){return db.lots.filter(l=>l.foodId===id).reduce((s,l)=>s+remaining(l),0)}function unit(f){return f?.unit||'g'}function opts(items,selected){return items.map(x=>`<option value="${esc(x.id)}" ${x.id===selected?'selected':''}>${esc(x.name)}</option>`).join('')}function show(t){tab=t;document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==t));document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x.dataset.tab===t));render()}document.querySelectorAll('.tabs button').forEach(x=>x.onclick=()=>show(x.dataset.tab));function totals(lines){return lines.reduce((a,x)=>{const f=food(x.foodId);if(!f)return a;const factor=n(x.qty)/n(f.base);for(let k of ['k','p','c','f'])a[k]+=n(f[k])*factor;a.cost+=n(x.cost);return a},{k:0,p:0,c:0,f:0,cost:0})}function render(){({dashboard:drawDashboard,meals:drawMeals,inventory:drawInventory,catalog:drawCatalog,settings:drawSettings})[tab]()}function drawDashboard(){const today=db.meals.filter(m=>m.date===localDate()),lines=today.flatMap(m=>m.lines),t=totals(lines);let cards=[['แคลอรี','k','kcal'],['โปรตีน','p','g'],['คาร์บ','c','g'],['ไขมัน','f','g']];document.getElementById('dashboard').innerHTML=`<h2>ภาพรวมวันนี้ <span class="sub">${localDate()}</span></h2><div class="grid">${cards.map(([title,key,u])=>`<div class="metric"><div class="muted">${title}</div><b>${num(t[key])} <small class="sub">${u}</small></b><div class="sub">เป้าหมาย ${num(db.goals[key])}</div><div class="progress"><span style="width:${Math.min(100,t[key]/(db.goals[key]||1)*100)}%"></span></div></div>`).join('')}</div><div class="card row"><div><div class="muted">ต้นทุนอาหารวันนี้</div><h1 class="brand">${money(t.cost)}</h1></div><button class="btn" onclick="show('meals')">+ เพิ่มมื้อ</button></div><h2>มื้ออาหารวันนี้</h2><div class="list">${today.length?today.map(m=>`<div class="item row"><div><strong>${esc(m.name)}</strong><div class="sub">${m.lines.length} รายการ · ${num(totals(m.lines).k)} kcal</div></div><b>${money(totals(m.lines).cost)}</b></div>`).join(''):'<div class="empty">ยังไม่มีมื้ออาหารวันนี้</div>'}</div><div class="card"><strong>สรุปคลัง</strong><div class="row"><span class="muted">ล็อตที่ยังมีของ</span><b>${db.lots.filter(l=>remaining(l)>0).length}</b></div><div class="row"><span class="muted">ล็อตใกล้หมดอายุ (ภายใน 3 วัน)</span><b>${db.lots.filter(l=>remaining(l)>0&&l.expiry&&((new Date(l.expiry+'T00:00:00')-new Date(localDate()+'T00:00:00'))/86400000)<=3).length}</b></div></div>`}function drawMeals(){let available=db.foods.filter(f=>stock(f.id)>0),chosen=document.getElementById('addFood')?.value||available[0]?.id;const total=totals(draft.map(d=>({...d,cost:estimate(d.foodId,d.qty)})));document.getElementById('meals').innerHTML=`<h2>บันทึกมื้ออาหาร</h2><div class="card"><label>วันที่</label><input id="mealDate" type="date" value="${mealDate}" onchange="mealDate=this.value"><label>มื้อ</label><select id="mealName" onchange="mealName=this.value">${['มื้อเช้า','มื้อกลางวัน','มื้อเย็น','ของว่าง'].map(x=>`<option ${x===mealName?'selected':''}>${x}</option>`).join('')}</select><div class="divider"></div><label>เลือกวัตถุดิบจากคลัง</label><select id="addFood" onchange="updateAvail()">${opts(available,chosen)}</select><div id="avail" class="sub"></div><label>ปริมาณที่กิน (หน่วยตามวัตถุดิบ)</label><input id="eatQty" type="number" min="0.01" step="any" placeholder="เช่น 100"><button class="btn full" style="margin-top:12px" onclick="addDraft()">+ เพิ่มวัตถุดิบในมื้อ</button>${!available.length?'<div class="notice">ยังไม่มีวัตถุดิบในคลัง กรุณาเพิ่มล็อตที่ซื้อก่อน</div>':''}</div><h2>รายการในมื้อนี้</h2><div class="list">${draft.length?draft.map((d,i)=>`<div class="item row"><div><strong>${esc(food(d.foodId)?.name)}</strong><div class="sub">${num(d.qty)} ${esc(unit(food(d.foodId)))} · ${money(estimate(d.foodId,d.qty))}</div></div><button class="btn danger small" onclick="draft.splice(${i},1);drawMeals()">ลบ</button></div>`).join(''):'<div class="empty">เลือกวัตถุดิบด้านบนเพื่อเริ่ม</div>'}</div><div class="card"><strong>รวม ${num(total.k)} kcal</strong><div class="muted">โปรตีน ${num(total.p)}g · คาร์บ ${num(total.c)}g · ไขมัน ${num(total.f)}g</div><h2 class="brand">${money(total.cost)}</h2><button class="btn full" onclick="commitMeal()" ${!draft.length?'disabled':''}>บันทึกมื้อและหักสต็อกอัตโนมัติ</button></div><h2>ประวัติมื้ออาหาร</h2><input type="date" value="${filterDate}" onchange="filterDate=this.value;drawMeals()"><div class="list" style="margin-top:12px">${db.meals.filter(m=>m.date===filterDate).map(m=>`<div class="item"><div class="row"><b>${esc(m.name)}</b><button class="btn danger small" onclick="deleteMeal('${esc(m.id)}')">ลบและคืนสต็อก</button></div><div class="sub">${m.lines.map(l=>esc(food(l.foodId)?.name)+' '+num(l.qty)+unit(food(l.foodId))).join(' · ')}</div><div class="brand">${money(totals(m.lines).cost)}</div></div>`).join('')||'<div class="empty">ไม่มีรายการในวันที่เลือก</div>'}</div>`;updateAvail()}function updateAvail(){const id=document.getElementById('addFood')?.value,f=food(id),el=document.getElementById('avail');if(el)el.textContent=f?`คงเหลือ ${num(stock(id))} ${unit(f)}`:''}function sortedLots(id){return db.lots.filter(l=>l.foodId===id&&remaining(l)>0).sort((a,b)=>(a.expiry||'9999-12-31').localeCompare(b.expiry||'9999-12-31')||a.created.localeCompare(b.created))}function estimate(id,qty){let left=qty,cost=0;for(let l of sortedLots(id)){let take=Math.min(left,remaining(l));cost+=take*n(l.price)/n(l.qty);left-=take;if(left<=0)break}return cost}function addDraft(){const id=document.getElementById('addFood').value,qty=n(document.getElementById('eatQty').value);if(!id||!Number.isFinite(qty)||qty<=0)return alert('กรุณาเลือกวัตถุดิบและปริมาณที่ถูกต้อง');const used=draft.filter(x=>x.foodId===id).reduce((s,x)=>s+x.qty,0);if(qty+used>stock(id)+1e-7)return alert('สต็อกไม่เพียงพอ');draft.push({foodId:id,qty});drawMeals()}function commitMeal(){if(!draft.length)return;const requested={};for(let d of draft)requested[d.foodId]=(requested[d.foodId]||0)+d.qty;for(let [id,qty] of Object.entries(requested))if(qty>stock(id)+1e-7)return alert('สต็อกไม่เพียงพอ: '+food(id)?.name);if(!mealDate)return alert('กรุณาเลือกวันที่');const snapshot=JSON.stringify(db);try{let lines=draft.map(d=>{let left=d.qty,allocations=[];for(let l of sortedLots(d.foodId)){let take=Math.min(left,remaining(l));if(take<=0)continue;l.used=n(l.used)+take;allocations.push({lotId:l.id,qty:take,cost:take*l.price/l.qty});left-=take;if(left<1e-7)break}if(left>1e-7)throw Error('สต็อกไม่เพียงพอ');return {...d,cost:allocations.reduce((s,x)=>s+x.cost,0),allocations}});db.meals.push({id:uid(),date:mealDate,name:mealName,lines,created:new Date().toISOString()});save();draft=[];alert('บันทึกมื้ออาหารและหักสต็อกแล้ว');drawMeals()}catch(e){db=JSON.parse(snapshot);alert('บันทึกไม่สำเร็จ: '+e.message)}}function deleteMeal(id){let m=db.meals.find(x=>x.id===id);if(!m||!confirm('ลบมื้อนี้และคืนปริมาณวัตถุดิบเข้าล็อตเดิม?'))return;for(let line of m.lines)for(let a of line.allocations){let l=db.lots.find(x=>x.id===a.lotId);if(l)l.used=Math.max(0,l.used-a.qty)}db.meals=db.meals.filter(x=>x.id!==id);save();drawMeals()}function drawInventory(){document.getElementById('inventory').innerHTML=`<h2>คลังวัตถุดิบ</h2><div class="card"><strong>เพิ่มล็อตที่ซื้อ</strong><label>วัตถุดิบ</label><select id="lotFood">${opts(db.foods)}</select><div class="grid"><div><label>ปริมาณที่ซื้อ</label><input id="lotQty" type="number" step="any" min="0" placeholder="300"></div><div><label>ราคาซื้อ (บาท)</label><input id="lotPrice" type="number" step="any" min="0" placeholder="100"></div></div><label>วันหมดอายุ (ถ้ามี)</label><input id="lotExpiry" type="date"><button class="btn full" style="margin-top:12px" onclick="addLot()">+ บันทึกล็อตใหม่</button></div><h2>ล็อตในคลัง</h2><div class="list">${db.lots.slice().reverse().map(l=>{let f=food(l.foodId),r=remaining(l),pct=l.qty?r/l.qty*100:0;return `<div class="item"><div class="row"><strong>${esc(f?.name||'วัตถุดิบที่ถูกลบ')}</strong><span class="pill">${num(r)} ${esc(unit(f))}</span></div><div class="sub">ซื้อ ${num(l.qty)} ${esc(unit(f))} · ${money(l.price)} · ต้นทุนคงเหลือ ${money(r*l.price/l.qty)}</div><div class="progress"><span style="width:${pct}%"></span></div><div class="row"><span class="sub">หมดอายุ: ${esc(l.expiry||'ไม่ได้ระบุ')}</span><span class="sub">${r===0?'ใช้หมดแล้ว':'คงเหลือ '+num(pct)+'%'}</span></div>${r>0?`<details><summary>ปรับยอด / ทิ้งวัตถุดิบ</summary><label>ปริมาณที่ต้องการตัดออก (${esc(unit(f))})</label><input type="number" id="waste-${esc(l.id)}" min="0" step="any"><button class="btn danger small" onclick="wasteLot('${esc(l.id)}')">ยืนยันตัดออก</button></details>`:''}</div>`}).join('')||'<div class="empty">ยังไม่มีล็อตวัตถุดิบ</div>'}</div>`}function addLot(){const foodId=document.getElementById('lotFood').value,qty=n(document.getElementById('lotQty').value),price=n(document.getElementById('lotPrice').value),expiry=document.getElementById('lotExpiry').value;if(!foodId||!Number.isFinite(qty)||qty<=0||!Number.isFinite(price)||price<0||document.getElementById('lotPrice').value==='')return alert('กรุณากรอกปริมาณและราคาที่ถูกต้อง');db.lots.push({id:uid(),foodId,qty,price,used:0,expiry,created:new Date().toISOString()});save();drawInventory()}function wasteLot(id){const l=db.lots.find(x=>x.id===id),v=n(document.getElementById('waste-'+id).value);if(!l||v<=0||v>remaining(l))return alert('จำนวนไม่ถูกต้อง');if(!confirm('ตัดวัตถุดิบออกจากคลัง '+num(v)+' หน่วย?'))return;l.used+=v;save();drawInventory()}function drawCatalog(){let filtered=db.foods.filter(f=>selectedGroup==='ทั้งหมด'||f.group===selectedGroup);document.getElementById('catalog').innerHTML=`<h2>ฐานข้อมูลวัตถุดิบ</h2><div class="chips">${['ทั้งหมด',...groups].map(g=>`<button class="chip ${g===selectedGroup?'active':''}" data-group="${esc(g)}">${esc(g)}</button>`).join('')}</div><div class="list">${filtered.map(f=>`<div class="item"><div class="row"><strong>${esc(f.name)}</strong><span class="pill">${num(stock(f.id))} ${esc(f.unit)}</span></div><div class="sub">ต่อ ${num(f.base)} ${esc(f.unit)} · ${num(f.k)} kcal · โปรตีน ${num(f.p)}g · คาร์บ ${num(f.c)}g · ไขมัน ${num(f.f)}g</div></div>`).join('')}</div><div class="card"><strong>เพิ่มวัตถุดิบใหม่</strong><label>ชื่อ</label><input id="newName" placeholder="เช่น เนื้อวัวส่วนริบอาย"><label>หมวดหมู่</label><select id="newGroup">${groups.map(g=>`<option>${esc(g)}</option>`).join('')}</select><label>หน่วย</label><select id="newUnit"><option value="g">กรัม (g)</option><option value="ฟอง">ฟอง</option><option value="ml">มิลลิลิตร (ml)</option><option value="ชิ้น">ชิ้น</option></select><label>ค่าข้อมูลสารอาหารต่อปริมาณ</label><input id="newBase" type="number" value="100" min="0.01" step="any"><div class="grid">${[['k','แคลอรี (kcal)'],['p','โปรตีน (g)'],['c','คาร์บ (g)'],['f','ไขมัน (g)']].map(([k,label])=>`<div><label>${label}</label><input id="new${k}" type="number" value="0" min="0" step="any"></div>`).join('')}</div><button class="btn full" style="margin-top:12px" onclick="addFood()">+ เพิ่มเข้าฐานข้อมูล</button></div><div class="notice">ค่าทางโภชนาการตั้งต้นเป็นค่าประมาณ โปรดตรวจสอบฉลากหรือฐานข้อมูลอาหารก่อนใช้งานจริง โดยเฉพาะเนื้อดรายเอจ</div>`;document.querySelectorAll('[data-group]').forEach(b=>b.onclick=()=>{selectedGroup=b.dataset.group;drawCatalog()})}function addFood(){const name=document.getElementById('newName').value.trim(),base=n(document.getElementById('newBase').value);let values={};for(let k of ['k','p','c','f'])values[k]=n(document.getElementById('new'+k).value);if(!name||base<=0||Object.values(values).some(v=>v<0||!Number.isFinite(v)))return alert('กรุณากรอกข้อมูลให้ถูกต้อง');db.foods.push({id:uid(),name,group:document.getElementById('newGroup').value,unit:document.getElementById('newUnit').value,base,...values});save();drawCatalog()}function drawSettings(){document.getElementById('settings').innerHTML=`<h2>ตั้งค่าและสำรองข้อมูล</h2><div class="card"><strong>เป้าหมายสารอาหารต่อวัน</strong><div class="grid">${[['k','แคลอรี (kcal)'],['p','โปรตีน (g)'],['c','คาร์บ (g)'],['f','ไขมัน (g)']].map(([k,label])=>`<div><label>${label}</label><input id="goal${k}" type="number" min="0" value="${db.goals[k]}"></div>`).join('')}</div><button class="btn full" style="margin-top:12px" onclick="saveGoals()">บันทึกเป้าหมาย</button></div><div class="card"><strong>สำรองข้อมูล</strong><p class="muted">ดาวน์โหลดไฟล์ JSON ไปเก็บในแอป Files หรือ iCloud Drive เพื่อป้องกันข้อมูลหายเมื่อ Safari ล้างข้อมูลเว็บไซต์</p><button class="btn full" onclick="exportData()">⬇ ส่งออกไฟล์สำรอง</button><label>นำเข้าไฟล์สำรอง (แทนที่ข้อมูลปัจจุบันทั้งหมด)</label><input type="file" id="importFile" accept="application/json,.json" onchange="importData(this)"></div><div class="notice">แอปนี้เก็บข้อมูลไว้ในเบราว์เซอร์ของเครื่องเดียว ไม่มีระบบซิงก์หรือบัญชีผู้ใช้ หากล้างข้อมูล Safari ข้อมูลอาจสูญหาย กรุณาสำรองข้อมูลเป็นระยะ</div><div class="card"><strong>วิธีติดตั้งบน iPhone</strong><p class="muted">เมื่อแอปถูกเผยแพร่ผ่าน HTTPS ให้เปิดใน Safari → กด Share → Add to Home Screen เพื่อเพิ่มไอคอนบนหน้าจอ</p></div>`}function saveGoals(){for(let k of ['k','p','c','f']){let v=n(document.getElementById('goal'+k).value);if(!Number.isFinite(v)||v<0)return alert('เป้าหมายไม่ถูกต้อง');db.goals[k]=v}save();alert('บันทึกเป้าหมายแล้ว')}function exportData(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='nutricost-backup-'+localDate()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}async function importData(el){const f=el.files[0];if(!f)return;try{let obj=JSON.parse(await f.text());if(!obj||!Array.isArray(obj.foods)||!Array.isArray(obj.lots)||!Array.isArray(obj.meals)||!obj.goals||!obj.foods.every(x=>x.id&&x.name&&x.base>0)||!obj.lots.every(x=>x.id&&x.foodId&&x.qty>0&&x.price>=0&&x.used>=0&&x.used<=x.qty))throw Error('รูปแบบไฟล์ไม่ถูกต้อง');if(!confirm('แทนที่ข้อมูลทั้งหมดด้วยไฟล์สำรองนี้?'))return;db=obj;save();show('dashboard');alert('นำเข้าข้อมูลสำเร็จ')}catch(e){alert('นำเข้าไม่สำเร็จ: '+e.message)}}if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});show('dashboard');
-</script></body></html>
+'use strict';const KEY='nutricost.v1';const groups=['เนื้อสัตว์','ปลาและอาหารทะเล','ไข่','ผัก','ผลไม้','ข้าวและธัญพืช','หัวและอาหารประเภทแป้ง','นมและผลิตภัณฑ์นม','ถั่วและเมล็ดพืช','น้ำมันและไขมัน','เครื่องปรุงและซอส','อื่น ๆ'];const seed=[['เนื้อวัวดรายเอจ','เนื้อสัตว์','g',100,220,20,0,15],['อกไก่ดิบ','เนื้อสัตว์','g',100,120,23,0,2.6],['ไข่ไก่','ไข่','ฟอง',1,72,6.3,.4,4.8],['ไข่เป็ด','ไข่','ฟอง',1,130,9,1,9.6],['มันฝรั่งดิบ','หัวและอาหารประเภทแป้ง','g',100,77,2,17,.1],['บรอกโคลีดิบ','ผัก','g',100,34,2.8,6.6,.4],['ข้าวสารขาว','ข้าวและธัญพืช','g',100,365,7.1,80,.7],['กล้วย','ผลไม้','g',100,89,1.1,22.8,.3],['แซลมอนดิบ','ปลาและอาหารทะเล','g',100,208,20,0,13]];const init=()=>({foods:seed.map((x,i)=>({id:'f'+i,name:x[0],group:x[1],unit:x[2],base:x[3],k:x[4],p:x[5],c:x[6],f:x[7]})),lots:[],meals:[],goals:{k:2200,p:150,c:220,f:70},version:1});let db;try{db=JSON.parse(localStorage.getItem(KEY))||init();if(!Array.isArray(db.foods)||!Array.isArray(db.lots)||!Array.isArray(db.meals))throw Error('Invalid data')}catch(e){db=init();alert('ไม่สามารถอ่านข้อมูลเดิมได้ กรุณานำเข้าไฟล์สำรองหากมี')}let tab='dashboard',selectedGroup='ทั้งหมด',draft=[],mealName='มื้อเช้า',mealDate=localDate(),filterDate=localDate();function localDate(){let d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}function uid(){return crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random()}function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){alert('บันทึกข้อมูลไม่สำเร็จ พื้นที่เก็บข้อมูลอาจเต็ม');throw e}}function esc(x){return String(x??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}const n=x=>Number(x||0),money=x=>'฿'+n(x).toFixed(2),num=x=>n(x).toLocaleString('th-TH',{maximumFractionDigits:1});const food=id=>db.foods.find(f=>f.id===id),remaining=lot=>Math.max(0,n(lot.qty)-n(lot.used));function stock(id){return db.lots.filter(l=>l.foodId===id).reduce((s,l)=>s+remaining(l),0)}function unit(f){return f?.unit||'g'}function opts(items,selected){return items.map(x=>`<option value="${esc(x.id)}" ${x.id===selected?'selected':''}>${esc(x.name)}</option>`).join('')}function show(t){tab=t;document.querySelectorAll('main>section').forEach(x=>x.classList.toggle('hidden',x.id!==t));document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x.dataset.tab===t));render()}document.querySelectorAll('.tabs button').forEach(x=>x.onclick=()=>show(x.dataset.tab));function totals(lines){return lines.reduce((a,x)=>{const f=food(x.foodId);if(!f)return a;const factor=n(x.qty)/n(f.base);for(let k of ['k','p','c','f'])a[k]+=n(f[k])*factor;a.cost+=n(x.cost);return a},{k:0,p:0,c:0,f:0,cost:0})}function render(){({dashboard:drawDashboard,meals:drawMeals,inventory:drawInventory,catalog:drawCatalog,settings:drawSettings})[tab]()}function drawDashboard(){const today=db.meals.filter(m=>m.date===localDate()),lines=today.flatMap(m=>m.lines),t=totals(lines);let cards=[['แคลอรี','k','kcal'],['โปรตีน','p','g'],['คาร์บ','c','g'],['ไขมัน','f','g']];document.getElementById('dashboard').innerHTML=`<h2>ภาพรวมวันนี้ <span class="sub">${localDate()}</span></h2><div class="grid">${cards.map(([title,key,u])=>`<div class="metric"><div class="muted">${title}</div><b>${num(t[key])} <small class="sub">${u}</small></b><div class="sub">เป้าหมาย ${num(db.goals[key])}</div><div class="progress"><span style="width:${Math.min(100,t[key]/(db.goals[key]||1)*100)}%"></span></div></div>`).join('')}</div><div class="card row"><div><div class="muted">ต้นทุนอาหารวันนี้</div><h1 class="brand">${money(t.cost)}</h1></div><button class="btn" onclick="show('meals')">+ เพิ่มมื้อ</button></div><h2>มื้ออาหารวันนี้</h2><div class="list">${today.length?today.map(m=>`<div class="item row"><div><strong>${esc(m.name)}</strong><div class="sub">${m.lines.length} รายการ · ${num(totals(m.lines).k)} kcal</div></div><b>${money(totals(m.lines).cost)}</b></div>`).join(''):'<div class="empty">ยังไม่มีมื้ออาหารวันนี้</div>'}</div><div class="card"><strong>สรุปคลัง</strong><div class="row"><span class="muted">ล็อตที่ยังมีของ</span><b>${db.lots.filter(l=>remaining(l)>0).length}</b></div><div class="row"><span class="muted">ล็อตใกล้หมดอายุ (ภายใน 3 วัน)</span><b>${db.lots.filter(l=>remaining(l)>0&&l.expiry&&((new Date(l.expiry+'T00:00:00')-new Date(localDate()+'T00:00:00'))/86400000)<=3).length}</b></div></div>`}function drawMeals(){let available=db.foods.filter(f=>stock(f.id)>0),chosen=document.getElementById('addFood')?.value||available[0]?.id;const total=totals(draft.map(d=>({...d,cost:estimate(d.foodId,d.qty)})));document.getElementById('meals').innerHTML=`<h2>บันทึกมื้ออาหาร</h2><div class="card"><label>วันที่</label><input id="mealDate" type="date" value="${mealDate}" onchange="mealDate=this.value"><label>มื้อ</label><select id="mealName" onchange="mealName=this.value">${['มื้อเช้า','มื้อกลางวัน','มื้อเย็น','ของว่าง','มื้อ 1','มื้อ 2','มื้อ 3','หลังออกกำลังกาย','กำหนดเอง'].map(x=>`<option ${x===mealName?'selected':''}>${x}</option>`).join('')}</select><label>ชื่อมื้อกำหนดเอง (ถ้าต้องการ)</label><input id="nc-custom-meal" placeholder="เช่น มื้อ 4 / ก่อนออกกำลังกาย" maxlength="70"><div class="divider"></div><label>เลือกวัตถุดิบจากคลัง</label><select id="addFood" onchange="updateAvail()">${opts(available,chosen)}</select><div id="avail" class="sub"></div><label>ปริมาณที่กิน (หน่วยตามวัตถุดิบ)</label><input id="eatQty" type="number" min="0.01" step="any" placeholder="เช่น 100"><button class="btn full" style="margin-top:12px" onclick="addDraft()">+ เพิ่มวัตถุดิบในมื้อ</button>${!available.length?'<div class="notice">ยังไม่มีวัตถุดิบในคลัง กรุณาเพิ่มล็อตที่ซื้อก่อน</div>':''}</div><h2>รายการในมื้อนี้</h2><div class="list">${draft.length?draft.map((d,i)=>`<div class="item row"><div><strong>${esc(food(d.foodId)?.name)}</strong><div class="sub">${num(d.qty)} ${esc(unit(food(d.foodId)))} · ${money(estimate(d.foodId,d.qty))}</div></div><button class="btn danger small" onclick="draft.splice(${i},1);drawMeals()">ลบ</button></div>`).join(''):'<div class="empty">เลือกวัตถุดิบด้านบนเพื่อเริ่ม</div>'}</div><div class="card"><strong>รวม ${num(total.k)} kcal</strong><div class="muted">โปรตีน ${num(total.p)}g · คาร์บ ${num(total.c)}g · ไขมัน ${num(total.f)}g</div><h2 class="brand">${money(total.cost)}</h2><button class="btn full" onclick="commitMeal()" ${!draft.length?'disabled':''}>บันทึกมื้อและหักสต็อกอัตโนมัติ</button></div><h2>ประวัติมื้ออาหาร</h2><input type="date" value="${filterDate}" onchange="filterDate=this.value;drawMeals()"><div class="list" style="margin-top:12px">${db.meals.filter(m=>m.date===filterDate).map(m=>`<div class="item"><div class="row"><b>${esc(m.name)}</b><button class="btn danger small" onclick="deleteMeal('${esc(m.id)}')">ลบและคืนสต็อก</button></div><div class="sub">${m.lines.map(l=>esc(food(l.foodId)?.name)+' '+num(l.qty)+unit(food(l.foodId))).join(' · ')}</div><div class="brand">${money(totals(m.lines).cost)}</div></div>`).join('')||'<div class="empty">ไม่มีรายการในวันที่เลือก</div>'}</div>`;updateAvail()}function updateAvail(){const id=document.getElementById('addFood')?.value,f=food(id),el=document.getElementById('avail');if(el)el.textContent=f?`คงเหลือ ${num(stock(id))} ${unit(f)}`:''}function sortedLots(id){return db.lots.filter(l=>l.foodId===id&&remaining(l)>0).sort((a,b)=>(a.expiry||'9999-12-31').localeCompare(b.expiry||'9999-12-31')||a.created.localeCompare(b.created))}function estimate(id,qty){let left=qty,cost=0;for(let l of sortedLots(id)){let take=Math.min(left,remaining(l));cost+=take*n(l.price)/n(l.qty);left-=take;if(left<=0)break}return cost}function addDraft(){const id=document.getElementById('addFood').value,qty=n(document.getElementById('eatQty').value);if(!id||!Number.isFinite(qty)||qty<=0)return alert('กรุณาเลือกวัตถุดิบและปริมาณที่ถูกต้อง');const used=draft.filter(x=>x.foodId===id).reduce((s,x)=>s+x.qty,0);if(qty+used>stock(id)+1e-7)return alert('สต็อกไม่เพียงพอ');draft.push({foodId:id,qty});drawMeals()}function commitMeal(){const custom=document.getElementById('nc-custom-meal')?.value.trim();if(custom)mealName=custom;else if(mealName==='กำหนดเอง')return alert('กรุณาระบุชื่อมื้อ');if(!draft.length)return;const requested={};for(let d of draft)requested[d.foodId]=(requested[d.foodId]||0)+d.qty;for(let [id,qty] of Object.entries(requested))if(qty>stock(id)+1e-7)return alert('สต็อกไม่เพียงพอ: '+food(id)?.name);if(!mealDate)return alert('กรุณาเลือกวันที่');const snapshot=JSON.stringify(db);try{let lines=draft.map(d=>{let left=d.qty,allocations=[];for(let l of sortedLots(d.foodId)){let take=Math.min(left,remaining(l));if(take<=0)continue;l.used=n(l.used)+take;allocations.push({lotId:l.id,qty:take,cost:take*l.price/l.qty});left-=take;if(left<1e-7)break}if(left>1e-7)throw Error('สต็อกไม่เพียงพอ');return {...d,cost:allocations.reduce((s,x)=>s+x.cost,0),allocations}});db.meals.push({id:uid(),date:mealDate,name:mealName,lines,created:new Date().toISOString()});save();draft=[];alert('บันทึกมื้ออาหารและหักสต็อกแล้ว');drawMeals()}catch(e){db=JSON.parse(snapshot);alert('บันทึกไม่สำเร็จ: '+e.message)}}function deleteMeal(id){let m=db.meals.find(x=>x.id===id);if(!m||!confirm('ลบมื้อนี้และคืนปริมาณวัตถุดิบเข้าล็อตเดิม?'))return;for(let line of m.lines)for(let a of line.allocations){let l=db.lots.find(x=>x.id===a.lotId);if(l)l.used=Math.max(0,l.used-a.qty)}db.meals=db.meals.filter(x=>x.id!==id);save();drawMeals()}function drawInventory(){document.getElementById('inventory').innerHTML=`<h2>คลังวัตถุดิบ</h2><div class="card"><strong>เพิ่มล็อตที่ซื้อ</strong><label>วัตถุดิบ</label><select id="lotFood">${opts(db.foods)}</select><div class="grid"><div><label>ปริมาณที่ซื้อ</label><input id="lotQty" type="number" step="any" min="0" placeholder="300"></div><div><label>ราคาซื้อ (บาท)</label><input id="lotPrice" type="number" step="any" min="0" placeholder="100"></div></div><label>วันหมดอายุ (ถ้ามี)</label><input id="lotExpiry" type="date"><button class="btn full" style="margin-top:12px" onclick="addLot()">+ บันทึกล็อตใหม่</button></div><h2>ล็อตในคลัง</h2><div class="list">${db.lots.slice().reverse().map(l=>{let f=food(l.foodId),r=remaining(l),pct=l.qty?r/l.qty*100:0;return `<div class="item"><div class="row"><strong>${esc(f?.name||'วัตถุดิบที่ถูกลบ')}</strong><span class="pill">${num(r)} ${esc(unit(f))}</span></div><div class="sub">ซื้อ ${num(l.qty)} ${esc(unit(f))} · ${money(l.price)} · ต้นทุนคงเหลือ ${money(r*l.price/l.qty)}</div><div class="progress"><span style="width:${pct}%"></span></div><div class="row"><span class="sub">หมดอายุ: ${esc(l.expiry||'ไม่ได้ระบุ')}</span><span class="sub">${r===0?'ใช้หมดแล้ว':'คงเหลือ '+num(pct)+'%'}</span></div>${r>0?`<details><summary>ปรับยอด / ทิ้งวัตถุดิบ</summary><label>ปริมาณที่ต้องการตัดออก (${esc(unit(f))})</label><input type="number" id="waste-${esc(l.id)}" min="0" step="any"><button class="btn danger small" onclick="wasteLot('${esc(l.id)}')">ยืนยันตัดออก</button></details>`:''}</div>`}).join('')||'<div class="empty">ยังไม่มีล็อตวัตถุดิบ</div>'}</div>`}function addLot(){const foodId=document.getElementById('lotFood').value,qty=n(document.getElementById('lotQty').value),price=n(document.getElementById('lotPrice').value),expiry=document.getElementById('lotExpiry').value;if(!foodId||!Number.isFinite(qty)||qty<=0||!Number.isFinite(price)||price<0||document.getElementById('lotPrice').value==='')return alert('กรุณากรอกปริมาณและราคาที่ถูกต้อง');db.lots.push({id:uid(),foodId,qty,price,used:0,expiry,created:new Date().toISOString()});save();drawInventory()}function wasteLot(id){const l=db.lots.find(x=>x.id===id),v=n(document.getElementById('waste-'+id).value);if(!l||v<=0||v>remaining(l))return alert('จำนวนไม่ถูกต้อง');if(!confirm('ตัดวัตถุดิบออกจากคลัง '+num(v)+' หน่วย?'))return;l.used+=v;save();drawInventory()}function drawCatalog(){let filtered=db.foods.filter(f=>selectedGroup==='ทั้งหมด'||f.group===selectedGroup);document.getElementById('catalog').innerHTML=`<h2>ฐานข้อมูลวัตถุดิบ</h2><div class="chips">${['ทั้งหมด',...groups].map(g=>`<button class="chip ${g===selectedGroup?'active':''}" data-group="${esc(g)}">${esc(g)}</button>`).join('')}</div><div class="list">${filtered.map(f=>`<div class="item"><div class="row"><strong>${esc(f.name)}</strong><span class="pill">${num(stock(f.id))} ${esc(f.unit)}</span></div><div class="sub">ต่อ ${num(f.base)} ${esc(f.unit)} · ${num(f.k)} kcal · โปรตีน ${num(f.p)}g · คาร์บ ${num(f.c)}g · ไขมัน ${num(f.f)}g</div></div>`).join('')}</div><div class="card"><strong>เพิ่มวัตถุดิบใหม่</strong><label>ชื่อ</label><input id="newName" placeholder="เช่น เนื้อวัวส่วนริบอาย"><label>หมวดหมู่</label><select id="newGroup">${groups.map(g=>`<option>${esc(g)}</option>`).join('')}</select><label>หน่วย</label><select id="newUnit"><option value="g">กรัม (g)</option><option value="ฟอง">ฟอง</option><option value="ml">มิลลิลิตร (ml)</option><option value="ชิ้น">ชิ้น</option></select><label>ค่าข้อมูลสารอาหารต่อปริมาณ</label><input id="newBase" type="number" value="100" min="0.01" step="any"><div class="grid">${[['k','แคลอรี (kcal)'],['p','โปรตีน (g)'],['c','คาร์บ (g)'],['f','ไขมัน (g)']].map(([k,label])=>`<div><label>${label}</label><input id="new${k}" type="number" value="0" min="0" step="any"></div>`).join('')}</div><button class="btn full" style="margin-top:12px" onclick="addFood()">+ เพิ่มเข้าฐานข้อมูล</button></div><div class="notice">ค่าทางโภชนาการตั้งต้นเป็นค่าประมาณ โปรดตรวจสอบฉลากหรือฐานข้อมูลอาหารก่อนใช้งานจริง โดยเฉพาะเนื้อดรายเอจ</div>`;document.querySelectorAll('[data-group]').forEach(b=>b.onclick=()=>{selectedGroup=b.dataset.group;drawCatalog()})}function addFood(){const name=document.getElementById('newName').value.trim(),base=n(document.getElementById('newBase').value);let values={};for(let k of ['k','p','c','f'])values[k]=n(document.getElementById('new'+k).value);if(!name||base<=0||Object.values(values).some(v=>v<0||!Number.isFinite(v)))return alert('กรุณากรอกข้อมูลให้ถูกต้อง');db.foods.push({id:uid(),name,group:document.getElementById('newGroup').value,unit:document.getElementById('newUnit').value,base,...values});save();drawCatalog()}function drawSettings(){document.getElementById('settings').innerHTML=`<h2>ตั้งค่าและสำรองข้อมูล</h2><div class="card"><strong>เป้าหมายสารอาหารต่อวัน</strong><div class="grid">${[['k','แคลอรี (kcal)'],['p','โปรตีน (g)'],['c','คาร์บ (g)'],['f','ไขมัน (g)']].map(([k,label])=>`<div><label>${label}</label><input id="goal${k}" type="number" min="0" value="${db.goals[k]}"></div>`).join('')}</div><button class="btn full" style="margin-top:12px" onclick="saveGoals()">บันทึกเป้าหมาย</button></div><div class="card"><strong>สำรองข้อมูล</strong><p class="muted">ดาวน์โหลดไฟล์ JSON ไปเก็บในแอป Files หรือ iCloud Drive เพื่อป้องกันข้อมูลหายเมื่อ Safari ล้างข้อมูลเว็บไซต์</p><button class="btn full" onclick="exportData()">⬇ ส่งออกไฟล์สำรอง</button><label>นำเข้าไฟล์สำรอง (แทนที่ข้อมูลปัจจุบันทั้งหมด)</label><input type="file" id="importFile" accept="application/json,.json" onchange="importData(this)"></div><div class="notice">แอปนี้เก็บข้อมูลไว้ในเบราว์เซอร์ของเครื่องเดียว ไม่มีระบบซิงก์หรือบัญชีผู้ใช้ หากล้างข้อมูล Safari ข้อมูลอาจสูญหาย กรุณาสำรองข้อมูลเป็นระยะ</div><div class="card"><strong>วิธีติดตั้งบน iPhone</strong><p class="muted">เมื่อแอปถูกเผยแพร่ผ่าน HTTPS ให้เปิดใน Safari → กด Share → Add to Home Screen เพื่อเพิ่มไอคอนบนหน้าจอ</p></div>`}function saveGoals(){for(let k of ['k','p','c','f']){let v=n(document.getElementById('goal'+k).value);if(!Number.isFinite(v)||v<0)return alert('เป้าหมายไม่ถูกต้อง');db.goals[k]=v}save();alert('บันทึกเป้าหมายแล้ว')}function exportData(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='nutricost-backup-'+localDate()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}async function importData(el){const f=el.files[0];if(!f)return;try{let obj=JSON.parse(await f.text());if(!obj||!Array.isArray(obj.foods)||!Array.isArray(obj.lots)||!Array.isArray(obj.meals)||!obj.goals||!obj.foods.every(x=>x.id&&x.name&&x.base>0)||!obj.lots.every(x=>x.id&&x.foodId&&x.qty>0&&x.price>=0&&x.used>=0&&x.used<=x.qty))throw Error('รูปแบบไฟล์ไม่ถูกต้อง');if(!confirm('แทนที่ข้อมูลทั้งหมดด้วยไฟล์สำรองนี้?'))return;db=obj;save();show('dashboard');alert('นำเข้าข้อมูลสำเร็จ')}catch(e){alert('นำเข้าไม่สำเร็จ: '+e.message)}}if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});show('dashboard');
+</script><script>
+(function(){
+ const K='nutricost.appearance.v2';
+ const defaults={theme:'forest',accent:'#6be3b3',font:'ibm',compact:false};
+ let pref;try{pref={...defaults,...JSON.parse(localStorage.getItem(K)||'{}')}}catch(e){pref={...defaults}}
+ const themes=[['forest','Forest','#6be3b3'],['midnight','Midnight','#9b9bff'],['ivory','Ivory','#238a6b']];
+ const accents=[['Mint','#6be3b3'],['Ocean','#65bfff'],['Amber','#f1b96d'],['Rose','#f09cba'],['Violet','#b9a0fa']];
+ function apply(){let root=document.documentElement;root.dataset.ncTheme=pref.theme;root.dataset.ncFont=pref.font;root.dataset.ncCompact=String(pref.compact);root.style.setProperty('--nc-accent',pref.accent);try{localStorage.setItem(K,JSON.stringify(pref))}catch(e){}}
+ function open(){if(document.getElementById('nc-overlay'))return;let o=document.createElement('div');o.id='nc-overlay';o.className='nc-overlay';o.innerHTML='<div class="nc-sheet" role="dialog" aria-modal="true" aria-label="ปรับแต่งหน้าตาแอป"><div class="row"><div><h2>ปรับแต่งแอป ✨</h2><div class="muted">เลือกสไตล์ที่เหมาะกับคุณ</div></div><button class="btn secondary small" id="nc-close">ปิด ✕</button></div><label>ธีมแอป</label><div class="nc-options" id="nc-themes"></div><label>สีหลัก</label><div class="nc-options" id="nc-accents"></div><label>ฟอนต์ภาษาไทย</label><select id="nc-font"><option value="ibm">IBM Plex Sans Thai — เรียบหรู</option><option value="prompt">Prompt — โมเดิร์น</option><option value="system">System — อ่านง่าย</option></select><label style="display:flex;align-items:center;gap:12px;margin:20px 0"><input id="nc-compact" type="checkbox" style="width:20px;min-height:20px"> แสดงผลแบบกระชับ</label><div class="muted">การตั้งค่าหน้าตาเก็บในอุปกรณ์นี้ ไม่เปลี่ยนข้อมูลอาหาร</div></div>';document.body.append(o);
+ o.querySelector('#nc-close').onclick=()=>o.remove();o.onclick=e=>{if(e.target===o)o.remove()};
+ const t=o.querySelector('#nc-themes');t.innerHTML=themes.map(x=>'<button class="nc-option" data-theme="'+x[0]+'" aria-pressed="'+(pref.theme===x[0])+'"><span class="nc-preview" style="background:'+x[2]+'"></span>'+x[1]+'</button>').join('');
+ t.querySelectorAll('button').forEach(b=>b.onclick=()=>{pref.theme=b.dataset.theme;if(pref.theme==='midnight')pref.accent='#9b9bff';if(pref.theme==='ivory')pref.accent='#238a6b';if(pref.theme==='forest')pref.accent='#6be3b3';apply();o.remove();open()});
+ const a=o.querySelector('#nc-accents');a.innerHTML=accents.map(x=>'<button class="nc-option" data-accent="'+x[1]+'" aria-pressed="'+(pref.accent===x[1])+'"><span class="nc-preview" style="background:'+x[1]+'"></span>'+x[0]+'</button>').join('');
+ a.querySelectorAll('button').forEach(b=>b.onclick=()=>{pref.accent=b.dataset.accent;apply();o.remove();open()});
+ o.querySelector('#nc-font').value=pref.font;o.querySelector('#nc-font').onchange=e=>{pref.font=e.target.value;apply()};
+ o.querySelector('#nc-compact').checked=pref.compact;o.querySelector('#nc-compact').onchange=e=>{pref.compact=e.target.checked;apply()};
+ }
+ apply();const header=document.querySelector('header');if(header){const b=document.createElement('button');b.className='nc-theme-button';b.type='button';b.textContent='✦';b.setAttribute('aria-label','ปรับแต่งธีมและฟอนต์');b.onclick=open;header.append(b)}
+})();
+</script>
+<style>
+.nc-stat-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.nc-stat-head select{width:auto;min-width:132px}.nc-bars{display:flex;align-items:flex-end;gap:7px;height:155px;padding:16px 0 0;border-bottom:1px solid var(--nc-border)}.nc-bar-col{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:7px}.nc-bar{width:100%;max-width:35px;min-height:3px;background:linear-gradient(180deg,var(--nc-accent),color-mix(in srgb,var(--nc-accent) 45%,var(--nc-panel)));border-radius:8px 8px 2px 2px}.nc-bar-col small{font-size:10px;color:var(--nc-muted)}.nc-fav{font-size:13px}.nc-fav-row{display:flex;align-items:center;justify-content:space-between;gap:10px}.nc-fav-row .btn{flex-shrink:0}.nc-kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.nc-kpi{background:var(--nc-panel2);padding:14px;border-radius:14px}.nc-kpi b{display:block;font-size:21px}.nc-kpi small{color:var(--nc-muted)}
+</style>
+<script>
+(function(){
+const FKEY='nutricost.favorites.v1';
+function favs(){try{return JSON.parse(localStorage.getItem(FKEY)||'[]')}catch(e){return []}}
+function putFavs(x){try{localStorage.setItem(FKEY,JSON.stringify(x))}catch(e){alert('บันทึกรายการโปรดไม่สำเร็จ')}}
+function dateKey(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
+function aggregate(meals){let cost=0,k=0,p=0,c=0,f=0;for(const m of meals){for(const l of m.lines||[]){cost+=Number(l.cost)||0;const item=food(l.foodId);if(!item||!Number(item.base))continue;let factor=Number(l.qty)/Number(item.base);k+=factor*Number(item.k||0);p+=factor*Number(item.p||0);c+=factor*Number(item.c||0);f+=factor*Number(item.f||0)}}return {cost,k,p,c,f}}
+let period='week';
+function stats(){
+const el=document.getElementById('nc-stats');if(!el)return;
+const now=new Date(),days=period==='week'?7:30,items=[];
+for(let i=days-1;i>=0;i--){let d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i),key=dateKey(d);let meals=db.meals.filter(m=>m.date===key);items.push({key,label:days===7?d.toLocaleDateString('th-TH',{weekday:'short'}):String(d.getDate()),...aggregate(meals),count:meals.length})}
+const sum=items.reduce((a,x)=>({cost:a.cost+x.cost,k:a.k+x.k,p:a.p+x.p,c:a.c+x.c,f:a.f+x.f,count:a.count+x.count}),{cost:0,k:0,p:0,c:0,f:0,count:0});
+const max=Math.max(1,...items.map(x=>x.cost));const display=days===7?items:items.filter((_,i)=>i%3===0||i===29);
+el.innerHTML='<div class="card"><div class="nc-stat-head"><strong>สถิติการกินและค่าอาหาร</strong><select id="nc-period" aria-label="ช่วงเวลาสถิติ"><option value="week">7 วันล่าสุด</option><option value="month">30 วันล่าสุด</option></select></div><div class="nc-kpis" style="margin-top:16px"><div class="nc-kpi"><small>ค่าอาหารรวม</small><b>'+money(sum.cost)+'</b></div><div class="nc-kpi"><small>เฉลี่ยต่อวัน</small><b>'+money(sum.cost/days)+'</b></div><div class="nc-kpi"><small>แคลอรีเฉลี่ย/วัน</small><b>'+num(sum.k/days)+'</b></div><div class="nc-kpi"><small>จำนวนมื้อ</small><b>'+sum.count+'</b></div></div><div class="muted" style="margin-top:18px">ค่าอาหารรายวัน (บาท)</div><div class="nc-bars">'+display.map(x=>'<div class="nc-bar-col" title="'+x.key+': '+money(x.cost)+'"><div class="nc-bar" style="height:'+Math.max(3,x.cost/max*116)+'px"></div><small>'+x.label+'</small></div>').join('')+'</div><div class="sub" style="margin-top:12px">โปรตีนเฉลี่ย '+num(sum.p/days)+'g · คาร์บ '+num(sum.c/days)+'g · ไขมัน '+num(sum.f/days)+'g / วัน</div><div class="sub">ข้อมูลจากมื้อที่บันทึกจริง ไม่มีการสมมติยอดใช้จ่าย</div></div>';
+const select=document.getElementById('nc-period');select.value=period;select.onchange=e=>{period=e.target.value;stats()};
+}
+function favorites(){
+const el=document.getElementById('nc-favorites');if(!el)return;
+let data=favs();el.innerHTML='<h2>รายการโปรด ⭐</h2><div class="card"><div class="muted">บันทึกชุดวัตถุดิบจากมื้อที่เคยกิน แล้วเพิ่มซ้ำได้ทันที</div><div class="list" style="margin-top:12px">'+(data.length?data.map((x,i)=>'<div class="item nc-fav-row"><div><strong>'+esc(x.name)+'</strong><div class="sub">'+x.lines.length+' วัตถุดิบ</div></div><div class="actions"><button class="btn small" data-load="'+i+'">เลือก</button><button class="btn danger small" data-remove="'+i+'">ลบ</button></div></div>').join(''):'<div class="empty">ยังไม่มีรายการโปรด</div>')+'</div></div>';
+el.querySelectorAll('[data-load]').forEach(b=>b.onclick=()=>{const x=favs()[Number(b.dataset.load)];if(!x)return;const req={};for(const l of x.lines)req[l.foodId]=(req[l.foodId]||0)+Number(l.qty);const missing=Object.entries(req).filter(([id,q])=>!food(id)||stock(id)+1e-7<q);if(missing.length)return alert('สต็อกไม่เพียงพอ: '+missing.map(([id])=>food(id)?.name||'วัตถุดิบที่ถูกลบ').join(', '));draft=x.lines.map(l=>({foodId:l.foodId,qty:Number(l.qty)}));mealName=x.name;show('meals');window.scrollTo(0,0)});
+el.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{if(!confirm('ลบรายการโปรดนี้?'))return;let a=favs();a.splice(Number(b.dataset.remove),1);putFavs(a);favorites()});
+}
+function saveFavorite(id){const m=db.meals.find(x=>x.id===id);if(!m)return;let a=favs();a.push({id:Date.now()+Math.random(),name:m.name,lines:m.lines.map(l=>({foodId:l.foodId,qty:l.qty}))});putFavs(a);alert('เพิ่มลงรายการโปรดแล้ว');favorites()}
+window.ncSaveFavorite=saveFavorite;
+const oldDashboard=drawDashboard;drawDashboard=function(){oldDashboard();const el=document.getElementById('dashboard');if(!document.getElementById('nc-stats')){el.insertAdjacentHTML('beforeend','<div id="nc-stats"></div><div id="nc-favorites"></div>')}stats();favorites()};
+const oldMeals=drawMeals;drawMeals=function(){oldMeals();const container=document.getElementById('meals');container.querySelectorAll('button[onclick^="deleteMeal("]').forEach(b=>{const match=b.getAttribute('onclick').match(/deleteMeal\('([^']+)'\)/);if(!match)return;const id=match[1];if(b.parentElement.querySelector('.nc-fav'))return;const star=document.createElement('button');star.className='btn secondary small nc-fav';star.textContent='☆ โปรด';star.onclick=()=>saveFavorite(id);b.parentElement.insertBefore(star,b)})};
+})();
+</script>
+
+<style>
+/* NutriCost Health Dashboard — reference-inspired original interface */
+[data-nc-theme=ivory]{--nc-bg:#f6f7f9;--nc-panel:#ffffff;--nc-panel2:#f4f6f9;--nc-border:#e9ecf1;--nc-text:#19202e;--nc-muted:#87909f;--nc-accent:#ef7954}
+[data-nc-theme=ivory] .card{background:#fff;box-shadow:0 10px 32px #18233a0c;border-color:#edf0f4}
+[data-nc-theme=ivory] .metric{background:#fff;box-shadow:0 8px 28px #18233a09;border-color:#edf0f4}
+[data-nc-theme=ivory] .tabs{background:#fffffff0;border-top-color:#eceff3}
+[data-nc-theme=ivory] .tabs button.active{color:#18243c;background:#f0f2f6}
+[data-nc-theme=ivory] .brand{color:#ed7955!important}
+[data-nc-theme=ivory] header .pill{background:#fff;color:#606b7a;border-color:#e8ecf1}
+.nc-health-hero{padding:22px 19px!important}
+.nc-health-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:15px}
+.nc-health-top strong{font-size:18px}
+.nc-health-sub{font-size:12px;color:var(--nc-muted);margin-top:2px}
+.nc-cal-row{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:12px;align-items:center}
+.nc-ring{width:100%;max-width:214px;aspect-ratio:1;position:relative;margin:auto}
+.nc-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.nc-ring .track{fill:none;stroke:var(--nc-border);stroke-width:13}
+.nc-ring .value{fill:none;stroke:#f17a51;stroke-width:13;stroke-linecap:round}
+.nc-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.nc-ring-center small{font-size:12px;color:var(--nc-muted)}
+.nc-ring-center b{font-size:clamp(27px,8vw,38px);letter-spacing:-1.6px}
+.nc-ring-center span{font-size:11px;color:var(--nc-muted)}
+.nc-ring-facts{display:flex;flex-direction:column;gap:13px}
+.nc-ring-fact{display:flex;align-items:center;gap:10px}
+.nc-ring-fact .nc-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.nc-ring-fact small{font-size:11px;color:var(--nc-muted);display:block}
+.nc-ring-fact b{font-size:17px;line-height:1.3}
+.nc-health-macros{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:15px}
+.nc-health-macro{text-align:center;background:var(--nc-panel2);border-radius:16px;padding:13px 4px 12px}
+.nc-mini-ring{width:58px;height:58px;margin:auto;position:relative}
+.nc-mini-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.nc-mini-ring circle{fill:none;stroke-width:7}
+.nc-mini-ring .nc-mini-track{stroke:var(--nc-border)}
+.nc-mini-ring .nc-mini-fill{stroke:var(--ring-color);stroke-linecap:round}
+.nc-mini-ring span{position:absolute;inset:0;display:grid;place-items:center;font-size:22px}
+.nc-health-macro strong{display:block;font-size:13px;margin-top:8px}
+.nc-health-macro small{display:block;color:var(--nc-muted);font-size:11px;margin-top:3px}
+.nc-health-title{font-size:21px;font-weight:750;margin:19px 2px 8px}
+.nc-health-spend{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.nc-health-spend b{font-size:27px}
+.nc-health-spend small{color:var(--nc-muted);display:block}
+.nc-health-spend button{white-space:nowrap}
+.nc-health-action{border-radius:14px!important}
+.nc-health-quick{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:12px 0}
+.nc-health-quick button{background:var(--nc-panel);color:var(--nc-text);border:1px solid var(--nc-border);border-radius:17px;padding:14px 4px;font-size:12px;box-shadow:0 6px 16px #00000008}
+.nc-health-quick button span{display:block;font-size:23px;margin-bottom:5px}
+.nc-health-top button{border:1px solid var(--nc-border);border-radius:11px;background:var(--nc-panel2);color:var(--nc-text);padding:6px 10px}
+.nc-old-metrics{display:none}
+.tabs button{font-size:0!important;padding:9px 0!important}
+.tabs button:before{display:block;font-size:21px;line-height:1.4}
+.tabs button:after{display:block;font-size:10px;line-height:1.6}
+.tabs button[data-tab=dashboard]:before{content:'⌂'}.tabs button[data-tab=dashboard]:after{content:'ภาพรวม'}
+.tabs button[data-tab=meals]:before{content:'⊕'}.tabs button[data-tab=meals]:after{content:'มื้ออาหาร'}
+.tabs button[data-tab=inventory]:before{content:'▤'}.tabs button[data-tab=inventory]:after{content:'คลัง'}
+.tabs button[data-tab=catalog]:before{content:'◈'}.tabs button[data-tab=catalog]:after{content:'วัตถุดิบ'}
+.tabs button[data-tab=settings]:before{content:'⚙'}.tabs button[data-tab=settings]:after{content:'ตั้งค่า'}
+@media(max-width:360px){.nc-cal-row{gap:5px}.nc-ring-fact{gap:6px}.nc-ring-fact b{font-size:15px}.nc-health-hero{padding:16px 12px!important}}
+</style>
+<script>
+(function(){
+ const previous=drawDashboard;
+ drawDashboard=function(){
+   previous();
+   const root=document.getElementById('dashboard');
+   if(!root)return;
+   const today=db.meals.filter(m=>m.date===localDate());
+   const t=totals(today.flatMap(m=>m.lines));
+   const goal=Number(db.goals.k)||2000;
+   const left=Math.max(0,goal-t.k);
+   const ratio=Math.max(0,Math.min(1,t.k/goal));
+   const circ=2*Math.PI*73;
+   const macro=[
+     {name:'โปรตีน',key:'p',color:'#448bf1',emoji:'🥩'},
+     {name:'คาร์บ',key:'c',color:'#2bbd85',emoji:'🍞'},
+     {name:'ไขมัน',key:'f',color:'#f4b83f',emoji:'🧀'}
+   ];
+   const mini=macro.map(m=>{
+     const v=Number(t[m.key])||0,g=Number(db.goals[m.key])||1,r=Math.max(0,Math.min(1,v/g)),c=2*Math.PI*23;
+     return '<div class="nc-health-macro"><div class="nc-mini-ring" style="--ring-color:'+m.color+'"><svg viewBox="0 0 60 60" aria-hidden="true"><circle class="nc-mini-track" cx="30" cy="30" r="23"/><circle class="nc-mini-fill" cx="30" cy="30" r="23" stroke-dasharray="'+(r*c)+' '+c+'"/></svg><span>'+m.emoji+'</span></div><strong>'+m.name+'</strong><small>'+num(v)+' / '+num(g)+' ก.</small></div>';
+   }).join('');
+   const top='<div class="nc-health-title">Dashboard <span class="sub">'+localDate()+'</span></div>'+
+   '<div class="card nc-health-hero"><div class="nc-health-top"><div><strong>พลังงานวันนี้</strong><div class="nc-health-sub">เป้าหมาย − อาหารที่บันทึก</div></div><button type="button" onclick="show(\'settings\')" aria-label="ตั้งค่าเป้าหมาย">⋯</button></div>'+
+   '<div class="nc-cal-row"><div class="nc-ring"><svg viewBox="0 0 180 180" aria-hidden="true"><circle class="track" cx="90" cy="90" r="73"/><circle class="value" cx="90" cy="90" r="73" stroke-dasharray="'+(ratio*circ)+' '+circ+'"/></svg><div class="nc-ring-center"><small>คงเหลือ</small><b>'+num(left)+'</b><span>kcal</span></div></div>'+
+   '<div class="nc-ring-facts"><div class="nc-ring-fact"><span class="nc-dot" style="background:#8791a6"></span><div><small>เป้าหมาย</small><b>'+num(goal)+'</b></div></div><div class="nc-ring-fact"><span class="nc-dot" style="background:#f17a51"></span><div><small>กินแล้ว</small><b>'+num(t.k)+'</b></div></div><div class="nc-ring-fact"><span class="nc-dot" style="background:#2bbd85"></span><div><small>คงเหลือ</small><b>'+num(left)+'</b></div></div></div></div></div>'+
+   '<div class="nc-health-title">สารอาหารหลัก</div><div class="card"><div class="nc-health-macros">'+mini+'</div></div>'+
+   '<div class="nc-health-title">ค่าอาหารวันนี้</div><div class="card nc-health-spend"><div><small>ต้นทุนจากวัตถุดิบที่ใช้จริง</small><b>'+money(t.cost)+'</b></div><button class="btn nc-health-action" onclick="show(\'meals\')">+ เพิ่มมื้อ</button></div>'+
+   '<div class="nc-health-quick"><button onclick="show(\'meals\')"><span>🍽️</span>บันทึกอาหาร</button><button onclick="show(\'inventory\')"><span>🧺</span>คลังอาหาร</button><button onclick="show(\'catalog\')"><span>🥦</span>วัตถุดิบ</button></div>';
+   const oldGrid=root.querySelector('.grid');if(oldGrid)oldGrid.classList.add('nc-old-metrics');
+   root.insertAdjacentHTML('afterbegin',top);
+   const oldTitle=root.querySelector('.nc-old-metrics')?.previousElementSibling;
+   if(oldTitle&&oldTitle.tagName==='H2')oldTitle.style.display='none';
+ }
+ const appearance='nutricost.appearance.v2';
+ try{
+   if(!localStorage.getItem(appearance)){
+     localStorage.setItem(appearance,JSON.stringify({theme:'ivory',accent:'#ef7954',font:'ibm',compact:false}));
+     document.documentElement.dataset.ncTheme='ivory';
+     document.documentElement.style.setProperty('--nc-accent','#ef7954');
+   }
+ }catch(e){}
+ if(document.getElementById('dashboard')&&!document.getElementById('dashboard').classList.contains('hidden'))drawDashboard();
+})();
+</script>
+<style>
+/* Clean Luxury v3: original premium visual system */
+:root[data-nc-theme=ivory]{--nc-bg:#f7f8fa;--nc-panel:#fff;--nc-panel2:#f6f7f9;--nc-border:#edf0f2;--nc-text:#18212b;--nc-muted:#929aa4;--nc-accent:#e87550}
+[data-nc-theme=ivory] body{background:#f7f8fa!important;color:#18212b}
+body{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
+header{padding:25px 23px 15px;display:flex;align-items:center;justify-content:space-between}
+header h1{font-size:23px!important;letter-spacing:-.9px!important}
+header .muted{font-size:9px!important;letter-spacing:2.5px!important}
+header .pill{display:none}
+header .nc-theme-button{position:static;margin-left:auto;width:39px;height:39px;border-radius:50%;background:#fff;color:#222b35;box-shadow:0 5px 20px #151c2b0b}
+main{padding:0 17px}
+#dashboard>.nc-health-title:first-child{margin:7px 5px 17px;font-size:27px;letter-spacing:-1.2px}
+#dashboard>.nc-health-title:first-child .sub{display:block;font-size:11px;font-weight:500;letter-spacing:.1px;margin-top:4px;color:#939ba7}
+#dashboard>.card,#dashboard>.nc-health-hero{border:1px solid #edf0f3!important;border-radius:27px!important;background:#fff!important;box-shadow:0 8px 32px #1a25350a!important}
+#dashboard>.nc-health-hero{padding:24px 21px 26px!important}
+.nc-health-top{margin-bottom:18px}
+.nc-health-top strong{font-size:17px;font-weight:700;letter-spacing:-.4px}
+.nc-health-top button{width:35px;height:35px;padding:0;border-radius:12px!important;font-size:23px;line-height:1}
+.nc-health-sub{font-size:11px}
+.nc-ring{max-width:215px}
+.nc-ring .track{stroke:#f0f1f4;stroke-width:11}
+.nc-ring .value{stroke:#f27a50;stroke-width:11}
+.nc-ring-center small{font-size:12px}
+.nc-ring-center b{font-size:clamp(29px,8.8vw,40px);font-weight:750;color:#171e29}
+.nc-ring-facts{gap:19px}
+.nc-ring-fact .nc-dot{width:8px;height:8px}
+.nc-ring-fact b{font-size:19px;font-weight:750;letter-spacing:-.5px}
+.nc-health-title{font-size:20px!important;letter-spacing:-.7px;margin:25px 5px 12px!important}
+.nc-health-macros{margin-top:0;gap:10px}
+.nc-health-macro{background:transparent;border-radius:16px;padding:6px 2px 8px}
+.nc-mini-ring{width:70px;height:70px}
+.nc-mini-ring span{font-size:24px}
+.nc-health-macro strong{font-size:13px;font-weight:700;margin-top:11px}
+.nc-health-macro small{font-size:11px;letter-spacing:-.2px}
+.nc-health-spend{padding:21px!important}
+.nc-health-spend b{font-size:30px;letter-spacing:-1px;color:#17202b}
+.nc-health-spend .btn{background:#172336;color:#fff;box-shadow:none;border-radius:15px;padding:13px}
+.nc-health-quick{gap:10px;margin:16px 0 23px}
+.nc-health-quick button{background:#fff;border:1px solid #edf0f3;border-radius:19px;padding:17px 4px 13px;font-weight:600;box-shadow:0 6px 20px #19263808}
+.nc-health-quick button span{font-size:24px;margin-bottom:7px}
+#dashboard #nc-stats .card,#dashboard #nc-favorites .card{border-radius:25px}
+#dashboard .nc-old-metrics{display:none!important}
+.tabs{left:50%;transform:translateX(-50%);width:min(100%,720px);bottom:0;background:#fffffff2!important;border-top:1px solid #eef0f4!important;box-shadow:0 -8px 30px #18263809;display:flex;align-items:center;justify-content:space-around;padding:11px 6px calc(9px + env(safe-area-inset-bottom));z-index:12}
+.tabs button{width:20%;flex:1;min-width:0;color:#a1a9b3!important;font-weight:600;border-radius:16px;padding:7px 0!important}
+.tabs button.active{background:transparent!important;color:#1c2736!important}
+.tabs button:before{font-size:24px;line-height:1.3}
+.tabs button:after{font-size:10px;margin-top:3px}
+.tabs button[data-tab=meals]{background:transparent!important}
+.tabs button[data-tab=meals]:before{content:'+';display:grid;place-items:center;margin:-12px auto 2px;background:#1b2638;color:#fff;width:45px;height:45px;border-radius:50%;font-size:32px;font-weight:400;box-shadow:0 6px 13px #19253722}
+.tabs button[data-tab=meals]:after{content:'บันทึก'}
+.tabs button[data-tab=dashboard]:before{content:'⌂'}
+.tabs button[data-tab=inventory]:before{content:'▥'}
+.tabs button[data-tab=catalog]:before{content:'▦'}
+.tabs button[data-tab=settings]:before{content:'⚙'}
+[data-nc-theme=ivory] .card:not(.nc-health-hero){background:#fff}
+@media(min-width:720px){.tabs{border-radius:22px 22px 0 0}}
+</style><script>
+(function(){
+ const key='nutricost.appearance.v2';
+ try{
+ const p=JSON.parse(localStorage.getItem(key)||'null');
+ if(!p){localStorage.setItem(key,JSON.stringify({theme:'ivory',accent:'#e87550',font:'ibm',compact:false}));document.documentElement.dataset.ncTheme='ivory';document.documentElement.style.setProperty('--nc-accent','#e87550')}
+ }catch(e){}
+})();
+</script>
+<style>
+.nc-meal-table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;overflow:hidden;border-radius:15px;border:1px solid var(--nc-border)}
+.nc-meal-table th{background:var(--nc-panel2);font-size:11px;color:var(--nc-muted);padding:11px 7px;text-align:right;font-weight:650}
+.nc-meal-table th:first-child,.nc-meal-table td:first-child{text-align:left}
+.nc-meal-table td{padding:12px 7px;text-align:right;border-top:1px solid var(--nc-border)}
+.nc-meal-table tr:last-child td{font-weight:750;background:color-mix(in srgb,var(--nc-accent) 8%,var(--nc-panel))}
+.nc-meal-table-wrap{overflow-x:auto}
+.nc-meal-table{min-width:340px}
+.nc-meal-tag{background:var(--nc-panel2);border-radius:12px;padding:6px 10px;font-size:12px;color:var(--nc-muted)}
+</style>
+<script>
+(function(){
+const old=drawMeals;
+drawMeals=function(){
+ old();
+ const section=document.getElementById('meals');
+ const entries=db.meals.filter(m=>m.date===filterDate);
+ const map={};
+ for(const m of entries){(map[m.name]??=[]).push(m)}
+ const rows=Object.entries(map).map(([name,ms])=>{
+ const t=totals(ms.flatMap(m=>m.lines));
+ return '<tr><td>'+esc(name)+'</td><td>'+num(t.k)+'</td><td>'+num(t.p)+'</td><td>'+num(t.c)+'</td><td>'+num(t.f)+'</td><td>'+money(t.cost)+'</td></tr>';
+ }).join('');
+ const t=totals(entries.flatMap(m=>m.lines));
+ const summary='<div class="card"><div class="row"><strong>ตารางสรุปแยกตามมื้อ</strong><span class="nc-meal-tag">'+esc(filterDate)+'</span></div><div class="nc-meal-table-wrap"><table class="nc-meal-table"><thead><tr><th>มื้อ</th><th>kcal</th><th>โปรตีน</th><th>คาร์บ</th><th>ไขมัน</th><th>บาท</th></tr></thead><tbody>'+rows+'<tr><td>รวมทั้งวัน</td><td>'+num(t.k)+'</td><td>'+num(t.p)+'</td><td>'+num(t.c)+'</td><td>'+num(t.f)+'</td><td>'+money(t.cost)+'</td></tr></tbody></table></div></div>';
+ const history=[...section.querySelectorAll('h2')].find(e=>e.textContent.includes('ประวัติมื้ออาหาร'));
+ if(history)history.insertAdjacentHTML('beforebegin',summary);
+};
+})();
+</script>
+<style>
+.nc-easy-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:12px 0 23px}
+.nc-easy-summary>div{background:var(--nc-panel);border:1px solid var(--nc-border);border-radius:20px;padding:17px 8px;text-align:center}
+.nc-easy-summary b{display:block;font-size:clamp(16px,4.8vw,23px);letter-spacing:-.6px}
+.nc-easy-summary small{font-size:11px;color:var(--nc-muted)}
+.nc-easy-meal{border:1px solid var(--nc-border);border-radius:22px;background:var(--nc-panel);padding:18px;margin:11px 0;box-shadow:0 6px 22px #11182708}
+.nc-easy-meal-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.nc-easy-meal h3{font-size:17px;margin:0}
+.nc-easy-meal .sub{font-size:12px}
+.nc-easy-add{border:0;border-radius:14px;background:#1b2739;color:#fff;padding:11px 14px;font-size:13px;font-weight:650}
+.nc-easy-line{display:flex;justify-content:space-between;gap:12px;padding-top:12px;margin-top:12px;border-top:1px solid var(--nc-border);font-size:13px}
+.nc-easy-line small{color:var(--nc-muted)}
+.nc-easy-editor{border:1px solid var(--nc-border);border-radius:24px;padding:20px;background:var(--nc-panel)}
+.nc-easy-editor label{display:block;margin:15px 0 6px;font-size:12px;color:var(--nc-muted)}
+.nc-easy-editor select,.nc-easy-editor input{width:100%;min-height:47px;border-radius:14px}
+.nc-easy-editor .btn{border-radius:14px;min-height:45px}
+.nc-easy-draft{padding:10px 0;border-bottom:1px solid var(--nc-border)}
+.nc-easy-advanced{margin-top:16px}
+.nc-easy-advanced summary{cursor:pointer;font-size:13px;color:var(--nc-muted)}
+</style>
+<script>
+(function(){
+const previousDashboard=drawDashboard;
+function easyHome(){
+ const root=document.getElementById('dashboard');
+ if(!root)return;
+ const today=db.meals.filter(m=>m.date===localDate()),sum=totals(today.flatMap(m=>m.lines));
+ const names=['มื้อ 1','มื้อ 2','มื้อ 3'];
+ const cards=names.map((name,i)=>{
+  const meals=today.filter(m=>m.name===name);
+  const lines=meals.flatMap(m=>m.lines);
+  const t=totals(lines);
+  const entries=lines.map(l=>'<div class="nc-easy-line"><div>'+esc(food(l.foodId)?.name||'วัตถุดิบ')+' <small>'+num(l.qty)+' '+esc(unit(food(l.foodId)))+'</small></div><div>'+num(totals([l]).k)+' kcal</div></div>').join('');
+  return '<div class="nc-easy-meal"><div class="nc-easy-meal-head"><div><h3>'+name+'</h3><div class="sub">'+(lines.length?num(t.k)+' kcal · '+money(t.cost):'ยังไม่บันทึกอาหาร')+'</div></div><button class="nc-easy-add" onclick="ncEasyOpen('+i+')">+ เพิ่มอาหาร</button></div>'+entries+'</div>';
+ }).join('');
+ const other=today.filter(m=>!names.includes(m.name));
+ root.innerHTML='<div class="nc-health-title" style="margin-top:12px!important">อาหารของฉัน</div><div class="sub" style="margin-left:5px">'+localDate()+'</div>'+
+ '<div class="nc-easy-summary"><div><b>'+num(sum.k)+'</b><small>แคลอรี</small></div><div><b>'+num(sum.p)+' ก.</b><small>โปรตีน</small></div><div><b>'+money(sum.cost)+'</b><small>ค่าอาหาร</small></div></div>'+
+ '<h2 style="margin:0 4px 13px">มื้ออาหารวันนี้</h2>'+cards+
+ (other.length?'<div class="card"><strong>มื้ออื่น ๆ</strong>'+other.map(m=>'<div class="nc-easy-line"><span>'+esc(m.name)+'</span><span>'+num(totals(m.lines).k)+' kcal · '+money(totals(m.lines).cost)+'</span></div>').join('')+'</div>':'')+
+ '<button class="btn full" onclick="ncEasyOpen(3)" style="margin:12px 0 20px">+ เพิ่มมื้ออื่น</button>'+
+ '<details class="nc-easy-advanced"><summary>ดูสถิติและรายการโปรด</summary><div id="nc-stats"></div><div id="nc-favorites"></div></details>';
+ if(typeof stats==='function')stats();
+ if(typeof favorites==='function')favorites();
+}
+drawDashboard=function(){previousDashboard();easyHome()};
+window.ncEasyOpen=function(index){
+ const names=['มื้อ 1','มื้อ 2','มื้อ 3','ของว่าง'];
+ mealName=names[index]||'มื้อ 1';
+ mealDate=localDate();
+ show('meals');
+};
+const oldMeals=drawMeals;
+drawMeals=function(){
+ oldMeals();
+ const root=document.getElementById('meals');
+ if(!root)return;
+ const oldMarkup=root.innerHTML;
+ const available=db.foods.filter(f=>stock(f.id)>0);
+ const chosen=available[0]?.id;
+ const lines=draft.map((d,i)=>'<div class="nc-easy-draft">'+esc(food(d.foodId)?.name||'วัตถุดิบ')+' · '+num(d.qty)+' '+esc(unit(food(d.foodId)))+' <button class="btn danger small" style="float:right" onclick="draft.splice('+i+',1);drawMeals()">ลบ</button></div>').join('');
+ root.innerHTML='<div class="nc-easy-editor"><button class="btn secondary small" onclick="show(\'dashboard\')">‹ กลับหน้าวันนี้</button><h2 style="margin:17px 0 5px">เพิ่มอาหาร</h2><div class="sub">เลือกวัตถุดิบ ใส่ปริมาณ แล้วบันทึก</div>'+
+ '<label>มื้ออาหาร</label><select id="mealName" onchange="mealName=this.value">'+['มื้อ 1','มื้อ 2','มื้อ 3','ของว่าง','มื้อเช้า','มื้อกลางวัน','มื้อเย็น','กำหนดเอง'].map(x=>'<option '+(x===mealName?'selected':'')+'>'+x+'</option>').join('')+'</select>'+
+ '<label>ชื่อมื้ออื่น ๆ (ถ้าต้องการ)</label><input id="nc-custom-meal" maxlength="70" placeholder="เช่น หลังออกกำลังกาย">'+
+ '<label>วัตถุดิบ</label><select id="addFood" onchange="updateAvail()">'+opts(available,chosen)+'</select><div id="avail" class="sub"></div>'+
+ '<label>ปริมาณที่กิน</label><input id="eatQty" type="number" min="0.01" step="any" inputmode="decimal" placeholder="เช่น 100">'+
+ '<button class="btn secondary full" style="margin-top:12px" onclick="addDraft()">+ เพิ่มในมื้อนี้</button>'+
+ '<div style="margin:18px 0 8px"><strong>รายการที่เลือก ('+draft.length+')</strong></div>'+ (lines||'<div class="sub">ยังไม่ได้เลือกอาหาร</div>')+
+ '<button class="btn full" style="margin-top:20px" onclick="commitMeal()" '+(!draft.length?'disabled':'')+'>บันทึกมื้ออาหาร</button>'+
+ (!available.length?'<div class="notice">ไม่มีวัตถุดิบในคลัง <button class="btn small" onclick="show(\'inventory\')">เพิ่มของในคลัง</button></div>':'')+
+ '<details class="nc-easy-advanced"><summary>ดูประวัติและรายละเอียดเพิ่มเติม</summary><div id="nc-easy-original"></div></details></div>';
+ const advanced=root.querySelector('#nc-easy-original');
+ if(advanced){advanced.innerHTML=oldMarkup;advanced.querySelectorAll('[id]').forEach(el=>{el.removeAttribute('id')});}
+ updateAvail();
+};
+const originalCommit=commitMeal;
+commitMeal=function(){const before=db.meals.length;originalCommit();if(db.meals.length>before)show('dashboard')};
+})();
+</script>
+<script>(function(){const prev=drawDashboard;drawDashboard=function(){prev();const root=document.getElementById('dashboard');if(!root)return;const title=root.querySelector('.nc-health-title');if(title&&title.textContent.includes('อาหารของฉัน'))title.textContent='✨ อาหารของฉัน';const cards=root.querySelectorAll('.nc-easy-summary>div');['🔥','💪','💸'].forEach((e,i)=>{if(cards[i])cards[i].insertAdjacentHTML('afterbegin','<span class="nc-play-icon" aria-hidden="true">'+e+'</span>')});const heads=root.querySelectorAll('.nc-easy-meal h3');['☀️','🥗','🌙'].forEach((e,i)=>{if(heads[i])heads[i].insertAdjacentHTML('afterbegin','<span class="nc-meal-emoji" aria-hidden="true">'+e+'</span>')});root.querySelectorAll('.nc-easy-add').forEach(b=>b.textContent='＋ เพิ่ม');};})();</script>
+<style>
+.nc-stock-header{display:flex;align-items:center;justify-content:space-between;margin:12px 0 16px}.nc-stock-header h2{font-size:25px;margin:0}.nc-stock-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.nc-stock-tile{background:var(--nc-panel);border:1px solid var(--nc-border);border-radius:22px;padding:17px 13px;box-shadow:0 8px 24px #34305e0a}.nc-stock-tile .emoji{font-size:28px;display:block;margin-bottom:10px}.nc-stock-tile strong{display:block;font-size:14px}.nc-stock-tile small{display:block;color:var(--nc-muted);font-size:11px;margin-top:5px}.nc-stock-tile b{font-size:18px}.nc-stock-progress{height:7px;background:var(--nc-border);border-radius:9px;margin:13px 0 7px;overflow:hidden}.nc-stock-progress i{display:block;height:100%;background:linear-gradient(90deg,#61c9b0,#7765ee);border-radius:9px}.nc-stock-filters{display:flex;gap:7px;overflow-x:auto;padding:3px 0 14px}.nc-stock-filters button{white-space:nowrap;border:1px solid var(--nc-border);background:var(--nc-panel);color:var(--nc-text);border-radius:20px;padding:9px 12px;font-size:12px}.nc-stock-filters button.active{background:#735cf4;color:white;border-color:#735cf4}.nc-stock-add{background:var(--nc-panel);border-radius:23px;border:1px solid var(--nc-border);padding:18px;margin-top:19px}.nc-stock-add summary{font-weight:700;cursor:pointer}.nc-stock-warning{color:#d17a37!important}.nc-extra-nutrients{margin-top:12px;padding:12px;background:var(--nc-panel2);border-radius:14px}.nc-extra-nutrients label{font-size:12px}
+</style>
+<script>
+(function(){
+let stockFilter='ทั้งหมด';
+const groupsForStock=['ทั้งหมด','เนื้อสัตว์','ไข่','ผัก','หัวและอาหารประเภทแป้ง','เครื่องปรุง'];
+function stockEmoji(f){const g=f?.group||'',name=f?.name||'';if(g.includes('เครื่องปรุง')||/ซอส|น้ำปลา|ซีอิ๊ว|เกลือ|น้ำตาล/.test(name))return '🧂';if(g.includes('เนื้อ'))return '🥩';if(g.includes('ไข่'))return '🥚';if(g.includes('ผัก'))return '🥦';if(g.includes('แป้ง')||g.includes('ข้าว'))return '🍚';if(g.includes('ผลไม้'))return '🍎';if(g.includes('ปลา'))return '🐟';return '🛒'}
+const previousInventory=drawInventory;
+drawInventory=function(){
+ previousInventory();
+ const root=document.getElementById('inventory');
+ const original=root.innerHTML;
+ const active=db.foods.filter(f=>stock(f.id)>0&&(stockFilter==='ทั้งหมด'||f.group===stockFilter));
+ const tiles=active.map(f=>{
+ const lots=db.lots.filter(l=>l.foodId===f.id&&remaining(l)>0);
+ const total=lots.reduce((s,l)=>s+remaining(l),0),purchased=lots.reduce((s,l)=>s+l.qty,0);
+ const pct=Math.max(0,Math.min(100,purchased?total/purchased*100:0));
+ const nearest=lots.map(l=>l.expiry).filter(Boolean).sort()[0];
+ return '<div class="nc-stock-tile"><span class="emoji">'+stockEmoji(f)+'</span><strong>'+esc(f.name)+'</strong><small>คงเหลือ</small><b>'+num(total)+' '+esc(unit(f))+'</b><div class="nc-stock-progress"><i style="width:'+pct+'%"></i></div><small'+(nearest&&nearest<localDate()?' class="nc-stock-warning"':'')+'>'+(nearest?'📅 หมดอายุ '+esc(nearest):'📦 '+lots.length+' ล็อต')+'</small></div>';
+ }).join('');
+ root.innerHTML='<div class="nc-stock-header"><div><h2>🧺 คลังของฉัน</h2><div class="sub">วัตถุดิบที่มีอยู่ในบ้าน</div></div><button class="btn small" onclick="document.getElementById(\'nc-stock-form\').open=true;document.getElementById(\'nc-stock-form\').scrollIntoView({behavior:\'smooth\'})">＋ ซื้อเพิ่ม</button></div>'+
+ '<div class="nc-stock-filters">'+groupsForStock.map(g=>'<button data-nc-stock-filter="'+esc(g)+'" class="'+(g===stockFilter?'active':'')+'">'+esc(g)+'</button>').join('')+'</div>'+
+ '<div class="nc-stock-grid">'+(tiles||'<div class="sub">ยังไม่มีวัตถุดิบในหมวดนี้</div>')+'</div>'+
+ '<details class="nc-stock-add" id="nc-stock-form"><summary>🛍️ เพิ่มวัตถุดิบที่ซื้อ</summary><div id="nc-stock-original"></div></details>';
+ const target=root.querySelector('#nc-stock-original');target.innerHTML=original;
+ const originalHeading=target.querySelector('h2');if(originalHeading)originalHeading.remove();
+ target.querySelectorAll('[id]').forEach(el=>{if(el.id==='nc-stock-original')return;});
+ root.querySelectorAll('[data-nc-stock-filter]').forEach(b=>b.onclick=()=>{stockFilter=b.dataset.ncStockFilter;drawInventory()});
+};
+const oldCatalog=drawCatalog;
+drawCatalog=function(){
+ oldCatalog();
+ const root=document.getElementById('catalog'),form=root.querySelector('#newName')?.closest('.card');
+ if(!form)return;
+ const group=form.querySelector('#newGroup');if(group&&!Array.from(group.options).some(o=>o.value==='เครื่องปรุง'))group.add(new Option('เครื่องปรุง','เครื่องปรุง'));
+ const block=document.createElement('div');block.className='nc-extra-nutrients';block.innerHTML='<strong>🧂 สารอาหารเพิ่มเติม</strong><div class="sub">กรอกตามฉลากต่อปริมาณอ้างอิงด้านบน (ไม่ทราบให้เว้นว่าง)</div><div class="grid"><div><label>น้ำตาล (กรัม)</label><input id="newSugar" type="number" min="0" step="any" placeholder="ไม่ทราบ"></div><div><label>โซเดียม (มก.)</label><input id="newSodium" type="number" min="0" step="any" placeholder="ไม่ทราบ"></div></div>';form.insertBefore(block,form.querySelector('button'));
+ root.querySelectorAll('.item').forEach(el=>{const name=el.querySelector('strong')?.textContent;const foodItem=db.foods.find(f=>f.name===name);if(!foodItem)return;const v=[];if(foodItem.sugar!=null)v.push('🍬 น้ำตาล '+num(foodItem.sugar)+' ก.');if(foodItem.sodium!=null)v.push('🧂 โซเดียม '+num(foodItem.sodium)+' มก.');if(v.length)el.insertAdjacentHTML('beforeend','<div class="sub">'+v.join(' · ')+'</div>')});
+};
+const oldAddFood=addFood;
+addFood=function(){
+ const s=document.getElementById('newSugar'),na=document.getElementById('newSodium');
+ const sugar=s?.value.trim(),sodium=na?.value.trim();
+ if((sugar&&(!Number.isFinite(Number(sugar))||Number(sugar)<0))||(sodium&&(!Number.isFinite(Number(sodium))||Number(sodium)<0)))return alert('น้ำตาลหรือโซเดียมไม่ถูกต้อง');
+ const before=db.foods.length;oldAddFood();
+ if(db.foods.length>before){const f=db.foods[db.foods.length-1];if(sugar!=='')f.sugar=Number(sugar);if(sodium!=='')f.sodium=Number(sodium);save();drawCatalog()}
+};
+const prevHome=drawDashboard;
+drawDashboard=function(){
+ prevHome();
+ const root=document.getElementById('dashboard'),today=db.meals.filter(m=>m.date===localDate());
+ let sugar=0,sodium=0,unknownSugar=false,unknownSodium=false;
+ for(const m of today)for(const l of m.lines){const f=food(l.foodId);if(!f||!f.base)continue;const factor=Number(l.qty)/Number(f.base);if(f.sugar==null)unknownSugar=true;else sugar+=Number(f.sugar)*factor;if(f.sodium==null)unknownSodium=true;else sodium+=Number(f.sodium)*factor}
+ const cards=root.querySelector('.nc-easy-summary');if(cards)cards.insertAdjacentHTML('afterend','<div class="sub" style="padding:4px 5px 10px">🍬 น้ำตาล '+num(sugar)+' ก.'+(unknownSugar?' (ข้อมูลไม่ครบ)':'')+'　·　🧂 โซเดียม '+num(sodium)+' มก.'+(unknownSodium?' (ข้อมูลไม่ครบ)':'')+'</div>');
+};
+})();
+</script>
+
+<style>
+.nc-groups{display:flex;gap:8px;overflow-x:auto;padding:5px 0 15px;scrollbar-width:none}
+.nc-groups button{flex:0 0 auto;border:1px solid var(--nc-border);background:var(--nc-panel);color:var(--nc-text);border-radius:17px;padding:10px 13px;font-size:12px;font-weight:600}
+.nc-groups button.active{background:linear-gradient(120deg,#725cf5,#9977fa);color:white;border-color:transparent}
+.nc-unit-hint{font-size:11px;color:var(--nc-muted);padding-top:5px}
+.nc-category-tag{font-size:11px;color:var(--nc-muted);margin-top:5px}
+</style>
+<script>
+(function(){
+const categories=[
+ {id:'ทั้งหมด',label:'✨ ทั้งหมด'},
+ {id:'โปรตีน',label:'🥩 หมู่ 1 โปรตีน'},
+ {id:'คาร์โบไฮเดรต',label:'🍚 หมู่ 2 แป้ง'},
+ {id:'วิตามิน',label:'🥦 หมู่ 3 ผัก'},
+ {id:'ผลไม้',label:'🍎 หมู่ 4 ผลไม้'},
+ {id:'ไขมัน',label:'🥑 หมู่ 5 ไขมัน'},
+ {id:'เครื่องปรุง',label:'🧂 เครื่องปรุง'}
+];
+const subgroups={
+ 'โปรตีน':['เนื้อสัตว์','ไข่','ปลาและอาหารทะเล','ถั่วและผลิตภัณฑ์จากถั่ว','นมและผลิตภัณฑ์นม'],
+ 'คาร์โบไฮเดรต':['ข้าวและธัญพืช','หัวและอาหารประเภทแป้ง','ขนมปังและเส้น'],
+ 'วิตามิน':['ผัก'],
+ 'ผลไม้':['ผลไม้'],
+ 'ไขมัน':['น้ำมันและไขมัน','ถั่วและเมล็ดพืช'],
+ 'เครื่องปรุง':['เครื่องปรุง','ซอสและน้ำจิ้ม','เครื่องเทศ']
+};
+const guessGroup=f=>{
+ if(f?.mainGroup)return f.mainGroup;
+ const g=f?.group||'';
+ if(g.includes('เครื่องปรุง')||g.includes('ซอส')||g.includes('เครื่องเทศ'))return 'เครื่องปรุง';
+ if(['เนื้อสัตว์','ไข่','ปลาและอาหารทะเล','ถั่วและผลิตภัณฑ์จากถั่ว','นมและผลิตภัณฑ์นม'].includes(g))return 'โปรตีน';
+ if(g.includes('ข้าว')||g.includes('แป้ง')||g.includes('ธัญพืช')||g.includes('เส้น'))return 'คาร์โบไฮเดรต';
+ if(g.includes('ผัก'))return 'วิตามิน';
+ if(g.includes('ผลไม้'))return 'ผลไม้';
+ if(g.includes('น้ำมัน')||g.includes('ไขมัน'))return 'ไขมัน';
+ return 'อื่น ๆ';
+};
+const defaultUnit=g=>g==='ไข่'?'ฟอง':g==='ซอสและน้ำจิ้ม'?'ml':g==='เครื่องปรุง'?'ml':g==='น้ำมันและไขมัน'?'ml':'g';
+let mainSelected='ทั้งหมด',inventoryMain='ทั้งหมด';
+function selectMain(main){
+ const select=document.getElementById('newGroup');if(!select)return;
+ const current=select.value;
+ const optsList=subgroups[main]||['อื่น ๆ'];
+ select.innerHTML=optsList.map(g=>'<option value="'+esc(g)+'" '+(g===current?'selected':'')+'>'+esc(g)+'</option>').join('');
+ updateUnit(true);
+}
+function updateUnit(force){
+ const group=document.getElementById('newGroup'),unitSelect=document.getElementById('newUnit'),base=document.getElementById('newBase');
+ if(!group||!unitSelect)return;
+ const desired=defaultUnit(group.value);
+ if(force||!unitSelect.dataset.userChanged){
+  unitSelect.value=desired;
+  if(base&&(!base.dataset.userChanged))base.value=desired==='ฟอง'?'1':'100';
+ }
+ const hint=document.getElementById('nc-unit-hint');
+ if(hint)hint.textContent='หน่วยแนะนำ: '+(desired==='ฟอง'?'ฟอง':desired==='ml'?'มิลลิลิตร':'กรัม')+' (เปลี่ยนได้)';
+}
+const oldCatalog=drawCatalog;
+drawCatalog=function(){
+ oldCatalog();
+ const root=document.getElementById('catalog');if(!root)return;
+ const form=root.querySelector('#newName')?.closest('.card');
+ const list=root.querySelector('.list');
+ if(list){
+ const filtered=db.foods.filter(f=>mainSelected==='ทั้งหมด'||guessGroup(f)===mainSelected);
+ list.innerHTML=filtered.map(f=>'<div class="item"><div class="row"><strong>'+esc(f.name)+'</strong><span class="pill">'+num(stock(f.id))+' '+esc(f.unit)+'</span></div><div class="nc-category-tag">'+esc(guessGroup(f))+' · '+esc(f.group)+'</div><div class="sub">ต่อ '+num(f.base)+' '+esc(f.unit)+' · '+num(f.k)+' kcal · โปรตีน '+num(f.p)+'g · คาร์บ '+num(f.c)+'g · ไขมัน '+num(f.f)+'g</div>'+(f.sugar!=null||f.sodium!=null?'<div class="sub">'+(f.sugar!=null?'🍬 '+num(f.sugar)+' ก. ':'')+(f.sodium!=null?'🧂 '+num(f.sodium)+' มก.':'')+'</div>':'')+'</div>').join('')||'<div class="empty">ไม่มีวัตถุดิบในหมวดนี้</div>';
+ const filters=document.createElement('div');filters.className='nc-groups';
+ filters.innerHTML=categories.map(c=>'<button type="button" data-main-filter="'+c.id+'" class="'+(mainSelected===c.id?'active':'')+'">'+c.label+'</button>').join('');
+ list.before(filters);
+ filters.querySelectorAll('button').forEach(b=>b.onclick=()=>{mainSelected=b.dataset.mainFilter;drawCatalog()});
+ const oldChips=root.querySelector('.chips');if(oldChips)oldChips.style.display='none';
+ }
+ if(form){
+ const group=form.querySelector('#newGroup');
+ if(group){
+ const wrap=document.createElement('div');
+ wrap.innerHTML='<label>อาหารหลัก 5 หมู่ / หมวดเสริม</label><select id="nc-main-group">'+categories.filter(x=>x.id!=='ทั้งหมด').map(x=>'<option value="'+x.id+'">'+x.label+'</option>').join('')+'</select>';
+ group.parentNode.insertBefore(wrap,group);
+ const main=document.getElementById('nc-main-group');
+ main.value='โปรตีน';
+ main.onchange=()=>selectMain(main.value);
+ group.onchange=()=>updateUnit(true);
+ const unitSelect=document.getElementById('newUnit');
+ unitSelect.onchange=()=>{unitSelect.dataset.userChanged='1'};
+ const base=document.getElementById('newBase');
+ base.onchange=()=>{base.dataset.userChanged='1'};
+ unitSelect.insertAdjacentHTML('afterend','<div id="nc-unit-hint" class="nc-unit-hint"></div>');
+ selectMain(main.value);
+ }
+ }
+};
+const oldAdd=addFood;
+addFood=function(){
+ const main=document.getElementById('nc-main-group')?.value||'โปรตีน';
+ const before=db.foods.length;
+ oldAdd();
+ if(db.foods.length>before){db.foods[db.foods.length-1].mainGroup=main;save();drawCatalog()}
+};
+const oldInventory=drawInventory;
+drawInventory=function(){
+ oldInventory();
+ const root=document.getElementById('inventory'),grid=root?.querySelector('.nc-stock-grid');
+ if(!grid)return;
+ const oldFilters=root.querySelector('.nc-stock-filters');
+ if(oldFilters)oldFilters.style.display='none';
+ const filter=document.createElement('div');filter.className='nc-groups';
+ filter.innerHTML=categories.map(c=>'<button type="button" data-pantry-main="'+c.id+'" class="'+(inventoryMain===c.id?'active':'')+'">'+c.label+'</button>').join('');
+ grid.before(filter);
+ const tiles=grid.querySelectorAll('.nc-stock-tile');
+ const foods=db.foods.filter(f=>stock(f.id)>0);
+ // Tiles are generated in the same order as the active stock foods.
+ tiles.forEach((tile,i)=>{const f=foods[i];if(f)tile.style.display=inventoryMain==='ทั้งหมด'||guessGroup(f)===inventoryMain?'':'none'});
+ filter.querySelectorAll('button').forEach(b=>b.onclick=()=>{inventoryMain=b.dataset.pantryMain;drawInventory()});
+};
+})();
+</script>
+
+<style>
+.nc-unit-picker{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:9px}
+.nc-unit-choice{min-height:79px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border-radius:17px;border:1px solid var(--nc-border);background:var(--nc-panel);color:var(--nc-text);font-size:12px;font-weight:600;transition:transform .12s,border-color .12s}
+.nc-unit-choice span{font-size:23px}.nc-unit-choice.active{border:2px solid #8266f5;background:color-mix(in srgb,#8266f5 10%,var(--nc-panel));color:var(--nc-text);box-shadow:0 5px 15px #8266f51b}
+.nc-unit-choice:active{transform:scale(.97)}
+.nc-unit-preview{background:var(--nc-panel2);border-radius:14px;padding:11px 13px;font-size:12px;margin-top:12px;color:var(--nc-muted)}
+.nc-unit-preview b{color:var(--nc-text)}
+</style>
+<script>
+(function(){
+const unitChoices=[['g','⚖️','กรัม'],['ฟอง','🥚','ฟอง'],['ml','💧','มิลลิลิตร'],['ชิ้น','🍞','ชิ้น'],['ลูก','🍎','ลูก'],['ช้อนชา','🥄','ช้อนชา']];
+const prior=drawCatalog;
+function syncUnitPicker(){
+ const select=document.getElementById('newUnit'),picker=document.getElementById('nc-unit-picker');
+ if(!select||!picker)return;
+ picker.querySelectorAll('[data-nc-unit]').forEach(btn=>{const selected=btn.dataset.ncUnit===select.value;btn.classList.toggle('active',selected);btn.setAttribute('aria-pressed',String(selected))});
+ const preview=document.getElementById('nc-unit-preview'),name=document.getElementById('newName')?.value.trim()||'วัตถุดิบ',base=document.getElementById('newBase')?.value||'100';
+ if(preview)preview.textContent='ตัวอย่าง: '+name+' — '+base+' '+(unitChoices.find(x=>x[0]===select.value)?.[2]||select.value);
+}
+drawCatalog=function(){
+ prior();
+ const select=document.getElementById('newUnit');if(!select)return;
+ for(const [value,,label] of unitChoices){if(!Array.from(select.options).some(x=>x.value===value))select.add(new Option(label,value))}
+ const picker=document.createElement('div');picker.id='nc-unit-picker';picker.className='nc-unit-picker';
+ picker.innerHTML=unitChoices.map(([value,emoji,label])=>'<button type="button" class="nc-unit-choice" data-nc-unit="'+value+'" aria-pressed="false"><span aria-hidden="true">'+emoji+'</span>'+label+'</button>').join('');
+ const title=document.createElement('label');title.textContent='เลือกหน่วยที่ใช้บันทึก';
+ select.before(title);select.after(picker);
+ // Keep the native selector as an accessible fallback, but emphasize the tap targets.
+ select.style.position='absolute';select.style.width='1px';select.style.height='1px';select.style.opacity='0';select.style.pointerEvents='none';select.tabIndex=-1;
+ const preview=document.createElement('div');preview.id='nc-unit-preview';preview.className='nc-unit-preview';picker.after(preview);
+ picker.querySelectorAll('button').forEach(btn=>btn.onclick=()=>{
+   select.value=btn.dataset.ncUnit;select.dataset.userChanged='1';
+   const base=document.getElementById('newBase');if(base&&!base.dataset.userChanged)base.value=select.value==='ฟอง'?'1':'100';
+   syncUnitPicker();
+ });
+ select.addEventListener('change',syncUnitPicker);
+ const group=document.getElementById('newGroup');if(group)group.addEventListener('change',()=>setTimeout(syncUnitPicker,0));
+ const main=document.getElementById('nc-main-group');if(main)main.addEventListener('change',()=>setTimeout(syncUnitPicker,0));
+ document.getElementById('newName')?.addEventListener('input',syncUnitPicker);
+ document.getElementById('newBase')?.addEventListener('input',syncUnitPicker);
+ syncUnitPicker();
+};
+})();
+</script>
+
+<style>
+.nc-quantity-unit{display:flex;align-items:center;gap:10px;margin-top:8px}
+.nc-quantity-unit input{flex:1;min-width:0}
+.nc-quantity-unit .nc-unit-badge{flex:0 0 auto;border-radius:13px;padding:12px 14px;background:var(--nc-panel2);border:1px solid var(--nc-border);font-size:13px;font-weight:700;white-space:nowrap;color:var(--nc-text)}
+.nc-quantity-hint{font-size:12px;color:var(--nc-muted);margin:7px 0}
+</style>
+<script>
+(function(){
+const readableUnit=f=>({g:'กรัม',ml:'มิลลิลิตร','ฟอง':'ฟอง','ชิ้น':'ชิ้น','ลูก':'ลูก','ช้อนชา':'ช้อนชา'})[f?.unit]||f?.unit||'หน่วย';
+const emojiUnit=f=>({g:'⚖️',ml:'💧','ฟอง':'🥚','ชิ้น':'🍞','ลูก':'🍎','ช้อนชา':'🥄'})[f?.unit]||'📦';
+function decorate(inputId,foodSelectId){
+ const input=document.getElementById(inputId),select=document.getElementById(foodSelectId);
+ if(!input||!select)return;
+ const wrapper=document.createElement('div');wrapper.className='nc-quantity-unit';
+ input.parentNode.insertBefore(wrapper,input);wrapper.appendChild(input);
+ const badge=document.createElement('span');badge.className='nc-unit-badge';wrapper.appendChild(badge);
+ const hint=document.createElement('div');hint.className='nc-quantity-hint';wrapper.after(hint);
+ function refresh(){const f=food(select.value);badge.textContent=emojiUnit(f)+' '+readableUnit(f);input.placeholder=f?.unit==='ฟอง'?'เช่น 6':f?.unit==='ml'?'เช่น 250':'เช่น 100';hint.textContent=f?'กรอกจำนวนเป็น'+readableUnit(f)+' · '+(inputId==='eatQty'?'คงเหลือ '+num(stock(f.id))+' '+readableUnit(f):'ระบบคำนวณต้นทุนตามหน่วยนี้'):''}
+ select.addEventListener('change',refresh);refresh();
+}
+const prevMeals=drawMeals;
+drawMeals=function(){prevMeals();decorate('eatQty','addFood')};
+const prevInventory=drawInventory;
+drawInventory=function(){prevInventory();decorate('lotQty','lotFood');const price=document.getElementById('lotPrice');if(price){price.placeholder='ราคาซื้อรวม (บาท)'}};
+})();
+</script>
+
+<style>
+.nc-macro-panel{background:var(--nc-panel);border:1px solid var(--nc-border);border-radius:23px;padding:17px;margin:0 0 18px;box-shadow:0 8px 24px #34305e0a}
+.nc-macro-title{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:15px}
+.nc-macro-title strong{font-size:16px}.nc-macro-title small{font-size:11px;color:var(--nc-muted)}
+.nc-macro-row{margin:12px 0 15px}.nc-macro-line{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px}
+.nc-macro-line b{font-size:14px}.nc-macro-line small{font-size:11px;color:var(--nc-muted)}
+.nc-macro-track{height:9px;background:var(--nc-panel2);border-radius:15px;overflow:hidden;margin-top:8px}
+.nc-macro-fill{height:100%;border-radius:15px;min-width:0}
+.nc-macro-note{font-size:11px;color:var(--nc-muted);line-height:1.6;margin-top:12px}
+</style>
+<script>
+(function(){
+const old=drawDashboard;
+drawDashboard=function(){
+ old();
+ const root=document.getElementById('dashboard');if(!root)return;
+ const lines=db.meals.filter(m=>m.date===localDate()).flatMap(m=>m.lines);
+ const t=totals(lines);
+ const metrics=[
+ ['💪 โปรตีน','p','g','#54c99c'],
+ ['🍚 คาร์บ','c','g','#e8ac5e'],
+ ['🥑 ไขมัน','f','g','#9877ed']
+ ];
+ const rows=metrics.map(([label,key,unit,color])=>{
+ const target=Number(db.goals?.[key])||0,amount=Number(t[key])||0;
+ const pct=target>0?amount/target*100:0;
+ const pctText=target>0?num(pct)+'%':'ยังไม่ตั้งเป้าหมาย';
+ return '<div class="nc-macro-row"><div class="nc-macro-line"><span>'+label+'</span><span><b>'+num(amount)+' '+unit+'</b> <small>/ '+(target>0?num(target)+' '+unit:'—')+'</small></span></div>'+
+ '<div class="nc-macro-track" role="progressbar" aria-label="'+label+'" aria-valuenow="'+Math.round(pct)+'" aria-valuemin="0" aria-valuemax="100"><div class="nc-macro-fill" style="width:'+Math.max(0,Math.min(100,pct))+'%;background:'+color+'"></div></div>'+
+ '<div style="text-align:right;font-size:11px;color:var(--nc-muted);margin-top:5px">'+pctText+' ของเป้าหมาย'+(pct>100?' · เกินเป้าหมาย':'')+'</div></div>';
+ }).join('');
+ const panel=document.createElement('div');panel.className='nc-macro-panel';
+ panel.innerHTML='<div class="nc-macro-title"><strong>📊 สารอาหารวันนี้</strong><small>เทียบเป้าหมายรายวัน</small></div>'+rows+'<div class="nc-macro-note">เปอร์เซ็นต์ = ปริมาณที่กิน ÷ เป้าหมายรายวัน × 100 · ปรับเป้าหมายได้ในตั้งค่า</div>';
+ const summary=root.querySelector('.nc-easy-summary');
+ if(summary){const sugar=summary.nextElementSibling;if(sugar&&sugar.classList.contains('sub')&&sugar.textContent.includes('น้ำตาล'))sugar.after(panel);else summary.after(panel)}
+ else root.prepend(panel);
+};
+})();
+</script>
+
+<style>
+.nc-extra-card{background:var(--nc-panel);border:1px solid var(--nc-border);border-radius:20px;padding:15px;margin:12px 0}
+.nc-extra-title{font-size:14px;font-weight:750;margin-bottom:8px}
+.nc-extra-small{font-size:12px;color:var(--nc-muted);line-height:1.6}
+.nc-extra-pill{display:inline-block;padding:6px 10px;border-radius:12px;background:var(--nc-panel2);font-size:12px;margin:3px 4px 3px 0}
+.nc-extra-alert{border-left:4px solid #e9ad54}
+.nc-extra-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.nc-extra-row input,.nc-extra-row select{min-width:0;flex:1}
+.nc-extra-button{border:0;border-radius:12px;padding:10px 12px;background:#7863eb;color:white;font-weight:700}
+</style>
+<script>
+(function(){
+const units=[['g','กรัม'],['kg','กิโลกรัม'],['ฟอง','ฟอง'],['ml','มิลลิลิตร'],['L','ลิตร'],['ชิ้น','ชิ้น'],['ลูก','ลูก'],['ช้อนชา','ช้อนชา']];
+function ratio(f,from){if(!f)return null;if(from===f.unit)return 1;if(from==='kg'&&f.unit==='g')return 1000;if(from==='g'&&f.unit==='kg')return .001;if(from==='L'&&f.unit==='ml')return 1000;if(from==='ml'&&f.unit==='L')return .001;const grams=Number(f.gramsPerUnit);if(grams>0){if(from==='g'&&f.unit==='ฟอง')return 1/grams;if(from==='ฟอง'&&f.unit==='g')return grams;if(from==='kg'&&f.unit==='ฟอง')return 1000/grams;if(from==='ฟอง'&&f.unit==='kg')return grams/1000}return null}
+function converter(inputId,selectId,mode){
+ const input=document.getElementById(inputId),sel=document.getElementById(selectId);if(!input||!sel)return;
+ const line=document.createElement('div');line.className='nc-extra-card';
+ line.innerHTML='<div class="nc-extra-title">🔁 หน่วยที่กรอก</div><div class="nc-extra-row"><select class="nc-convert-unit"></select><span class="nc-extra-small nc-convert-note"></span></div>';
+ const anchor=input.closest('.nc-quantity-unit')||input;anchor.after(line);
+ const pick=line.querySelector('select'),note=line.querySelector('.nc-convert-note');
+ function refresh(){const f=food(sel.value);if(!f)return;const prev=pick.value;pick.innerHTML=units.filter(x=>ratio(f,x[0])!==null).map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join('');pick.value=Array.from(pick.options).some(x=>x.value===prev)?prev:f.unit;note.textContent=pick.value===f.unit?'บันทึกเป็น '+f.unit:'แปลงเป็น '+f.unit}
+ sel.addEventListener('change',refresh);pick.addEventListener('change',refreshNote);input.addEventListener('input',refreshNote);refresh();function refreshNote(){const f=food(sel.value),mult=ratio(f,pick.value),v=Number(input.value);note.textContent=f&&mult!==null&&input.value!==''&&v>0?'≈ '+num(v*mult)+' '+f.unit+' ในคลัง':'บันทึกเป็น '+(f?.unit||'หน่วย')}refreshNote();
+ // Core functions read the original quantity input, so temporarily normalize before submit.
+ const action=mode==='meal'?'addDraft':'addLot',original=window[action];
+ if(typeof original==='function'&&!window['ncWrapped'+action]){
+ window['ncWrapped'+action]=true;
+ window[action]=function(){const selected=document.querySelector(mode==='meal'?'#meals .nc-convert-unit':'#inventory .nc-convert-unit');const quantity=document.getElementById(inputId),chosen=food(document.getElementById(selectId)?.value);
+ if(!selected||!quantity||!chosen)return original.apply(this,arguments);
+ const mult=ratio(chosen,selected.value);if(mult===null)return alert('หน่วยนี้ยังแปลงไม่ได้ กรุณาตั้งค่าน้ำหนักต่อหน่วย');
+ const raw=quantity.value,amount=Number(raw);if(!raw.trim()||!Number.isFinite(amount)||amount<=0)return alert('กรุณากรอกปริมาณมากกว่า 0');
+ const normalized=amount*mult;if(!Number.isFinite(normalized)||normalized<=0)return alert('ปริมาณที่แปลงไม่ถูกต้อง');
+ quantity.value=String(normalized);
+ try{return original.apply(this,arguments)}finally{if(quantity.isConnected)quantity.value=raw}
+ };
+ }
+}
+const prevCatalog=drawCatalog;
+drawCatalog=function(){
+ prevCatalog();
+ const base=document.getElementById('newBase'),form=base?.closest('.card');if(!form)return;
+ const field=document.createElement('div');field.innerHTML='<label>น้ำหนักต่อ 1 หน่วย (กรัม) — ถ้ามี เช่น ไข่ 1 ฟอง</label><input id="nc-grams-per-unit" type="number" min="0.01" step="any" placeholder="เช่น 50"><div class="nc-extra-small">ใช้แปลงระหว่างฟอง/ชิ้นกับกรัม (ระบุเฉพาะหน่วยที่เหมาะสม)</div><label>ใยอาหารต่อปริมาณอ้างอิง (กรัม) — ถ้าทราบ</label><input id="nc-fiber" type="number" min="0" step="any" placeholder="ยังไม่มีข้อมูล">';
+ base.after(field);
+};
+const prevAddFood=addFood;
+addFood=function(){const grams=document.getElementById('nc-grams-per-unit')?.value,fiber=document.getElementById('nc-fiber')?.value,before=db.foods.length;prevAddFood();if(db.foods.length>before){const f=db.foods[db.foods.length-1];if(grams&&Number(grams)>0)f.gramsPerUnit=Number(grams);if(fiber!=='')f.fiber=Number(fiber);save();drawCatalog()}};
+const prevMeals=drawMeals;
+drawMeals=function(){prevMeals();converter('eatQty','addFood','meal')};
+const prevInventory=drawInventory;
+drawInventory=function(){
+ prevInventory();converter('lotQty','lotFood','lot');
+ const root=document.getElementById('inventory');if(!root)return;
+ const available=db.foods.filter(f=>stock(f.id)>0);
+ const low=available.filter(f=>stock(f.id)<=(f.unit==='ฟอง'?6:100));
+ const expiring=db.lots.filter(l=>remaining(l)>0&&l.expiry&&((new Date(l.expiry+'T12:00:00')-new Date())/86400000)<=7);
+ const value=db.lots.reduce((s,l)=>s+(l.qty>0?remaining(l)*Number(l.price)/Number(l.qty):0),0);
+ const card=document.createElement('div');card.className='nc-extra-card';
+ card.innerHTML='<div class="nc-extra-title">📦 สรุปคลัง</div><span class="nc-extra-pill">💰 มูลค่าคงเหลือ '+money(value)+'</span><span class="nc-extra-pill">🛒 ใกล้หมด '+low.length+' รายการ</span><span class="nc-extra-pill">⏳ ใกล้หมดอายุ/หมดแล้ว '+expiring.length+' ล็อต</span>'+(low.length?'<div class="nc-extra-small">ใกล้หมด: '+low.map(f=>esc(f.name)).join(', ')+'</div>':'')+(expiring.length?'<div class="nc-extra-small">ควรตรวจสอบ: '+expiring.map(l=>esc(food(l.foodId)?.name||'วัตถุดิบ')).join(', ')+'</div>':'');
+ root.prepend(card);
+};
+const prevDashboard=drawDashboard;
+drawDashboard=function(){
+ prevDashboard();
+ const root=document.getElementById('dashboard');if(!root)return;
+ const meals=db.meals.filter(m=>m.date===localDate());
+ const cards=root.querySelectorAll('.nc-easy-meal');
+ cards.forEach((card,i)=>{const name=['มื้อ 1','มื้อ 2','มื้อ 3'][i],lines=meals.filter(m=>m.name===name).flatMap(m=>m.lines),t=totals(lines);
+ const detail=document.createElement('div');detail.className='nc-extra-small';detail.style.marginTop='10px';
+ detail.innerHTML='💪 โปรตีน '+num(t.p)+' ก. · 🍚 คาร์บ '+num(t.c)+' ก. · 🥑 ไขมัน '+num(t.f)+' ก.';
+ card.appendChild(detail);
+ });
+ const lines=meals.flatMap(m=>m.lines),missing=lines.filter(l=>{const f=food(l.foodId);return f&&(f.sugar==null||f.sodium==null||f.fiber==null)}).length;
+ if(missing){const notice=document.createElement('div');notice.className='nc-extra-card nc-extra-alert nc-extra-small';notice.textContent='🧂 มี '+missing+' รายการที่ข้อมูลน้ำตาล โซเดียม หรือใยอาหารยังไม่ครบ ยอดรวมส่วนนี้อาจต่ำกว่าจริง';root.appendChild(notice)}
+};
+const prevSettings=drawSettings;
+drawSettings=function(){
+ prevSettings();const root=document.getElementById('settings');if(!root)return;
+ const card=document.createElement('div');card.className='nc-extra-card';
+ card.innerHTML='<div class="nc-extra-title">🍱 เมนูที่บันทึกไว้</div><div class="nc-extra-small">เลือกเมนูที่เคยกินเพื่อเพิ่มรายการเดิมได้รวดเร็ว โดยตรวจสอบสต็อกอีกครั้งก่อนบันทึก</div><div id="nc-repeat-meals"></div>';
+ const holder=card.querySelector('#nc-repeat-meals');
+ const seen=new Set();
+ for(const m of db.meals.slice().reverse()){const key=m.name+'|'+m.lines.map(l=>l.foodId+':'+l.qty).join(',');if(seen.has(key))continue;seen.add(key);const b=document.createElement('button');b.className='nc-extra-button';b.style.margin='7px 7px 0 0';b.textContent='🍽️ '+m.name+' ('+m.lines.length+' รายการ)';b.onclick=()=>{draft=m.lines.map(l=>({foodId:l.foodId,qty:l.qty}));mealName=m.name;mealDate=localDate();show('meals')};holder.appendChild(b);if(seen.size>=12)break}
+ if(!seen.size)holder.innerHTML='<p class="nc-extra-small">ยังไม่มีมื้ออาหารที่บันทึกไว้</p>';
+ root.prepend(card);
+};
+})();
+</script>
+
+<style>
+.nc-edit-panel{margin:12px 0;padding:16px;border:1px solid var(--nc-border);border-radius:19px;background:var(--nc-panel)}
+.nc-edit-panel label{display:block;font-size:12px;margin:10px 0 5px;color:var(--nc-muted)}
+.nc-edit-panel input,.nc-edit-panel select{width:100%;min-height:43px;border-radius:12px}
+.nc-edit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.nc-edit-btn{border:1px solid var(--nc-border);border-radius:12px;padding:7px 11px;background:var(--nc-panel2);color:var(--nc-text);font-size:12px}
+.nc-edit-save{border:0;background:#7863eb;color:white;border-radius:12px;padding:12px 15px;font-weight:700}
+</style>
+<script>
+(function(){
+let editingId=null;
+const safe=(v)=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const options=(arr,value)=>arr.map(x=>'<option value="'+safe(x)+'" '+(x===value?'selected':'')+'>'+safe(x)+'</option>').join('');
+const mainGroups=['โปรตีน','คาร์โบไฮเดรต','วิตามิน','ผลไม้','ไขมัน','เครื่องปรุง','อื่น ๆ'];
+const units=['g','kg','ฟอง','ml','L','ชิ้น','ลูก','ช้อนชา'];
+function used(f){return db.lots.some(l=>l.foodId===f.id)||db.meals.some(m=>m.lines.some(l=>l.foodId===f.id))}
+function editor(f){
+ const locked=used(f);
+ return '<div class="nc-edit-panel" id="nc-edit-panel"><strong>✏️ แก้ไข '+safe(f.name)+'</strong>'+
+ '<label>ชื่อวัตถุดิบ</label><input id="nc-edit-name" maxlength="100" value="'+safe(f.name)+'">'+
+ '<div class="nc-edit-grid"><div><label>หมู่หลัก</label><select id="nc-edit-main">'+options(mainGroups,f.mainGroup||'อื่น ๆ')+'</select></div><div><label>หมวดย่อย</label><input id="nc-edit-group" maxlength="70" value="'+safe(f.group)+'"></div></div>'+
+ '<div class="nc-edit-grid"><div><label>หน่วยบันทึก</label><select id="nc-edit-unit" '+(locked?'disabled':'')+'>'+options(units,f.unit)+'</select></div><div><label>ปริมาณอ้างอิง</label><input id="nc-edit-base" type="number" min="0.01" step="any" value="'+safe(f.base)+'"></div></div>'+
+ (locked?'<p class="nc-extra-small">🔒 หน่วยถูกล็อก เพราะมีประวัติการซื้อหรือมื้ออาหารแล้ว เพื่อป้องกันข้อมูลสต็อกและต้นทุนผิดพลาด</p>':'')+
+ '<div class="nc-edit-grid">'+[['k','🔥 แคลอรี (kcal)'],['p','💪 โปรตีน (กรัม)'],['c','🍚 คาร์บ (กรัม)'],['f','🥑 ไขมัน (กรัม)'],['sugar','🍬 น้ำตาล (กรัม)'],['sodium','🧂 โซเดียม (มก.)'],['fiber','🥦 ใยอาหาร (กรัม)'],['gramsPerUnit','⚖️ กรัมต่อหน่วย']].map(([key,label])=>'<div><label>'+label+'</label><input id="nc-edit-'+key+'" type="number" min="0" step="any" placeholder="ไม่ทราบ" value="'+safe(f[key]??'')+'"></div>').join('')+'</div>'+
+ '<p class="nc-extra-small">ช่องน้ำตาล โซเดียม และใยอาหารที่เว้นว่าง = ยังไม่มีข้อมูล ไม่ใช่ศูนย์</p>'+
+ '<div class="nc-extra-row"><button type="button" class="nc-edit-save" onclick="ncSaveIngredient()">💾 บันทึกการแก้ไข</button><button type="button" class="nc-edit-btn" onclick="ncCloseIngredient()">ยกเลิก</button></div></div>';
+}
+const old=drawCatalog;
+drawCatalog=function(){
+ old();
+ const root=document.getElementById('catalog'),list=root?.querySelector('.list');if(!list)return;
+ const cards=Array.from(list.children);
+ // Match the actual rendered catalog order (may be filtered by main group).
+ cards.forEach(card=>{
+ const title=card.querySelector('strong')?.textContent;
+ const f=db.foods.find(x=>x.name===title);
+ if(!f)return;
+ const b=document.createElement('button');b.type='button';b.className='nc-edit-btn';b.textContent='✏️ แก้ไข';b.onclick=()=>{editingId=f.id;drawCatalog();document.getElementById('nc-edit-panel')?.scrollIntoView({block:'nearest',behavior:'smooth'})};
+ card.appendChild(b);
+ });
+ if(editingId){const f=db.foods.find(x=>x.id===editingId);if(f){const node=document.createElement('div');node.innerHTML=editor(f);list.before(node)}}
+};
+window.ncCloseIngredient=function(){editingId=null;drawCatalog()};
+window.ncSaveIngredient=function(){
+ const f=db.foods.find(x=>x.id===editingId);if(!f)return;
+ const get=k=>document.getElementById('nc-edit-'+k)?.value;
+ const name=(get('name')||'').trim(),group=(get('group')||'').trim(),main=get('main'),base=Number(get('base'));
+ if(!name||!group||!Number.isFinite(base)||base<=0)return alert('กรุณากรอกชื่อ หมวดหมู่ และปริมาณอ้างอิงให้ถูกต้อง');
+ if(db.foods.some(x=>x.id!==f.id&&x.name===name))return alert('มีชื่อวัตถุดิบนี้อยู่แล้ว');
+ const changes={name,group,mainGroup:main,base};
+ if(!used(f))changes.unit=get('unit');
+ for(const key of ['k','p','c','f','sugar','sodium','fiber','gramsPerUnit']){
+ const raw=get(key);if(raw==null)continue;
+ if(raw===''){if(['k','p','c','f'].includes(key))return alert('กรุณากรอกสารอาหารหลักให้ครบ');changes[key]=undefined;continue}
+ const v=Number(raw);if(!Number.isFinite(v)||v<0||(key==='gramsPerUnit'&&v===0))return alert('ตัวเลขสารอาหารไม่ถูกต้อง: '+key);
+ changes[key]=v;
+ }
+ Object.assign(f,changes);save();editingId=null;drawCatalog();alert('บันทึกข้อมูลวัตถุดิบแล้ว');
+};
+})();
+</script>
+
+<style>
+.nc-catalog-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:8px 0 16px}
+.nc-catalog-top h2{margin:0}
+.nc-catalog-add{border:0;border-radius:14px;background:linear-gradient(125deg,#7360eb,#a079f4);color:white;font-size:13px;font-weight:750;padding:12px 14px;white-space:nowrap}
+.nc-catalog-create{display:none;margin:12px 0 18px}
+.nc-catalog-create.open{display:block}
+.nc-catalog-create>.card{margin:0}
+.nc-catalog-edit{margin:8px 0 0 auto;display:block;border:1px solid var(--nc-border);border-radius:12px;padding:8px 13px;background:var(--nc-panel2);color:var(--nc-text);font-weight:650;font-size:12px}
+.nc-catalog-editor-wrap{margin:0 0 15px}
+</style>
+<script>
+(function(){
+let createOpen=false,editorOpen=false;
+const previous=drawCatalog;
+drawCatalog=function(){
+ previous();
+ const root=document.getElementById('catalog');if(!root)return;
+ const list=root.querySelector('.list'),nameField=root.querySelector('#newName'),form=nameField?.closest('.card');
+ if(!list||!form)return;
+ const header=document.createElement('div');header.className='nc-catalog-top';
+ header.innerHTML='<h2>🥗 วัตถุดิบของฉัน</h2><button type="button" class="nc-catalog-add" id="nc-open-create">＋ เพิ่มวัตถุดิบ</button>';
+ const oldHeading=root.querySelector('h2');if(oldHeading)oldHeading.remove();
+ root.prepend(header);
+ const drawer=document.createElement('section');drawer.className='nc-catalog-create'+(createOpen?' open':'');drawer.id='nc-create-drawer';
+ form.before(drawer);drawer.appendChild(form);
+ const close=document.createElement('button');close.type='button';close.className='nc-catalog-edit';close.textContent='✕ ปิดแบบฟอร์ม';close.onclick=()=>{createOpen=false;drawer.classList.remove('open')};form.prepend(close);
+ header.querySelector('button').onclick=()=>{createOpen=!createOpen;drawer.classList.toggle('open',createOpen);if(createOpen)drawer.scrollIntoView({behavior:'smooth',block:'start'})};
+ // Make editing discoverable on every ingredient row, independently of earlier wrappers.
+ Array.from(list.querySelectorAll('.item')).forEach(card=>{
+ const name=card.querySelector('strong')?.textContent?.trim();
+ const ingredient=db.foods.find(f=>f.name===name);
+ if(!ingredient)return;
+ const originalEdit=card.querySelector('.nc-edit-btn');const openEditor=originalEdit?.onclick;card.querySelectorAll('.nc-edit-btn').forEach(b=>b.remove());
+ const btn=document.createElement('button');btn.type='button';btn.className='nc-catalog-edit';btn.textContent='✏️ แก้ไขข้อมูล';
+ btn.onclick=()=>{
+   // Existing editor uses the closure-scoped selected ID; activate its original handler via the prior render.
+   if(openEditor)openEditor();else alert('กรุณาลองเปิดหน้านี้ใหม่อีกครั้ง');
+ };
+ card.appendChild(btn);
+ });
+ // Existing editor wrapper's buttons are replaced above; keep a working edit trigger
+ // by capturing the original handlers before removal in the next pass.
+};
+})();
+</script>
+
+<script>
+(function(){
+ // Preview-safe catalog entrypoint, independent of legacy wrapper order.
+ const oldRenderCatalog=drawCatalog;
+ drawCatalog=function(){
+ oldRenderCatalog();
+ const root=document.getElementById('catalog');
+ if(!root)return;
+ const header=root.querySelector('.nc-catalog-top');
+ const list=root.querySelector('.list');
+ const form=root.querySelector('#newName')?.closest('.card');
+ if(header&&list&&form)return;
+ // Keep a visible top action even if a legacy catalog wrapper changes its structure.
+ if(!root.querySelector('#nc-fallback-create')&&form){
+ const bar=document.createElement('div');bar.className='nc-catalog-top';
+ bar.innerHTML='<strong>🥗 วัตถุดิบของฉัน</strong><button type="button" class="nc-catalog-add" id="nc-fallback-create">＋ เพิ่มวัตถุดิบ</button>';
+ root.prepend(bar);form.style.display='none';
+ bar.querySelector('button').onclick=()=>{form.style.display=form.style.display==='none'?'block':'none'};
+ }
+ };
+})();
+</script>
+
+<style>
+.nc-catalog-top{align-items:center}
+.nc-catalog-create,.nc-catalog-edit,.nc-edit-btn{display:none!important}
+.nc-manage-menu{position:relative}
+.nc-manage-trigger{border:0;border-radius:14px;background:linear-gradient(125deg,#7460ed,#9a75ef);color:#fff;font-weight:750;padding:12px 15px;font-size:13px}
+.nc-manage-options{position:absolute;right:0;top:calc(100% + 8px);z-index:25;min-width:205px;padding:7px;background:var(--nc-panel);border:1px solid var(--nc-border);border-radius:16px;box-shadow:0 16px 45px #0005}
+.nc-manage-options[hidden]{display:none}
+.nc-manage-options button{display:block;width:100%;padding:13px;border:0;border-radius:10px;background:transparent;color:var(--nc-text);text-align:left;font-size:14px}
+.nc-manage-options button:active{background:var(--nc-panel2)}
+.nc-modal-layer{position:fixed;inset:0;z-index:10000;background:#080d18b8;display:flex;align-items:center;justify-content:center;padding:16px}
+.nc-modal-layer[hidden]{display:none}
+.nc-modal-sheet{background:var(--nc-panel);color:var(--nc-text);border:1px solid var(--nc-border);border-radius:23px;width:min(100%,540px);max-height:min(88dvh,850px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 70px #0006}
+.nc-modal-head{padding:16px 18px;border-bottom:1px solid var(--nc-border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.nc-modal-head strong{font-size:17px}
+.nc-modal-close{border:0;border-radius:12px;padding:9px 12px;background:var(--nc-panel2);color:var(--nc-text)}
+.nc-modal-body{padding:15px;overflow:auto;overscroll-behavior:contain}
+.nc-modal-body>.card,.nc-modal-body .nc-edit-panel{margin:0}
+.nc-manage-picker{width:100%;min-height:48px;margin:8px 0 12px}
+</style>
+<script>
+(function(){
+let active=null;
+function modal(){
+ let layer=document.getElementById('nc-manage-modal');if(layer)return layer;
+ layer=document.createElement('div');layer.id='nc-manage-modal';layer.className='nc-modal-layer';layer.hidden=true;
+ layer.innerHTML='<div class="nc-modal-sheet" role="dialog" aria-modal="true" aria-labelledby="nc-modal-heading"><div class="nc-modal-head"><strong id="nc-modal-heading"></strong><button type="button" class="nc-modal-close">✕ ปิด</button></div><div class="nc-modal-body"></div></div>';
+ document.body.appendChild(layer);
+ layer.querySelector('.nc-modal-close').onclick=close;
+ layer.addEventListener('click',e=>{if(e.target===layer)close()});
+ return layer;
+}
+function close(){
+ const layer=modal();layer.hidden=true;
+ // Close without modifying saved data; original catalog render recreates the form.
+ active=null;drawCatalog();
+}
+function open(title){
+ const layer=modal();layer.querySelector('#nc-modal-heading').textContent=title;layer.hidden=false;
+ return layer.querySelector('.nc-modal-body');
+}
+function openCreate(){
+ const root=document.getElementById('catalog'),form=root.querySelector('#newName')?.closest('.card');
+ if(!form)return;
+ const body=open('➕ เพิ่มวัตถุดิบใหม่');body.replaceChildren(form);
+ form.style.display='block';form.querySelectorAll('.nc-catalog-edit').forEach(b=>b.remove());
+ active='create';
+}
+function openEdit(){
+ const root=document.getElementById('catalog'),list=root.querySelector('.list');
+ if(!list)return;
+ const body=open('✏️ แก้ไขวัตถุดิบ');
+ body.innerHTML='<label>เลือกวัตถุดิบที่ต้องการแก้ไข</label><select class="nc-manage-picker" id="nc-manage-food"></select><div id="nc-manage-edit-body"></div>';
+ const picker=body.querySelector('select');
+ const foods=db.foods.slice().sort((a,b)=>a.name.localeCompare(b.name,'th'));
+ for(const f of foods){const option=document.createElement('option');option.value=f.id;option.textContent=f.name;picker.appendChild(option)}
+ function selectFood(){
+  const f=db.foods.find(x=>x.id===picker.value);if(!f)return;
+  // Trigger existing editor through its original handler in a freshly rendered catalog.
+  const oldButton=Array.from(root.querySelectorAll('.item')).find(el=>el.querySelector('strong')?.textContent?.trim()===f.name)?.querySelector('.nc-catalog-edit');
+  if(oldButton&&oldButton.onclick){oldButton.onclick();const editor=root.querySelector('#nc-edit-panel');if(editor){body.querySelector('#nc-manage-edit-body')?.replaceChildren(editor);editor.style.display='block';editor.querySelectorAll('.nc-edit-btn').forEach(b=>b.style.display='inline-block')}}
+ }
+ picker.onchange=()=>{drawCatalog();selectFood()};
+ if(foods.length)selectFood();else body.insertAdjacentText('beforeend','ยังไม่มีวัตถุดิบ');
+ active='edit';
+}
+const previous=drawCatalog;
+drawCatalog=function(){
+ previous();
+ const root=document.getElementById('catalog');if(!root)return;
+ root.querySelectorAll('.nc-catalog-top .nc-catalog-add,#nc-fallback-create').forEach(b=>b.remove());
+ const header=root.querySelector('.nc-catalog-top');
+ if(!header)return;
+ const menu=document.createElement('div');menu.className='nc-manage-menu';
+ menu.innerHTML='<button type="button" class="nc-manage-trigger" aria-expanded="false">＋ จัดการวัตถุดิบ ▾</button><div class="nc-manage-options" hidden><button type="button" data-action="add">➕ เพิ่มวัตถุดิบใหม่</button><button type="button" data-action="edit">✏️ แก้ไขวัตถุดิบ</button></div>';
+ header.appendChild(menu);
+ const trigger=menu.querySelector('.nc-manage-trigger'),options=menu.querySelector('.nc-manage-options');
+ trigger.onclick=()=>{options.hidden=!options.hidden;trigger.setAttribute('aria-expanded',String(!options.hidden))};
+ options.querySelector('[data-action="add"]').onclick=()=>{options.hidden=true;openCreate()};
+ options.querySelector('[data-action="edit"]').onclick=()=>{options.hidden=true;openEdit()};
+};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal().hidden)close()});
+})();
+</script>
+
+<style>
+.nc-delete-action{color:#ef7777!important}
+.nc-delete-hint{font-size:12px;color:var(--nc-muted);line-height:1.7;margin:9px 0 15px}
+.nc-delete-danger{background:#bc414d;color:#fff;border:0;border-radius:12px;padding:12px 16px;font-weight:700;width:100%}
+.nc-delete-danger:disabled{opacity:.45}
+.nc-delete-select{width:100%;min-height:48px;margin:10px 0}
+</style>
+<script>
+(function(){
+const previous=drawCatalog;
+drawCatalog=function(){
+ previous();
+ const menu=document.querySelector('#catalog .nc-manage-options');if(!menu)return;
+ const action=document.createElement('button');action.type='button';action.className='nc-delete-action';action.textContent='🗑️ ลบวัตถุดิบ';menu.appendChild(action);
+ action.onclick=()=>{
+ menu.hidden=true;
+ let modal=document.getElementById('nc-manage-modal');
+ if(!modal){
+ modal=document.createElement('div');modal.id='nc-manage-modal';modal.className='nc-modal-layer';modal.hidden=true;
+ modal.innerHTML='<div class="nc-modal-sheet" role="dialog" aria-modal="true" aria-labelledby="nc-modal-heading"><div class="nc-modal-head"><strong id="nc-modal-heading"></strong><button type="button" class="nc-modal-close">✕ ปิด</button></div><div class="nc-modal-body"></div></div>';
+ document.body.appendChild(modal);
+ modal.querySelector('.nc-modal-close').onclick=()=>{modal.hidden=true;drawCatalog()};
+ modal.addEventListener('click',e=>{if(e.target===modal){modal.hidden=true;drawCatalog()}});
+ }
+ const title=modal.querySelector('#nc-modal-heading'),body=modal.querySelector('.nc-modal-body');
+ title.textContent='🗑️ ลบวัตถุดิบ';modal.hidden=false;
+ body.replaceChildren();
+ const label=document.createElement('label');label.textContent='ติ๊กเลือกวัตถุดิบที่ต้องการลบ (เลือกได้หลายรายการ)';body.appendChild(label);
+ const toolbar=document.createElement('div');toolbar.className='nc-delete-toolbar';body.appendChild(toolbar);
+ const list=document.createElement('div');list.className='nc-delete-checklist';body.appendChild(list);
+ const hint=document.createElement('p');hint.className='nc-delete-hint';body.appendChild(hint);
+ const del=document.createElement('button');del.type='button';del.className='nc-delete-danger';body.appendChild(del);
+ const foods=db.foods.slice().sort((a,b)=>a.name.localeCompare(b.name,'th'));
+ function references(id){
+ const lots=db.lots.filter(l=>l.foodId===id).length;
+ const meals=db.meals.reduce((sum,m)=>sum+m.lines.filter(l=>l.foodId===id).length,0);
+ const drafts=Array.isArray(draft)?draft.filter(l=>l.foodId===id).length:0;
+ return {lots,meals,drafts,blocked:lots+meals+drafts>0};
+ }
+ const all=document.createElement('button');all.type='button';all.textContent='☑️ เลือกทั้งหมดที่ลบได้';
+ const clear=document.createElement('button');clear.type='button';clear.textContent='ล้างที่เลือก';
+ toolbar.append(all,clear);
+ for(const f of foods){
+ const r=references(f.id),row=document.createElement('label');row.className='nc-delete-checkrow';
+ const cb=document.createElement('input');cb.type='checkbox';cb.value=f.id;cb.disabled=r.blocked;
+ const desc=document.createElement('span'),name=document.createElement('strong'),sub=document.createElement('small');
+ name.textContent=f.name;
+ sub.textContent=r.blocked?'🔒 มีประวัติซื้อ '+r.lots+' ล็อต / มื้ออาหาร '+r.meals+' รายการ'+(r.drafts?' / รายการค้าง '+r.drafts:''):'ลบได้';
+ desc.append(name,sub);row.append(cb,desc);list.appendChild(row);cb.onchange=inspect;
+ }
+ const checks=()=>Array.from(list.querySelectorAll('input[type="checkbox"]'));
+ function inspect(){
+ const selected=checks().filter(x=>x.checked&&!x.disabled);
+ del.disabled=!selected.length;
+ del.textContent='🗑️ ลบที่เลือก ('+selected.length+')';
+ const blocked=checks().filter(x=>x.disabled).length;
+ hint.textContent='เลือกแล้ว '+selected.length+' รายการ'+(blocked?' · 🔒 ลบไม่ได้ '+blocked+' รายการ เพราะมีประวัติซื้อหรือบันทึกมื้ออาหาร':'')+' · การลบย้อนกลับไม่ได้';
+ }
+ all.onclick=()=>{checks().forEach(x=>{if(!x.disabled)x.checked=true});inspect()};
+ clear.onclick=()=>{checks().forEach(x=>x.checked=false);inspect()};
+ inspect();
+ del.onclick=()=>{
+ const ids=checks().filter(x=>x.checked&&!x.disabled).map(x=>x.value);
+ const deletable=ids.filter(id=>db.foods.some(f=>f.id===id)&&!references(id).blocked);
+ if(!deletable.length){inspect();return}
+ const names=deletable.map(id=>db.foods.find(f=>f.id===id).name);
+ if(!confirm('ยืนยันลบวัตถุดิบ '+deletable.length+' รายการ?\\n\\n'+names.join(', ')+'\\n\\nการดำเนินการนี้ย้อนกลับไม่ได้'))return;
+ // Revalidate just before deletion so historical records are never orphaned.
+ const finalIds=new Set(deletable.filter(id=>!references(id).blocked));
+ db.foods=db.foods.filter(f=>!finalIds.has(f.id));
+ save();modal.hidden=true;drawCatalog();
+ };
+ };
+};
+})();
+</script>
+<style>
+.nc-delete-checklist{max-height:47vh;overflow:auto;border:1px solid var(--nc-border);border-radius:14px;margin:10px 0}
+.nc-delete-checkrow{display:flex!important;align-items:center;gap:12px;padding:12px 13px;border-bottom:1px solid var(--nc-border);cursor:pointer}
+.nc-delete-checkrow:last-child{border-bottom:0}
+.nc-delete-checkrow input{width:20px;height:20px;flex:none;accent-color:#8269ed}
+.nc-delete-checkrow span{display:flex;flex-direction:column;gap:3px;min-width:0}
+.nc-delete-checkrow small{color:var(--nc-muted);font-size:11px}
+.nc-delete-checkrow:has(input:disabled){opacity:.55;cursor:not-allowed}
+.nc-delete-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.nc-delete-toolbar button{border:1px solid var(--nc-border);border-radius:10px;background:var(--nc-panel2);color:var(--nc-text);padding:9px 12px}
+</style>
+<style>
+.nc-stock-adjust{margin:12px 0;border:1px solid var(--nc-border);border-radius:18px;padding:14px;background:var(--nc-panel)}
+.nc-stock-adjust h3{margin:0 0 6px;font-size:16px}
+.nc-stock-adjust label{display:block;margin:12px 0 6px;font-size:13px}
+.nc-stock-adjust input,.nc-stock-adjust select{width:100%;min-height:44px}
+.nc-stock-adjust .nc-stock-apply{margin-top:15px;width:100%;padding:13px;border:0;border-radius:12px;background:#7863eb;color:white;font-weight:700}
+.nc-stock-adjust .nc-stock-apply:disabled{opacity:.5}
+.nc-stock-adjust .nc-stock-note{font-size:12px;line-height:1.7;color:var(--nc-muted);margin-top:8px}
+.nc-stock-adjust .nc-stock-log{margin-top:13px;border-top:1px solid var(--nc-border);padding-top:10px}
+</style>
+<script>
+(function(){
+const previous=drawInventory;
+drawInventory=function(){
+ previous();
+ const root=document.getElementById('inventory');if(!root)return;
+ const stocks=db.foods.filter(f=>stock(f.id)>0);
+ const card=document.createElement('div');card.className='nc-stock-adjust';
+ card.innerHTML='<h3>📦 ปรับยอดวัตถุดิบในคลัง</h3><div class="nc-stock-note">สำหรับกรณีคนอื่นนำไปใช้ วัตถุดิบหาย หรือเสียหาย · หักจากคลังโดยไม่บันทึกเป็นมื้ออาหารของคุณ</div><label>วัตถุดิบ</label><select id="nc-stock-adjust-food"></select><label>จำนวนที่ต้องการตัดออก</label><input id="nc-stock-adjust-qty" type="number" min="0.01" step="any" inputmode="decimal" placeholder="ระบุจำนวน"><div id="nc-stock-adjust-available" class="nc-stock-note"></div><label>สาเหตุ</label><select id="nc-stock-adjust-reason"><option value="มีผู้อื่นนำไปใช้">👥 มีผู้อื่นนำไปใช้</option><option value="วัตถุดิบสูญหาย">🔎 วัตถุดิบสูญหาย</option><option value="วัตถุดิบเสียหาย/หมดอายุ">🥀 เสียหาย / หมดอายุ</option><option value="ปรับยอดสต็อก">⚖️ ปรับยอดสต็อก</option></select><button type="button" class="nc-stock-apply" id="nc-stock-adjust-save">ยืนยันตัดออกจากคลัง</button><div class="nc-stock-note">ระบบเก็บประวัติการปรับยอดไว้ ไม่ลบล็อตซื้อและไม่กระทบประวัติมื้ออาหาร</div><details class="nc-stock-log"><summary>📋 ประวัติการปรับยอด</summary><div id="nc-stock-adjust-history"></div></details>';
+ const select=card.querySelector('#nc-stock-adjust-food'),qty=card.querySelector('#nc-stock-adjust-qty'),available=card.querySelector('#nc-stock-adjust-available'),button=card.querySelector('#nc-stock-adjust-save');
+ for(const f of stocks){const o=document.createElement('option');o.value=f.id;o.textContent=f.name;select.appendChild(o)}
+ function refresh(){const f=food(select.value);available.textContent=f?'คงเหลือ '+num(stock(f.id))+' '+unit(f):'ไม่มีวัตถุดิบคงเหลือ';button.disabled=!f}
+ select.onchange=refresh;refresh();
+ button.onclick=()=>{
+ const f=food(select.value),amount=Number(qty.value);if(!f||!Number.isFinite(amount)||amount<=0)return alert('กรุณากรอกจำนวนที่ถูกต้อง');
+ const lots=db.lots.filter(l=>l.foodId===f.id&&remaining(l)>0).sort((a,b)=>(a.expiry||'9999-12-31').localeCompare(b.expiry||'9999-12-31')||(a.created||'').localeCompare(b.created||''));
+ const total=lots.reduce((s,l)=>s+remaining(l),0);
+ if(amount>total+1e-8)return alert('จำนวนเกินยอดคงเหลือ '+num(total)+' '+unit(f));
+ const reason=card.querySelector('#nc-stock-adjust-reason').value;
+ if(!confirm('ยืนยันตัด '+f.name+' จำนวน '+num(amount)+' '+unit(f)+'\\nสาเหตุ: '+reason+'?'))return;
+ let left=amount,cost=0;const allocations=[];
+ for(const l of lots){if(left<=1e-9)break;const take=Math.min(left,remaining(l));if(take<=0)continue;cost+=l.qty>0?take*l.price/l.qty:0;allocations.push({lotId:l.id,qty:take});left-=take}
+ if(left>1e-7)return alert('ยอดคลังเปลี่ยนแปลง กรุณาลองใหม่');
+ for(const a of allocations){const l=db.lots.find(x=>x.id===a.lotId);l.used=Number(l.used||0)+a.qty}
+ db.stockAdjustments=Array.isArray(db.stockAdjustments)?db.stockAdjustments:[];
+ db.stockAdjustments.push({id:uid(),foodId:f.id,foodName:f.name,qty:amount,unit:f.unit,reason,cost,allocations,created:new Date().toISOString()});
+ save();drawInventory();
+ };
+ const history=card.querySelector('#nc-stock-adjust-history'),records=Array.isArray(db.stockAdjustments)?db.stockAdjustments.slice(-15).reverse():[];
+ if(!records.length)history.textContent='ยังไม่มีประวัติ';
+ else for(const rec of records){const p=document.createElement('p');p.className='nc-stock-note';p.textContent=(rec.created?new Date(rec.created).toLocaleString('th-TH')+' · ':'')+rec.foodName+' −'+num(rec.qty)+' '+rec.unit+' · '+rec.reason;history.appendChild(p)}
+ root.prepend(card);
+};
+})();
+</script>
+
+<style>
+.nc-meal-v3{max-width:650px;margin:0 auto;padding-bottom:25px}
+.nc-meal-v3-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.nc-meal-v3-back{border:1px solid var(--nc-border);background:var(--nc-panel2);color:var(--nc-text);width:43px;height:43px;border-radius:15px;font-size:20px}
+.nc-meal-v3-head h2{margin:0;font-size:23px}
+.nc-meal-v3-head small{color:var(--nc-muted)}
+.nc-meal-v3-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-bottom:17px}
+.nc-meal-v3-tabs button{border:1px solid var(--nc-border);border-radius:14px;background:var(--nc-panel);color:var(--nc-text);padding:12px 3px;font-size:12px;font-weight:700}
+.nc-meal-v3-tabs button.active{background:linear-gradient(125deg,#7562eb,#9e79f1);color:#fff;border-color:transparent}
+.nc-meal-v3-card{background:var(--nc-panel);border:1px solid var(--nc-border);border-radius:23px;padding:17px;margin-bottom:13px}
+.nc-meal-v3-card label{display:block;margin:0 0 7px;font-size:13px;font-weight:700}
+.nc-meal-v3-card select,.nc-meal-v3-card input{width:100%;min-height:50px;border-radius:13px;font-size:15px}
+.nc-meal-v3-card .nc-meal-v3-hint{color:var(--nc-muted);font-size:12px;margin-top:8px}
+.nc-meal-v3-step{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:800;margin-bottom:13px}
+.nc-meal-v3-step span{display:inline-grid;place-items:center;background:var(--nc-panel2);border-radius:12px;width:31px;height:31px}
+.nc-meal-v3-add{width:100%;border:0;border-radius:15px;padding:14px;background:#7562eb;color:white;font-weight:800;margin-top:13px}
+.nc-meal-v3-line{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--nc-border);align-items:center}
+.nc-meal-v3-line:last-child{border-bottom:0}
+.nc-meal-v3-line small{display:block;color:var(--nc-muted);font-size:12px;margin-top:3px}
+.nc-meal-v3-remove{background:var(--nc-panel2);border:0;border-radius:11px;padding:9px;color:#eb7777}
+.nc-meal-v3-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:12px 0}
+.nc-meal-v3-stat{background:var(--nc-panel2);border-radius:13px;padding:11px 5px;text-align:center}
+.nc-meal-v3-stat b{display:block;font-size:15px}
+.nc-meal-v3-stat small{font-size:10px;color:var(--nc-muted)}
+.nc-meal-v3-save{width:100%;border:0;border-radius:16px;background:linear-gradient(120deg,#6556dc,#9d73ef);color:#fff;padding:16px;font-size:15px;font-weight:800}
+.nc-meal-v3-save:disabled{opacity:.4}
+.nc-meal-v3-empty{padding:15px;text-align:center;color:var(--nc-muted);font-size:13px}
+.nc-meal-v3-more summary{color:var(--nc-muted);font-size:12px;cursor:pointer}
+@media(max-width:370px){.nc-meal-v3-tabs button{font-size:11px}.nc-meal-v3-stat b{font-size:13px}}
+</style>
+<script>
+(function(){
+const previous=drawMeals;
+drawMeals=function(){
+ previous();
+ const root=document.getElementById('meals');if(!root)return;
+ const available=db.foods.filter(f=>stock(f.id)>0);
+ const current=document.getElementById('addFood')?.value||available[0]?.id;
+ const total=totals(draft.map(d=>({...d,cost:estimate(d.foodId,d.qty)})));
+ const choices=['มื้อ 1','มื้อ 2','มื้อ 3','อื่น ๆ'];
+ const active=choices.includes(mealName)?mealName:'อื่น ๆ';
+ const safe=s=>esc(String(s??''));
+ const lines=draft.map((d,i)=>{const f=food(d.foodId);return '<div class="nc-meal-v3-line"><div><b>'+safe(f?.name||'วัตถุดิบ')+'</b><small>'+num(d.qty)+' '+safe(unit(f))+' · '+num(totals([{...d,cost:0}]).k)+' kcal · '+money(estimate(d.foodId,d.qty))+'</small></div><button type="button" class="nc-meal-v3-remove" onclick="draft.splice('+i+',1);drawMeals()" aria-label="ลบรายการ">✕</button></div>'}).join('');
+ root.innerHTML='<div class="nc-meal-v3">'+
+ '<div class="nc-meal-v3-head"><button type="button" class="nc-meal-v3-back" onclick="show(\'dashboard\')">‹</button><div><h2>🍽️ เพิ่มอาหาร</h2><small>เลือกมื้อ ใส่วัตถุดิบ แล้วบันทึก</small></div></div>'+
+ '<div class="nc-meal-v3-tabs">'+choices.map((x,i)=>'<button type="button" class="'+(x===active?'active':'')+'" data-meal-tab="'+i+'">'+['☀️ มื้อ 1','🥗 มื้อ 2','🌙 มื้อ 3','✨ อื่น ๆ'][i]+'</button>').join('')+'</div>'+
+ '<div class="nc-meal-v3-card"><div class="nc-meal-v3-step"><span>1</span> เลือกวัตถุดิบ</div><select id="addFood">'+opts(available,current)+'</select><div class="nc-meal-v3-hint" id="avail"></div></div>'+
+ '<div class="nc-meal-v3-card"><div class="nc-meal-v3-step"><span>2</span> ระบุปริมาณ</div><label for="eatQty">จำนวนที่กิน</label><input id="eatQty" type="number" min="0.01" step="any" inputmode="decimal" placeholder="เช่น 100"><div class="nc-meal-v3-hint" id="nc-meal-v3-unit"></div><button type="button" class="nc-meal-v3-add" onclick="addDraft()">＋ เพิ่มลงในมื้อนี้</button></div>'+
+ '<div class="nc-meal-v3-card"><div class="nc-meal-v3-step"><span>3</span> ตรวจสอบมื้ออาหาร <small style="font-size:12px;color:var(--nc-muted)">('+draft.length+' รายการ)</small></div>'+
+ (lines||'<div class="nc-meal-v3-empty">🥣 ยังไม่มีรายการอาหาร<br>เลือกวัตถุดิบด้านบนเพื่อเริ่มได้เลย</div>')+
+ '<div class="nc-meal-v3-summary">'+[['🔥','k','kcal'],['💪','p','โปรตีน'],['🍚','c','คาร์บ'],['🥑','f','ไขมัน']].map(([e,k,label])=>'<div class="nc-meal-v3-stat"><b>'+e+' '+num(total[k])+'</b><small>'+label+'</small></div>').join('')+'</div>'+
+ '<div class="nc-meal-v3-hint" style="margin-bottom:12px">💸 ต้นทุนโดยประมาณ '+money(total.cost)+'</div>'+
+ (active==='อื่น ๆ'?'<label for="nc-custom-meal">ชื่อมื้ออาหาร</label><input id="nc-custom-meal" maxlength="70" placeholder="เช่น หลังออกกำลังกาย" value="'+safe(choices.includes(mealName)?'':mealName)+'">':'')+
+ '<button type="button" class="nc-meal-v3-save" onclick="commitMeal()" '+(!draft.length?'disabled':'')+'>✓ บันทึกมื้ออาหาร</button></div>'+
+ (!available.length?'<div class="notice">ยังไม่มีวัตถุดิบในคลัง <button class="btn small" onclick="show(\'inventory\')">ไปคลัง</button></div>':'')+
+ '<details class="nc-meal-v3-more"><summary>📅 วันที่และประวัติมื้ออาหาร</summary><label>วันที่บันทึก</label><input type="date" id="mealDate" value="'+safe(mealDate)+'"><div class="nc-meal-v3-hint">ประวัติมื้ออาหารดูได้จากหน้าภาพรวม</div></details></div>';
+ const foodSelect=root.querySelector('#addFood'),quantity=root.querySelector('#eatQty');
+ function refresh(){const f=food(foodSelect.value);root.querySelector('#avail').textContent=f?'คงเหลือในคลัง '+num(stock(f.id))+' '+unit(f):'ไม่มีวัตถุดิบพร้อมใช้';root.querySelector('#nc-meal-v3-unit').textContent=f?'หน่วยที่ใช้: '+unit(f):''}
+ foodSelect.onchange=refresh;refresh();
+ root.querySelectorAll('[data-meal-tab]').forEach(btn=>btn.onclick=()=>{const idx=Number(btn.dataset.mealTab);mealName=choices[idx]==='อื่น ๆ'?'กำหนดเอง':choices[idx];drawMeals()});
+ const date=root.querySelector('#mealDate');date.onchange=()=>mealDate=date.value;
+ const custom=root.querySelector('#nc-custom-meal');if(custom)custom.oninput=()=>{mealName=custom.value.trim()||'กำหนดเอง'};
+};
+})();
+</script>
+
+<style>
+/* Stronger hierarchy for the values users check most often */
+.nc-meal-v3-summary{gap:9px}
+.nc-meal-v3-stat{padding:15px 5px;border:1px solid var(--nc-border)}
+.nc-meal-v3-stat b{font-size:clamp(19px,4vw,27px);font-weight:850;line-height:1.25;letter-spacing:-.6px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.nc-meal-v3-stat small{font-size:12px;font-weight:700;display:block;margin-top:7px}
+.nc-easy-summary b{font-size:clamp(23px,5vw,35px)!important;line-height:1.25;font-variant-numeric:tabular-nums}
+.nc-macro-row strong,.nc-macro-row b{font-size:18px;font-variant-numeric:tabular-nums}
+.nc-meal-v3-line b{font-size:15px}
+.nc-sound-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--nc-panel);border:1px solid var(--nc-border);border-radius:18px;padding:15px;margin:14px 0}
+.nc-sound-toggle button{border:1px solid var(--nc-border);border-radius:12px;background:var(--nc-panel2);color:var(--nc-text);padding:10px 14px;font-weight:750;white-space:nowrap}
+.nc-sound-toggle small{display:block;color:var(--nc-muted);font-size:12px;margin-top:5px}
+@media(max-width:380px){.nc-meal-v3-stat b{font-size:19px}.nc-meal-v3-stat small{font-size:11px}}
+</style>
+<script>
+(function(){
+const soundKey='nutricost.sound.enabled.v1';
+let enabled=localStorage.getItem(soundKey)==='true';
+let context=null;
+function tone(kind){
+ if(!enabled)return;
+ try{
+ const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+ context=context||new AC();
+ if(context.state==='suspended')context.resume().catch(()=>{});
+ const t=context.currentTime;
+ const notes=kind==='save'?[659.25,880]:kind==='remove'?[330]:[560];
+ notes.forEach((hz,i)=>{
+ const oscillator=context.createOscillator(),gain=context.createGain(),start=t+i*.075;
+ oscillator.type='sine';oscillator.frequency.setValueAtTime(hz,start);
+ gain.gain.setValueAtTime(.0001,start);
+ gain.gain.exponentialRampToValueAtTime(.055,start+.012);
+ gain.gain.exponentialRampToValueAtTime(.0001,start+.12);
+ oscillator.connect(gain);gain.connect(context.destination);oscillator.start(start);oscillator.stop(start+.13);
+ });
+ }catch(e){}
+}
+function toggle(){
+ enabled=!enabled;localStorage.setItem(soundKey,String(enabled));
+ const btn=document.querySelector('#nc-sound-switch');
+ if(btn){btn.textContent=enabled?'🔊 เปิดเสียงอยู่':'🔇 ปิดเสียงอยู่';btn.setAttribute('aria-pressed',String(enabled))}
+ if(enabled)tone('save');
+}
+document.addEventListener('click',event=>{
+ const target=event.target.closest('button,[role="button"],.nc-meal-v3-tabs button');
+ if(!target||target.id==='nc-sound-switch'||target.disabled)return;
+ if(target.closest('#nc-manage-modal')&&target.classList.contains('nc-delete-danger'))tone('remove');
+ else if(/บันทึก|เพิ่มลง|ยืนยัน/.test(target.textContent||''))tone('save');
+ else if(/ลบ|ตัดออก/.test(target.textContent||''))tone('remove');
+ else tone('tap');
+},true);
+const oldSettings=drawSettings;
+drawSettings=function(){
+ oldSettings();
+ const root=document.getElementById('settings');if(!root)return;
+ const box=document.createElement('div');box.className='nc-sound-toggle';
+ box.innerHTML='<div><strong>🎵 เสียงตอบรับการกดปุ่ม</strong><small>เสียงเบา ๆ เมื่อแตะ เพิ่ม บันทึก หรือจัดการรายการ · ปิดไว้เป็นค่าเริ่มต้น</small></div><button id="nc-sound-switch" type="button" aria-pressed="'+enabled+'">'+(enabled?'🔊 เปิดเสียงอยู่':'🔇 ปิดเสียงอยู่')+'</button>';
+ box.querySelector('button').onclick=toggle;
+ root.prepend(box);
+};
+})();
+</script>
+</body></html>
