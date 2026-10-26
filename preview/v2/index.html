@@ -595,4 +595,31 @@ drawCatalog=function(){
 };
 })();
 </script>
+
+<style>
+.nc-quantity-unit{display:flex;align-items:center;gap:10px;margin-top:8px}
+.nc-quantity-unit input{flex:1;min-width:0}
+.nc-quantity-unit .nc-unit-badge{flex:0 0 auto;border-radius:13px;padding:12px 14px;background:var(--nc-panel2);border:1px solid var(--nc-border);font-size:13px;font-weight:700;white-space:nowrap;color:var(--nc-text)}
+.nc-quantity-hint{font-size:12px;color:var(--nc-muted);margin:7px 0}
+</style>
+<script>
+(function(){
+const readableUnit=f=>({g:'กรัม',ml:'มิลลิลิตร','ฟอง':'ฟอง','ชิ้น':'ชิ้น','ลูก':'ลูก','ช้อนชา':'ช้อนชา'})[f?.unit]||f?.unit||'หน่วย';
+const emojiUnit=f=>({g:'⚖️',ml:'💧','ฟอง':'🥚','ชิ้น':'🍞','ลูก':'🍎','ช้อนชา':'🥄'})[f?.unit]||'📦';
+function decorate(inputId,foodSelectId){
+ const input=document.getElementById(inputId),select=document.getElementById(foodSelectId);
+ if(!input||!select)return;
+ const wrapper=document.createElement('div');wrapper.className='nc-quantity-unit';
+ input.parentNode.insertBefore(wrapper,input);wrapper.appendChild(input);
+ const badge=document.createElement('span');badge.className='nc-unit-badge';wrapper.appendChild(badge);
+ const hint=document.createElement('div');hint.className='nc-quantity-hint';wrapper.after(hint);
+ function refresh(){const f=food(select.value);badge.textContent=emojiUnit(f)+' '+readableUnit(f);input.placeholder=f?.unit==='ฟอง'?'เช่น 6':f?.unit==='ml'?'เช่น 250':'เช่น 100';hint.textContent=f?'กรอกจำนวนเป็น'+readableUnit(f)+' · '+(inputId==='eatQty'?'คงเหลือ '+num(stock(f.id))+' '+readableUnit(f):'ระบบคำนวณต้นทุนตามหน่วยนี้'):''}
+ select.addEventListener('change',refresh);refresh();
+}
+const prevMeals=drawMeals;
+drawMeals=function(){prevMeals();decorate('eatQty','addFood')};
+const prevInventory=drawInventory;
+drawInventory=function(){prevInventory();decorate('lotQty','lotFood');const price=document.getElementById('lotPrice');if(price){price.placeholder='ราคาซื้อรวม (บาท)'}};
+})();
+</script>
 </body></html>
