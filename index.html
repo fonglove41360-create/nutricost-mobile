@@ -1051,4 +1051,50 @@ drawCatalog=function(){
 .nc-delete-checkrow:has(input:disabled){opacity:.55;cursor:not-allowed}
 .nc-delete-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .nc-delete-toolbar button{border:1px solid var(--nc-border);border-radius:10px;background:var(--nc-panel2);color:var(--nc-text);padding:9px 12px}
-</style></body></html>
+</style>
+<style>
+.nc-stock-adjust{margin:12px 0;border:1px solid var(--nc-border);border-radius:18px;padding:14px;background:var(--nc-panel)}
+.nc-stock-adjust h3{margin:0 0 6px;font-size:16px}
+.nc-stock-adjust label{display:block;margin:12px 0 6px;font-size:13px}
+.nc-stock-adjust input,.nc-stock-adjust select{width:100%;min-height:44px}
+.nc-stock-adjust .nc-stock-apply{margin-top:15px;width:100%;padding:13px;border:0;border-radius:12px;background:#7863eb;color:white;font-weight:700}
+.nc-stock-adjust .nc-stock-apply:disabled{opacity:.5}
+.nc-stock-adjust .nc-stock-note{font-size:12px;line-height:1.7;color:var(--nc-muted);margin-top:8px}
+.nc-stock-adjust .nc-stock-log{margin-top:13px;border-top:1px solid var(--nc-border);padding-top:10px}
+</style>
+<script>
+(function(){
+const previous=drawInventory;
+drawInventory=function(){
+ previous();
+ const root=document.getElementById('inventory');if(!root)return;
+ const stocks=db.foods.filter(f=>stock(f.id)>0);
+ const card=document.createElement('div');card.className='nc-stock-adjust';
+ card.innerHTML='<h3>📦 ปรับยอดวัตถุดิบในคลัง</h3><div class="nc-stock-note">สำหรับกรณีคนอื่นนำไปใช้ วัตถุดิบหาย หรือเสียหาย · หักจากคลังโดยไม่บันทึกเป็นมื้ออาหารของคุณ</div><label>วัตถุดิบ</label><select id="nc-stock-adjust-food"></select><label>จำนวนที่ต้องการตัดออก</label><input id="nc-stock-adjust-qty" type="number" min="0.01" step="any" inputmode="decimal" placeholder="ระบุจำนวน"><div id="nc-stock-adjust-available" class="nc-stock-note"></div><label>สาเหตุ</label><select id="nc-stock-adjust-reason"><option value="มีผู้อื่นนำไปใช้">👥 มีผู้อื่นนำไปใช้</option><option value="วัตถุดิบสูญหาย">🔎 วัตถุดิบสูญหาย</option><option value="วัตถุดิบเสียหาย/หมดอายุ">🥀 เสียหาย / หมดอายุ</option><option value="ปรับยอดสต็อก">⚖️ ปรับยอดสต็อก</option></select><button type="button" class="nc-stock-apply" id="nc-stock-adjust-save">ยืนยันตัดออกจากคลัง</button><div class="nc-stock-note">ระบบเก็บประวัติการปรับยอดไว้ ไม่ลบล็อตซื้อและไม่กระทบประวัติมื้ออาหาร</div><details class="nc-stock-log"><summary>📋 ประวัติการปรับยอด</summary><div id="nc-stock-adjust-history"></div></details>';
+ const select=card.querySelector('#nc-stock-adjust-food'),qty=card.querySelector('#nc-stock-adjust-qty'),available=card.querySelector('#nc-stock-adjust-available'),button=card.querySelector('#nc-stock-adjust-save');
+ for(const f of stocks){const o=document.createElement('option');o.value=f.id;o.textContent=f.name;select.appendChild(o)}
+ function refresh(){const f=food(select.value);available.textContent=f?'คงเหลือ '+num(stock(f.id))+' '+unit(f):'ไม่มีวัตถุดิบคงเหลือ';button.disabled=!f}
+ select.onchange=refresh;refresh();
+ button.onclick=()=>{
+ const f=food(select.value),amount=Number(qty.value);if(!f||!Number.isFinite(amount)||amount<=0)return alert('กรุณากรอกจำนวนที่ถูกต้อง');
+ const lots=db.lots.filter(l=>l.foodId===f.id&&remaining(l)>0).sort((a,b)=>(a.expiry||'9999-12-31').localeCompare(b.expiry||'9999-12-31')||(a.created||'').localeCompare(b.created||''));
+ const total=lots.reduce((s,l)=>s+remaining(l),0);
+ if(amount>total+1e-8)return alert('จำนวนเกินยอดคงเหลือ '+num(total)+' '+unit(f));
+ const reason=card.querySelector('#nc-stock-adjust-reason').value;
+ if(!confirm('ยืนยันตัด '+f.name+' จำนวน '+num(amount)+' '+unit(f)+'\\nสาเหตุ: '+reason+'?'))return;
+ let left=amount,cost=0;const allocations=[];
+ for(const l of lots){if(left<=1e-9)break;const take=Math.min(left,remaining(l));if(take<=0)continue;cost+=l.qty>0?take*l.price/l.qty:0;allocations.push({lotId:l.id,qty:take});left-=take}
+ if(left>1e-7)return alert('ยอดคลังเปลี่ยนแปลง กรุณาลองใหม่');
+ for(const a of allocations){const l=db.lots.find(x=>x.id===a.lotId);l.used=Number(l.used||0)+a.qty}
+ db.stockAdjustments=Array.isArray(db.stockAdjustments)?db.stockAdjustments:[];
+ db.stockAdjustments.push({id:uid(),foodId:f.id,foodName:f.name,qty:amount,unit:f.unit,reason,cost,allocations,created:new Date().toISOString()});
+ save();drawInventory();
+ };
+ const history=card.querySelector('#nc-stock-adjust-history'),records=Array.isArray(db.stockAdjustments)?db.stockAdjustments.slice(-15).reverse():[];
+ if(!records.length)history.textContent='ยังไม่มีประวัติ';
+ else for(const rec of records){const p=document.createElement('p');p.className='nc-stock-note';p.textContent=(rec.created?new Date(rec.created).toLocaleString('th-TH')+' · ':'')+rec.foodName+' −'+num(rec.qty)+' '+rec.unit+' · '+rec.reason;history.appendChild(p)}
+ root.prepend(card);
+};
+})();
+</script>
+</body></html>
