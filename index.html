@@ -880,4 +880,88 @@ drawCatalog=function(){
  };
 })();
 </script>
+
+<style>
+.nc-catalog-top{align-items:center}
+.nc-catalog-create,.nc-catalog-edit,.nc-edit-btn{display:none!important}
+.nc-manage-menu{position:relative}
+.nc-manage-trigger{border:0;border-radius:14px;background:linear-gradient(125deg,#7460ed,#9a75ef);color:#fff;font-weight:750;padding:12px 15px;font-size:13px}
+.nc-manage-options{position:absolute;right:0;top:calc(100% + 8px);z-index:25;min-width:205px;padding:7px;background:var(--nc-panel);border:1px solid var(--nc-border);border-radius:16px;box-shadow:0 16px 45px #0005}
+.nc-manage-options[hidden]{display:none}
+.nc-manage-options button{display:block;width:100%;padding:13px;border:0;border-radius:10px;background:transparent;color:var(--nc-text);text-align:left;font-size:14px}
+.nc-manage-options button:active{background:var(--nc-panel2)}
+.nc-modal-layer{position:fixed;inset:0;z-index:10000;background:#080d18b8;display:flex;align-items:center;justify-content:center;padding:16px}
+.nc-modal-layer[hidden]{display:none}
+.nc-modal-sheet{background:var(--nc-panel);color:var(--nc-text);border:1px solid var(--nc-border);border-radius:23px;width:min(100%,540px);max-height:min(88dvh,850px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 70px #0006}
+.nc-modal-head{padding:16px 18px;border-bottom:1px solid var(--nc-border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.nc-modal-head strong{font-size:17px}
+.nc-modal-close{border:0;border-radius:12px;padding:9px 12px;background:var(--nc-panel2);color:var(--nc-text)}
+.nc-modal-body{padding:15px;overflow:auto;overscroll-behavior:contain}
+.nc-modal-body>.card,.nc-modal-body .nc-edit-panel{margin:0}
+.nc-manage-picker{width:100%;min-height:48px;margin:8px 0 12px}
+</style>
+<script>
+(function(){
+let active=null;
+function modal(){
+ let layer=document.getElementById('nc-manage-modal');if(layer)return layer;
+ layer=document.createElement('div');layer.id='nc-manage-modal';layer.className='nc-modal-layer';layer.hidden=true;
+ layer.innerHTML='<div class="nc-modal-sheet" role="dialog" aria-modal="true" aria-labelledby="nc-modal-heading"><div class="nc-modal-head"><strong id="nc-modal-heading"></strong><button type="button" class="nc-modal-close">✕ ปิด</button></div><div class="nc-modal-body"></div></div>';
+ document.body.appendChild(layer);
+ layer.querySelector('.nc-modal-close').onclick=close;
+ layer.addEventListener('click',e=>{if(e.target===layer)close()});
+ return layer;
+}
+function close(){
+ const layer=modal();layer.hidden=true;
+ // Close without modifying saved data; original catalog render recreates the form.
+ active=null;drawCatalog();
+}
+function open(title){
+ const layer=modal();layer.querySelector('#nc-modal-heading').textContent=title;layer.hidden=false;
+ return layer.querySelector('.nc-modal-body');
+}
+function openCreate(){
+ const root=document.getElementById('catalog'),form=root.querySelector('#newName')?.closest('.card');
+ if(!form)return;
+ const body=open('➕ เพิ่มวัตถุดิบใหม่');body.replaceChildren(form);
+ form.style.display='block';form.querySelectorAll('.nc-catalog-edit').forEach(b=>b.remove());
+ active='create';
+}
+function openEdit(){
+ const root=document.getElementById('catalog'),list=root.querySelector('.list');
+ if(!list)return;
+ const body=open('✏️ แก้ไขวัตถุดิบ');
+ body.innerHTML='<label>เลือกวัตถุดิบที่ต้องการแก้ไข</label><select class="nc-manage-picker" id="nc-manage-food"></select><div id="nc-manage-edit-body"></div>';
+ const picker=body.querySelector('select');
+ const foods=db.foods.slice().sort((a,b)=>a.name.localeCompare(b.name,'th'));
+ for(const f of foods){const option=document.createElement('option');option.value=f.id;option.textContent=f.name;picker.appendChild(option)}
+ function selectFood(){
+  const f=db.foods.find(x=>x.id===picker.value);if(!f)return;
+  // Trigger existing editor through its original handler in a freshly rendered catalog.
+  const oldButton=Array.from(root.querySelectorAll('.item')).find(el=>el.querySelector('strong')?.textContent?.trim()===f.name)?.querySelector('.nc-catalog-edit');
+  if(oldButton&&oldButton.onclick){oldButton.onclick();const editor=root.querySelector('#nc-edit-panel');if(editor){body.querySelector('#nc-manage-edit-body')?.replaceChildren(editor);editor.style.display='block';editor.querySelectorAll('.nc-edit-btn').forEach(b=>b.style.display='inline-block')}}
+ }
+ picker.onchange=()=>{drawCatalog();selectFood()};
+ if(foods.length)selectFood();else body.insertAdjacentText('beforeend','ยังไม่มีวัตถุดิบ');
+ active='edit';
+}
+const previous=drawCatalog;
+drawCatalog=function(){
+ previous();
+ const root=document.getElementById('catalog');if(!root)return;
+ root.querySelectorAll('.nc-catalog-top .nc-catalog-add,#nc-fallback-create').forEach(b=>b.remove());
+ const header=root.querySelector('.nc-catalog-top');
+ if(!header)return;
+ const menu=document.createElement('div');menu.className='nc-manage-menu';
+ menu.innerHTML='<button type="button" class="nc-manage-trigger" aria-expanded="false">＋ จัดการวัตถุดิบ ▾</button><div class="nc-manage-options" hidden><button type="button" data-action="add">➕ เพิ่มวัตถุดิบใหม่</button><button type="button" data-action="edit">✏️ แก้ไขวัตถุดิบ</button></div>';
+ header.appendChild(menu);
+ const trigger=menu.querySelector('.nc-manage-trigger'),options=menu.querySelector('.nc-manage-options');
+ trigger.onclick=()=>{options.hidden=!options.hidden;trigger.setAttribute('aria-expanded',String(!options.hidden))};
+ options.querySelector('[data-action="add"]').onclick=()=>{options.hidden=true;openCreate()};
+ options.querySelector('[data-action="edit"]').onclick=()=>{options.hidden=true;openEdit()};
+};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal().hidden)close()});
+})();
+</script>
 </body></html>
