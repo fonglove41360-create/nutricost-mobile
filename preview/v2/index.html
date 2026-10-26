@@ -1184,17 +1184,17 @@ const soundKey=location.pathname.includes('/preview/')?'nutricost.preview.sound.
 let enabled=localStorage.getItem(soundKey)==='true';
 let audio=null,lastPlayed=0;
 const sounds={
- dashboard:[[523.25,0,.11],[659.25,.065,.13]],
- meals:[[587.33,0,.12],[783.99,.09,.19]],
- inventory:[[392,0,.12],[523.25,.10,.16]],
- catalog:[[440,0,.12],[659.25,.095,.17]],
- settings:[[493.88,0,.09],[587.33,.09,.14]],
- add:[[659.25,0,.09],[880,.08,.17]],
- save:[[523.25,0,.11],[659.25,.09,.12],[783.99,.18,.22]],
- remove:[[440,0,.10],[349.23,.10,.19]],
- select:[[659.25,0,.075]],
- back:[[493.88,0,.11],[392,.08,.14]],
- tap:[[523.25,0,.09]]
+ dashboard:[[523.25,0,.26],[659.25,.12,.32],[783.99,.25,.39]],
+ meals:[[587.33,0,.25],[739.99,.13,.29],[880,.28,.40]],
+ inventory:[[392,0,.26],[493.88,.13,.30],[587.33,.27,.38]],
+ catalog:[[440,0,.24],[554.37,.13,.30],[659.25,.27,.38]],
+ settings:[[493.88,0,.24],[622.25,.15,.31],[739.99,.29,.37]],
+ add:[[659.25,0,.25],[830.61,.13,.30],[987.77,.28,.38]],
+ save:[[523.25,0,.26],[659.25,.13,.30],[783.99,.27,.34],[1046.5,.41,.44]],
+ remove:[[440,0,.24],[392,.14,.30],[349.23,.28,.34]],
+ select:[[659.25,0,.22],[783.99,.12,.31]],
+ back:[[493.88,0,.25],[392,.15,.34]],
+ tap:[[523.25,0,.23],[659.25,.13,.29]]
 };
 function play(kind){
  if(!enabled)return;
@@ -1203,13 +1203,17 @@ function play(kind){
  audio=audio||new AC();if(audio.state==='suspended')audio.resume().catch(()=>{});
  const now=audio.currentTime,notes=sounds[kind]||sounds.tap;
  notes.forEach(([hz,delay,duration],i)=>{
- const start=now+delay,osc=audio.createOscillator(),gain=audio.createGain(),filter=audio.createBiquadFilter();
- osc.type='sine';osc.frequency.setValueAtTime(hz,start);osc.frequency.exponentialRampToValueAtTime(hz*1.005,start+duration);
- filter.type='lowpass';filter.frequency.value=1800;
+ const start=now+delay,osc=audio.createOscillator(),harmonic=audio.createOscillator(),gain=audio.createGain(),filter=audio.createBiquadFilter(),hg=audio.createGain();
+ osc.type='sine';osc.frequency.setValueAtTime(hz,start);osc.frequency.exponentialRampToValueAtTime(hz*1.003,start+duration);
+ harmonic.type='sine';harmonic.frequency.setValueAtTime(hz*2,start);harmonic.frequency.exponentialRampToValueAtTime(hz*2.004,start+duration);
+ filter.type='lowpass';filter.frequency.value=2400;
  gain.gain.setValueAtTime(.0001,start);
- gain.gain.exponentialRampToValueAtTime(.028,start+.018);
+ gain.gain.exponentialRampToValueAtTime(.095,start+.035);
+ gain.gain.exponentialRampToValueAtTime(.055,start+Math.min(.14,duration*.5));
  gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
- osc.connect(filter);filter.connect(gain);gain.connect(audio.destination);osc.start(start);osc.stop(start+duration+.01);
+ hg.gain.value=.13;
+ osc.connect(filter);harmonic.connect(hg);hg.connect(filter);filter.connect(gain);gain.connect(audio.destination);
+ osc.start(start);harmonic.start(start);osc.stop(start+duration+.02);harmonic.stop(start+duration+.02);
  });
  }catch(e){}
 }
