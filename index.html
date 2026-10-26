@@ -1250,4 +1250,41 @@ drawSettings=function(){
 :root:not([data-nc-theme="ivory"]) .nc-health-hero .nc-ring .track{stroke:#3b506a}
 :root:not([data-nc-theme="ivory"]) .nc-easy-summary b,
 :root:not([data-nc-theme="ivory"]) .nc-easy-meal strong{color:#fff!important}
+</style><style id="nc-readable-cards-fix">
+/* Explicit foreground on white dashboard cards, independent of stored theme. */
+#dashboard .nc-health-hero,
+#dashboard .nc-health-macros,
+#dashboard .nc-health-spend,
+#dashboard .nc-easy-summary,
+#dashboard .nc-easy-summary > div,
+#dashboard .nc-easy-meal,
+#dashboard .nc-health-card,
+#dashboard .nc-macro-card,
+#dashboard .nc-stock-tile {
+ background:#fff!important;
+ color:#1b2b40!important;
+ border-color:#e1e7ef!important;
+}
+#dashboard .nc-health-hero :is(h1,h2,h3,b,strong,span,small,div,p),
+#dashboard .nc-health-macros :is(h1,h2,h3,b,strong,span,small,div,p),
+#dashboard .nc-health-spend :is(h1,h2,h3,b,strong,span,small,div,p),
+#dashboard .nc-easy-summary :is(h1,h2,h3,b,strong,span,small,div,p),
+#dashboard .nc-easy-meal :is(h1,h2,h3,b,strong,span,small,div,p),
+#dashboard .nc-health-card :is(h1,h2,h3,b,strong,span,small,div,p),
+#dashboard .nc-macro-card :is(h1,h2,h3,b,strong,span,small,div,p),
+#dashboard .nc-stock-tile :is(h1,h2,h3,b,strong,span,small,div,p){
+ color:#1b2b40!important;
+ -webkit-text-fill-color:#1b2b40!important;
+ opacity:1!important;
+ visibility:visible!important;
+}
+#dashboard .nc-health-hero :is(.sub,.muted,small),
+#dashboard .nc-health-macros :is(.sub,.muted,small),
+#dashboard .nc-easy-summary small,
+#dashboard .nc-easy-meal :is(.sub,.muted,small){
+ color:#50627b!important;
+ -webkit-text-fill-color:#50627b!important;
+}
+#dashboard .nc-ring svg,#dashboard .nc-health-hero svg{visibility:visible!important}
+#dashboard .nc-easy-add{background:#304e79!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
 </style></body></html>
