@@ -662,4 +662,86 @@ drawDashboard=function(){
 };
 })();
 </script>
+
+<style>
+.nc-extra-card{background:var(--nc-panel);border:1px solid var(--nc-border);border-radius:20px;padding:15px;margin:12px 0}
+.nc-extra-title{font-size:14px;font-weight:750;margin-bottom:8px}
+.nc-extra-small{font-size:12px;color:var(--nc-muted);line-height:1.6}
+.nc-extra-pill{display:inline-block;padding:6px 10px;border-radius:12px;background:var(--nc-panel2);font-size:12px;margin:3px 4px 3px 0}
+.nc-extra-alert{border-left:4px solid #e9ad54}
+.nc-extra-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.nc-extra-row input,.nc-extra-row select{min-width:0;flex:1}
+.nc-extra-button{border:0;border-radius:12px;padding:10px 12px;background:#7863eb;color:white;font-weight:700}
+</style>
+<script>
+(function(){
+const units=[['g','กรัม'],['kg','กิโลกรัม'],['ฟอง','ฟอง'],['ml','มิลลิลิตร'],['L','ลิตร'],['ชิ้น','ชิ้น'],['ลูก','ลูก'],['ช้อนชา','ช้อนชา']];
+function ratio(f,from){if(!f)return null;if(from===f.unit)return 1;if(from==='kg'&&f.unit==='g')return 1000;if(from==='g'&&f.unit==='kg')return .001;if(from==='L'&&f.unit==='ml')return 1000;if(from==='ml'&&f.unit==='L')return .001;const grams=Number(f.gramsPerUnit);if(grams>0){if(from==='g'&&f.unit==='ฟอง')return 1/grams;if(from==='ฟอง'&&f.unit==='g')return grams;if(from==='kg'&&f.unit==='ฟอง')return 1000/grams;if(from==='ฟอง'&&f.unit==='kg')return grams/1000}return null}
+function converter(inputId,selectId,mode){
+ const input=document.getElementById(inputId),sel=document.getElementById(selectId);if(!input||!sel)return;
+ const line=document.createElement('div');line.className='nc-extra-card';
+ line.innerHTML='<div class="nc-extra-title">🔁 หน่วยที่กรอก</div><div class="nc-extra-row"><select class="nc-convert-unit"></select><span class="nc-extra-small nc-convert-note"></span></div>';
+ const anchor=input.closest('.nc-quantity-unit')||input;anchor.after(line);
+ const pick=line.querySelector('select'),note=line.querySelector('.nc-convert-note');
+ function refresh(){const f=food(sel.value);if(!f)return;const prev=pick.value;pick.innerHTML=units.filter(x=>ratio(f,x[0])!==null).map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join('');pick.value=Array.from(pick.options).some(x=>x.value===prev)?prev:f.unit;note.textContent=pick.value===f.unit?'บันทึกเป็น '+f.unit:'แปลงเป็น '+f.unit}
+ sel.addEventListener('change',refresh);pick.addEventListener('change',()=>{const f=food(sel.value);note.textContent='แปลงเป็น '+f?.unit});refresh();
+ // Core functions read the original quantity input, so temporarily normalize before submit.
+ const action=mode==='meal'?'addDraft':'addLot',original=window[action];
+ if(typeof original==='function'&&!window['ncWrapped'+action]){
+ window['ncWrapped'+action]=true;
+ window[action]=function(){const selected=document.querySelector(mode==='meal'?'#meals .nc-convert-unit':'#inventory .nc-convert-unit');const quantity=document.getElementById(inputId),chosen=food(document.getElementById(selectId)?.value);
+ if(selected&&quantity&&chosen){const mult=ratio(chosen,selected.value);if(mult===null)return alert('หน่วยนี้ยังแปลงไม่ได้ กรุณาตั้งค่าน้ำหนักต่อหน่วย');quantity.value=String(Number(quantity.value)*mult)}
+ return original.apply(this,arguments)};
+ }
+}
+const prevCatalog=drawCatalog;
+drawCatalog=function(){
+ prevCatalog();
+ const base=document.getElementById('newBase'),form=base?.closest('.card');if(!form)return;
+ const field=document.createElement('div');field.innerHTML='<label>น้ำหนักต่อ 1 หน่วย (กรัม) — ถ้ามี เช่น ไข่ 1 ฟอง</label><input id="nc-grams-per-unit" type="number" min="0.01" step="any" placeholder="เช่น 50"><div class="nc-extra-small">ใช้แปลงระหว่างฟอง/ชิ้นกับกรัม (ระบุเฉพาะหน่วยที่เหมาะสม)</div><label>ใยอาหารต่อปริมาณอ้างอิง (กรัม) — ถ้าทราบ</label><input id="nc-fiber" type="number" min="0" step="any" placeholder="ยังไม่มีข้อมูล">';
+ base.after(field);
+};
+const prevAddFood=addFood;
+addFood=function(){const grams=document.getElementById('nc-grams-per-unit')?.value,fiber=document.getElementById('nc-fiber')?.value,before=db.foods.length;prevAddFood();if(db.foods.length>before){const f=db.foods[db.foods.length-1];if(grams&&Number(grams)>0)f.gramsPerUnit=Number(grams);if(fiber!=='')f.fiber=Number(fiber);save();drawCatalog()}};
+const prevMeals=drawMeals;
+drawMeals=function(){prevMeals();converter('eatQty','addFood','meal')};
+const prevInventory=drawInventory;
+drawInventory=function(){
+ prevInventory();converter('lotQty','lotFood','lot');
+ const root=document.getElementById('inventory');if(!root)return;
+ const available=db.foods.filter(f=>stock(f.id)>0);
+ const low=available.filter(f=>stock(f.id)<=(f.unit==='ฟอง'?6:100));
+ const expiring=db.lots.filter(l=>remaining(l)>0&&l.expiry&&((new Date(l.expiry+'T12:00:00')-new Date())/86400000)<=7);
+ const value=db.lots.reduce((s,l)=>s+(l.qty>0?remaining(l)*Number(l.price)/Number(l.qty):0),0);
+ const card=document.createElement('div');card.className='nc-extra-card';
+ card.innerHTML='<div class="nc-extra-title">📦 สรุปคลัง</div><span class="nc-extra-pill">💰 มูลค่าคงเหลือ '+money(value)+'</span><span class="nc-extra-pill">🛒 ใกล้หมด '+low.length+' รายการ</span><span class="nc-extra-pill">⏳ ใกล้หมดอายุ/หมดแล้ว '+expiring.length+' ล็อต</span>'+(low.length?'<div class="nc-extra-small">ใกล้หมด: '+low.map(f=>esc(f.name)).join(', ')+'</div>':'')+(expiring.length?'<div class="nc-extra-small">ควรตรวจสอบ: '+expiring.map(l=>esc(food(l.foodId)?.name||'วัตถุดิบ')).join(', ')+'</div>':'');
+ root.prepend(card);
+};
+const prevDashboard=drawDashboard;
+drawDashboard=function(){
+ prevDashboard();
+ const root=document.getElementById('dashboard');if(!root)return;
+ const meals=db.meals.filter(m=>m.date===localDate());
+ const cards=root.querySelectorAll('.nc-easy-meal');
+ cards.forEach((card,i)=>{const name=['มื้อ 1','มื้อ 2','มื้อ 3'][i],lines=meals.filter(m=>m.name===name).flatMap(m=>m.lines),t=totals(lines);
+ const detail=document.createElement('div');detail.className='nc-extra-small';detail.style.marginTop='10px';
+ detail.innerHTML='💪 โปรตีน '+num(t.p)+' ก. · 🍚 คาร์บ '+num(t.c)+' ก. · 🥑 ไขมัน '+num(t.f)+' ก.';
+ card.appendChild(detail);
+ });
+ const lines=meals.flatMap(m=>m.lines),missing=lines.filter(l=>{const f=food(l.foodId);return f&&(f.sugar==null||f.sodium==null||f.fiber==null)}).length;
+ if(missing){const notice=document.createElement('div');notice.className='nc-extra-card nc-extra-alert nc-extra-small';notice.textContent='🧂 มี '+missing+' รายการที่ข้อมูลน้ำตาล โซเดียม หรือใยอาหารยังไม่ครบ ยอดรวมส่วนนี้อาจต่ำกว่าจริง';root.appendChild(notice)}
+};
+const prevSettings=drawSettings;
+drawSettings=function(){
+ prevSettings();const root=document.getElementById('settings');if(!root)return;
+ const card=document.createElement('div');card.className='nc-extra-card';
+ card.innerHTML='<div class="nc-extra-title">🍱 เมนูที่บันทึกไว้</div><div class="nc-extra-small">เลือกเมนูที่เคยกินเพื่อเพิ่มรายการเดิมได้รวดเร็ว โดยตรวจสอบสต็อกอีกครั้งก่อนบันทึก</div><div id="nc-repeat-meals"></div>';
+ const holder=card.querySelector('#nc-repeat-meals');
+ const seen=new Set();
+ for(const m of db.meals.slice().reverse()){const key=m.name+'|'+m.lines.map(l=>l.foodId+':'+l.qty).join(',');if(seen.has(key))continue;seen.add(key);const b=document.createElement('button');b.className='nc-extra-button';b.style.margin='7px 7px 0 0';b.textContent='🍽️ '+m.name+' ('+m.lines.length+' รายการ)';b.onclick=()=>{draft=m.lines.map(l=>({foodId:l.foodId,qty:l.qty}));mealName=m.name;mealDate=localDate();show('meals')};holder.appendChild(b);if(seen.size>=12)break}
+ if(!seen.size)holder.innerHTML='<p class="nc-extra-small">ยังไม่มีมื้ออาหารที่บันทึกไว้</p>';
+ root.prepend(card);
+};
+})();
+</script>
 </body></html>
