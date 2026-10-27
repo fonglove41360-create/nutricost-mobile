@@ -1265,4 +1265,65 @@ drawSettings=function(){
 };
 })();
 </script>
-</body></html>
+<style id="nc-meal-presets-style">
+.nc-presets{margin:14px 0 20px;padding:17px;border:1px solid #e0e9e4;border-radius:22px;background:#fffefa;color:#14233e;box-shadow:0 8px 22px #223e3210}
+.nc-presets h3{margin:0 0 6px;color:#14233e;font-size:19px}
+.nc-presets p{font-size:12px;color:#52617a;margin:4px 0 12px}
+.nc-preset-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 0;border-top:1px solid #e8ede9}
+.nc-preset-row strong{display:block;color:#14233e;font-size:14px}
+.nc-preset-row small{display:block;color:#52617a;font-size:12px;margin-top:4px}
+.nc-preset-buttons{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.nc-preset-buttons button,.nc-preset-save{border:0;border-radius:12px;padding:9px 11px;background:#dcf8e9;color:#086e51;font-weight:750;font-size:12px;cursor:pointer}
+.nc-preset-buttons button:last-child{background:#fff0ef;color:#9d3939}
+.nc-preset-save{width:100%;margin-top:10px;background:#6658e9;color:white;font-size:14px;padding:13px}
+.nc-presets input{width:100%;background:#fff!important;color:#14233e!important;border:1px solid #cddbd4!important;border-radius:12px;padding:11px;box-sizing:border-box}
+</style>
+<script>
+(function(){
+const KEY='nutricost.meal.presets.v1';
+function presets(){try{const x=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(x)?x:[]}catch(e){return []}}
+function store(items){localStorage.setItem(KEY,JSON.stringify(items))}
+let editing=null;
+function showPresets(){
+ const root=document.getElementById('meals');if(!root)return;
+ root.querySelector('#nc-presets')?.remove();
+ const panel=document.createElement('section');panel.id='nc-presets';panel.className='nc-presets';
+ const items=presets();
+ panel.innerHTML='<h3>🍱 มื้ออาหารประจำ</h3><p>เก็บชุดวัตถุดิบที่กินบ่อย เลือกใช้ซ้ำได้โดยไม่ต้องกรอกใหม่ · ยังไม่หักสต็อกจนกว่าจะบันทึกมื้อจริง</p>'+
+ (items.length?items.map((x,i)=>{
+ const valid=x.lines.filter(l=>food(l.foodId));
+ const t=totals(valid);
+ return '<div class="nc-preset-row"><div><strong>'+esc(x.name)+'</strong><small>'+valid.length+' วัตถุดิบ · '+num(t.k)+' kcal · โปรตีน '+num(t.p)+' g</small></div><div class="nc-preset-buttons"><button data-preset-use="'+i+'">ใช้มื้อนี้</button><button data-preset-edit="'+i+'">แก้ไข</button><button data-preset-delete="'+i+'">ลบ</button></div></div>';
+ }).join(''):'<p>ยังไม่มีมื้อประจำ ลองเพิ่มวัตถุดิบในมื้อด้านล่างแล้วกดบันทึกเป็นมื้อประจำ</p>')+
+ '<label for="nc-preset-name">ชื่อมื้อประจำ</label><input id="nc-preset-name" maxlength="80" placeholder="เช่น ข้าวไก่ไข่ต้มประจำวัน" value="'+(editing!==null&&items[editing]?esc(items[editing].name):'')+'"><button type="button" class="nc-preset-save" id="nc-preset-save">'+(editing!==null?'บันทึกการแก้ไขมื้อประจำ':'＋ บันทึกชุดวัตถุดิบปัจจุบันเป็นมื้อประจำ')+'</button>';
+ const heading=root.querySelector('h2');if(heading)heading.insertAdjacentElement('afterend',panel);else root.prepend(panel);
+ panel.addEventListener('click',e=>{
+ const button=e.target.closest('button');if(!button)return;
+ if(button.id==='nc-preset-save'){
+  const name=panel.querySelector('#nc-preset-name').value.trim();
+  if(!name)return alert('กรุณาตั้งชื่อมื้อประจำ');
+  if(!draft.length)return alert('กรุณาเพิ่มวัตถุดิบลงในมื้อก่อน');
+  if(draft.some(d=>!food(d.foodId)||!Number.isFinite(Number(d.qty))||Number(d.qty)<=0))return alert('รายการวัตถุดิบไม่ถูกต้อง');
+  const current=presets(),entry={id:editing!==null&&current[editing]?current[editing].id:uid(),name,lines:draft.map(d=>({foodId:d.foodId,qty:Number(d.qty)}))};
+  if(editing!==null&&current[editing])current[editing]=entry;else current.push(entry);
+  store(current);editing=null;drawMeals();alert('บันทึกมื้อประจำแล้ว สามารถเลือกใช้ซ้ำได้ทุกวัน');return;
+ }
+ const attr=button.hasAttribute('data-preset-use')?'use':button.hasAttribute('data-preset-edit')?'edit':button.hasAttribute('data-preset-delete')?'delete':null;
+ if(!attr)return;const i=Number(button.getAttribute('data-preset-'+attr)),item=presets()[i];if(!item)return;
+ if(attr==='delete'){if(!confirm('ลบสูตรมื้อประจำ '+item.name+' ? (ไม่ลบประวัติอาหาร)'))return;const all=presets();all.splice(i,1);store(all);editing=null;drawMeals();return}
+ const missing=item.lines.filter(l=>!food(l.foodId));
+ if(missing.length)return alert('มีวัตถุดิบในสูตรที่ถูกลบออกจากรายการแล้ว กรุณาจัดการวัตถุดิบก่อน');
+ if(draft.length&&!confirm('แทนที่รายการวัตถุดิบที่กำลังจัดมื้ออยู่ด้วยสูตรนี้?'))return;
+ draft=item.lines.map(l=>({foodId:l.foodId,qty:Number(l.qty)}));
+ if(attr==='edit')editing=i;else editing=null;
+ drawMeals();
+ if(attr==='use'){
+  const shortage=item.lines.filter(l=>item.lines.filter(x=>x.foodId===l.foodId).reduce((sum,x)=>sum+Number(x.qty),0)>stock(l.foodId)+1e-7);
+  if(shortage.length)alert('โหลดสูตรแล้ว แต่มีวัตถุดิบบางรายการในคลังไม่เพียงพอ กรุณาตรวจสอบก่อนบันทึกมื้อจริง');
+ }
+ });
+}
+const oldDraw=drawMeals;
+drawMeals=function(){oldDraw();showPresets()};
+})();
+</script></body></html>
