@@ -1581,4 +1581,54 @@ function show(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',show,{once:true});else show();
 })();
+</script><style>
+#inventory .nc-stock-header{position:relative}
+#inventory .nc-stock-actions{position:relative;display:flex;gap:8px;align-items:center}
+#inventory .nc-stock-more{min-width:43px;min-height:43px;border:1px solid var(--nc-border,#d8e1e8);border-radius:13px;background:var(--nc-panel,#fff);color:var(--nc-text,#243341);font-size:23px}
+#inventory .nc-stock-menu{position:absolute;right:0;top:calc(100% + 7px);z-index:30;width:210px;padding:7px;background:var(--nc-panel,#fff);border:1px solid var(--nc-border,#d8e1e8);border-radius:14px;box-shadow:0 12px 35px #0003}
+#inventory .nc-stock-menu[hidden]{display:none}
+#inventory .nc-stock-menu button{width:100%;min-height:44px;border:0;background:transparent;color:var(--nc-text,#243341);text-align:left;padding:10px;border-radius:9px}
+#nc-stock-adjust-overlay{position:fixed;inset:0;z-index:9998;background:#0009;display:flex;align-items:center;justify-content:center;padding:15px}
+#nc-stock-adjust-overlay[hidden]{display:none}
+#nc-stock-adjust-dialog{width:min(100%,450px);max-height:85dvh;overflow:auto;background:var(--nc-panel,#fff);color:var(--nc-text,#243341);border-radius:20px;padding:18px}
+#nc-stock-adjust-dialog .nc-stock-dialog-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+#nc-stock-adjust-dialog .nc-stock-dialog-head button{border:0;background:transparent;color:inherit;font-size:27px;min-width:42px;min-height:42px}
+#nc-stock-adjust-dialog .item{margin:10px 0}
+#nc-stock-adjust-dialog input{min-height:46px;font-size:16px}
+</style>
+<script>
+(function(){
+const previous=drawInventory;
+drawInventory=function(){
+ previous();
+ const root=document.getElementById('inventory'),header=root?.querySelector('.nc-stock-header');
+ if(!header)return;
+ const existing=header.querySelector('button[onclick]');
+ const actions=document.createElement('div');actions.className='nc-stock-actions';
+ if(existing)actions.appendChild(existing);
+ const more=document.createElement('button');more.type='button';more.className='nc-stock-more';more.textContent='⋯';more.setAttribute('aria-label','เมนูจัดการคลัง');more.setAttribute('aria-expanded','false');
+ const menu=document.createElement('div');menu.className='nc-stock-menu';menu.hidden=true;
+ const adjust=document.createElement('button');adjust.type='button';adjust.textContent='⚙️ ปรับยอดวัตถุดิบในคลัง';menu.appendChild(adjust);
+ actions.append(more,menu);header.appendChild(actions);
+ more.onclick=()=>{menu.hidden=!menu.hidden;more.setAttribute('aria-expanded',String(!menu.hidden))};
+ const original=root.querySelector('#nc-stock-original');
+ const list=original?.querySelector('.list');
+ if(list)list.hidden=true;
+ adjust.onclick=()=>{
+  menu.hidden=true;more.setAttribute('aria-expanded','false');
+  let overlay=document.getElementById('nc-stock-adjust-overlay');
+  if(!overlay){
+   overlay=document.createElement('div');overlay.id='nc-stock-adjust-overlay';overlay.hidden=true;
+   overlay.innerHTML='<div id="nc-stock-adjust-dialog" role="dialog" aria-modal="true" aria-labelledby="nc-stock-adjust-title"><div class="nc-stock-dialog-head"><strong id="nc-stock-adjust-title">ปรับยอดวัตถุดิบในคลัง</strong><button type="button" aria-label="ปิดหน้าต่าง">×</button></div><div id="nc-stock-adjust-list"></div></div>';
+   document.body.appendChild(overlay);
+   overlay.querySelector('.nc-stock-dialog-head button').onclick=()=>overlay.hidden=true;
+   overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.hidden=true});
+  }
+  const target=overlay.querySelector('#nc-stock-adjust-list');target.replaceChildren();
+  const current=root.querySelector('#nc-stock-original .list');
+  if(current){current.hidden=false;target.appendChild(current)}
+  overlay.hidden=false;
+ };
+};
+})();
 </script></body></html>
