@@ -1559,12 +1559,13 @@ drawInventory=function(){
 <div id="nc-release-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="nc-release-title"><div id="nc-release-card"><div style="font-size:29px">✨</div><h2 id="nc-release-title">NutriCost อัปเดตแล้ว</h2><p id="nc-release-version"></p><ol id="nc-release-items"></ol><button type="button" id="nc-release-close">เข้าใจแล้ว เริ่มใช้งาน</button></div></div>
 <script>
 (function(){
-const release={version:'2026.10.30.4',notes:[
+const release={version:'2026.10.30.5',notes:[
 'แก้ไขวัตถุดิบ: เลือกหมวดหมู่ก่อน แล้วค่อยเลือกวัตถุดิบที่ต้องการแก้',
 'แถบหมวดหมู่: ปรับให้จำตำแหน่งที่เลื่อนบนมือถือ',
 'คลังวัตถุดิบ: ปรับแบบฟอร์มเพิ่มวัตถุดิบที่ซื้อให้อ่านง่ายและกดสะดวก',
 'คลังวัตถุดิบ: เลือกหมวดหมู่ก่อนเลือกวัตถุดิบ',
-'เพิ่มหน้าสรุปสิ่งที่เปลี่ยนแปลงเมื่อเปิดแอปเวอร์ชันใหม่'
+'เพิ่มหน้าสรุปสิ่งที่เปลี่ยนแปลงเมื่อเปิดแอปเวอร์ชันใหม่',
+'เมนูคลัง: ย้ายการปรับยอดวัตถุดิบไปไว้ในเมนูมุมขวาบน เพื่อลดความรกของหน้าหลัก'
 ]};
 const key='nutricost.lastSeenRelease';
 function show(){
