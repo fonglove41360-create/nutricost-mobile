@@ -1546,4 +1546,39 @@ drawInventory=function(){
  const expiry=card.querySelector('#lotExpiry');if(expiry&&!card.querySelector('.nc-purchase-hint'))expiry.insertAdjacentHTML('afterend','<small class="nc-purchase-hint">ไม่ทราบวันหมดอายุ เว้นว่างได้</small>');
 };
 })();
+</script><style>
+#nc-release-overlay{position:fixed;inset:0;z-index:99999;background:#0c1520a8;display:flex;align-items:center;justify-content:center;padding:20px}
+#nc-release-overlay[hidden]{display:none!important}
+#nc-release-card{width:min(100%,420px);max-height:85dvh;overflow:auto;background:#fff;color:#22313d;border-radius:24px;padding:25px 22px;box-shadow:0 20px 60px #0005;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+#nc-release-card h2{margin:8px 0 8px;font-size:23px;color:#1c2e38}
+#nc-release-card p{color:#60727d;font-size:14px}
+#nc-release-card ol{padding-left:22px;line-height:1.65;font-size:15px}
+#nc-release-card li{margin:10px 0}
+#nc-release-card button{width:100%;min-height:50px;background:#6758d8;color:white;border:0;border-radius:13px;font-weight:700;font-size:16px}
+</style>
+<div id="nc-release-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="nc-release-title"><div id="nc-release-card"><div style="font-size:29px">✨</div><h2 id="nc-release-title">NutriCost อัปเดตแล้ว</h2><p id="nc-release-version"></p><ol id="nc-release-items"></ol><button type="button" id="nc-release-close">เข้าใจแล้ว เริ่มใช้งาน</button></div></div>
+<script>
+(function(){
+const release={version:'2026.10.30.4',notes:[
+'แก้ไขวัตถุดิบ: เลือกหมวดหมู่ก่อน แล้วค่อยเลือกวัตถุดิบที่ต้องการแก้',
+'แถบหมวดหมู่: ปรับให้จำตำแหน่งที่เลื่อนบนมือถือ',
+'คลังวัตถุดิบ: ปรับแบบฟอร์มเพิ่มวัตถุดิบที่ซื้อให้อ่านง่ายและกดสะดวก',
+'คลังวัตถุดิบ: เลือกหมวดหมู่ก่อนเลือกวัตถุดิบ',
+'เพิ่มหน้าสรุปสิ่งที่เปลี่ยนแปลงเมื่อเปิดแอปเวอร์ชันใหม่'
+]};
+const key='nutricost.lastSeenRelease';
+function show(){
+ let last=null;try{last=localStorage.getItem(key)}catch(e){return}
+ if(last===release.version)return;
+ const overlay=document.getElementById('nc-release-overlay');if(!overlay)return;
+ document.getElementById('nc-release-version').textContent='รายการเปลี่ยนแปลง • เวอร์ชัน '+release.version;
+ const list=document.getElementById('nc-release-items');list.replaceChildren();
+ release.notes.forEach(note=>{const li=document.createElement('li');li.textContent=note;list.appendChild(li)});
+ overlay.hidden=false;
+ const close=document.getElementById('nc-release-close');
+ close.onclick=()=>{try{localStorage.setItem(key,release.version)}catch(e){}overlay.hidden=true};
+ close.focus();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',show,{once:true});else show();
+})();
 </script></body></html>
