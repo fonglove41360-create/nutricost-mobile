@@ -1,0 +1,5 @@
+/* NutriCost catalog refresh: mobile contrast and touch targets */
+#catalog{color:var(--nc-text,#1d3040);padding-bottom:24px}
+#catalog .card,#catalog .panel{border-radius:18px;box-shadow:0 5px 18px #00000012;border:1px solid var(--nc-border,#d6e0dd)}
+#catalog button,#catalog input,#catalog select{min-height:44px}
+@media(max-width:480px){#catalog{min-width:0;overflow-wrap:anywhere}#catalog .grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr))}}
