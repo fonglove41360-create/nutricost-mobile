@@ -932,18 +932,29 @@ function openEdit(){
  const root=document.getElementById('catalog'),list=root.querySelector('.list');
  if(!list)return;
  const body=open('✏️ แก้ไขวัตถุดิบ');
- body.innerHTML='<label>เลือกวัตถุดิบที่ต้องการแก้ไข</label><select class="nc-manage-picker" id="nc-manage-food"></select><div id="nc-manage-edit-body"></div>';
- const picker=body.querySelector('select');
- const foods=db.foods.slice().sort((a,b)=>a.name.localeCompare(b.name,'th'));
- for(const f of foods){const option=document.createElement('option');option.value=f.id;option.textContent=f.name;picker.appendChild(option)}
- function selectFood(){
-  const f=db.foods.find(x=>x.id===picker.value);if(!f)return;
-  // Trigger existing editor through its original handler in a freshly rendered catalog.
-  const oldButton=Array.from(root.querySelectorAll('.item')).find(el=>el.querySelector('strong')?.textContent?.trim()===f.name)?.querySelector('.nc-catalog-edit');
-  if(oldButton&&oldButton.onclick){oldButton.onclick();const editor=root.querySelector('#nc-edit-panel');if(editor){body.querySelector('#nc-manage-edit-body')?.replaceChildren(editor);editor.style.display='block';editor.querySelectorAll('.nc-edit-btn').forEach(b=>b.style.display='inline-block')}}
+ body.innerHTML='<label>1. เลือกหมวดหมู่</label><select class="nc-manage-picker" id="nc-manage-group"></select><label>2. เลือกวัตถุดิบ</label><select class="nc-manage-picker" id="nc-manage-food"></select><div id="nc-manage-edit-body"></div>';
+ const groupPicker=body.querySelector('#nc-manage-group'),picker=body.querySelector('#nc-manage-food');
+ const available=[...new Set(db.foods.map(f=>f.group))];
+ for(const g of available){const o=new Option(g,g);groupPicker.add(o)}
+ if(available.includes(selectedGroup))groupPicker.value=selectedGroup;
+ function refreshFoods(){
+  picker.replaceChildren();
+  const foods=db.foods.filter(f=>f.group===groupPicker.value).sort((a,b)=>a.name.localeCompare(b.name,'th'));
+  for(const f of foods)picker.add(new Option(f.name,f.id));
+  selectFood();
  }
- picker.onchange=()=>{drawCatalog();selectFood()};
- if(foods.length)selectFood();else body.insertAdjacentText('beforeend','ยังไม่มีวัตถุดิบ');
+ function selectFood(){
+  const f=db.foods.find(x=>x.id===picker.value);
+  body.querySelector('#nc-manage-edit-body').replaceChildren();
+  if(!f)return;
+  selectedGroup=f.group;
+  drawCatalog();
+  const oldButton=Array.from(root.querySelectorAll('.item')).find(el=>el.querySelector('strong')?.textContent?.trim()===f.name)?.querySelector('.nc-catalog-edit');
+  if(oldButton&&oldButton.onclick){oldButton.onclick();const editor=root.querySelector('#nc-edit-panel');if(editor){body.querySelector('#nc-manage-edit-body').replaceChildren(editor);editor.style.display='block';editor.querySelectorAll('.nc-edit-btn').forEach(b=>b.style.display='inline-block')}}
+ }
+ groupPicker.onchange=refreshFoods;
+ picker.onchange=selectFood;
+ refreshFoods();
  active='edit';
 }
 const previous=drawCatalog;
@@ -1491,4 +1502,4 @@ function showPresets(){
 const oldDraw=drawMeals;
 drawMeals=function(){oldDraw();showPresets()};
 })();
-</script></body></html>
+</script><script>(function(){let left=0;document.addEventListener('click',e=>{const b=e.target.closest('#catalog .chips button[data-group]');if(b){const c=b.closest('.chips');if(c)left=c.scrollLeft;requestAnimationFrame(()=>{const n=document.querySelector('#catalog .chips');if(n)n.scrollLeft=left})}},true);const root=document.getElementById('catalog');if(root)new MutationObserver(()=>{const n=root.querySelector('.chips');if(n&&Math.abs(n.scrollLeft-left)>2)n.scrollLeft=left}).observe(root,{childList:true});})();</script></body></html>
