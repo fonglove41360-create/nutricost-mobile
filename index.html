@@ -1502,4 +1502,48 @@ function showPresets(){
 const oldDraw=drawMeals;
 drawMeals=function(){oldDraw();showPresets()};
 })();
-</script><script>(function(){let left=0;document.addEventListener('click',e=>{const b=e.target.closest('#catalog .chips button[data-group]');if(b){const c=b.closest('.chips');if(c)left=c.scrollLeft;requestAnimationFrame(()=>{const n=document.querySelector('#catalog .chips');if(n)n.scrollLeft=left})}},true);const root=document.getElementById('catalog');if(root)new MutationObserver(()=>{const n=root.querySelector('.chips');if(n&&Math.abs(n.scrollLeft-left)>2)n.scrollLeft=left}).observe(root,{childList:true});})();</script></body></html>
+</script><script>(function(){let left=0;document.addEventListener('click',e=>{const b=e.target.closest('#catalog .chips button[data-group]');if(b){const c=b.closest('.chips');if(c)left=c.scrollLeft;requestAnimationFrame(()=>{const n=document.querySelector('#catalog .chips');if(n)n.scrollLeft=left})}},true);const root=document.getElementById('catalog');if(root)new MutationObserver(()=>{const n=root.querySelector('.chips');if(n&&Math.abs(n.scrollLeft-left)>2)n.scrollLeft=left}).observe(root,{childList:true});})();</script><style>
+/* Inventory purchase form: compact, legible mobile layout */
+#inventory #nc-stock-original>.card{border-radius:20px;padding:18px;background:var(--nc-panel,#fff);border:1px solid var(--nc-border,#dce4e9);box-shadow:none}
+#inventory #nc-stock-original>.card strong{display:block;font-size:18px;margin-bottom:14px;color:var(--nc-text,#243341)}
+#inventory #nc-stock-original>.card label{display:block;margin:15px 0 7px;color:var(--nc-text,#243341);font-weight:600;font-size:14px}
+#inventory #nc-stock-original>.card input,#inventory #nc-stock-original>.card select{display:block;width:100%;min-height:49px;border-radius:13px;padding:11px 13px;background:var(--nc-panel2,#f8fafb);border:1px solid var(--nc-border,#cbd5df);color:var(--nc-text,#243341);font-size:16px}
+#inventory #nc-stock-original>.card .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#inventory #nc-stock-original>.card .grid>*{min-width:0}
+#inventory #nc-stock-original>.card button{min-height:51px;border-radius:13px;font-size:16px;font-weight:700;margin-top:22px!important}
+#inventory .nc-purchase-hint{display:block;font-size:12px;margin:5px 0 0;color:var(--nc-muted,#687681)}
+@media(max-width:390px){#inventory #nc-stock-original>.card .grid{grid-template-columns:1fr}}
+</style>
+<script>
+(function(){
+const previous=drawInventory;
+drawInventory=function(){
+ previous();
+ const card=document.querySelector('#inventory #nc-stock-original>.card');
+ if(!card)return;
+ const title=card.querySelector('strong');if(title)title.textContent='บันทึกวัตถุดิบที่ซื้อ';
+ const food=card.querySelector('#lotFood');
+ if(food&&!card.querySelector('#nc-purchase-group')){
+  const label=document.createElement('label');label.textContent='1. เลือกหมวดหมู่';label.htmlFor='nc-purchase-group';
+  const group=document.createElement('select');group.id='nc-purchase-group';
+  const existing=Array.from(new Set(db.foods.map(f=>f.group)));
+  existing.forEach(g=>group.add(new Option(g,g)));
+  const foodLabel=food.previousElementSibling;if(foodLabel&&foodLabel.tagName==='LABEL')foodLabel.textContent='2. เลือกวัตถุดิบ';
+  food.parentNode.insertBefore(label,foodLabel||food);
+  food.parentNode.insertBefore(group,foodLabel||food);
+  function updateFood(){
+   const previousId=food.value;
+   const matches=db.foods.filter(f=>f.group===group.value).sort((a,b)=>a.name.localeCompare(b.name,'th'));
+   food.replaceChildren();
+   matches.forEach(f=>food.add(new Option(f.name,f.id)));
+   if(matches.some(f=>f.id===previousId))food.value=previousId;
+  }
+  group.onchange=updateFood;updateFood();
+ }
+ const qty=card.querySelector('#lotQty'),price=card.querySelector('#lotPrice');
+ if(qty){qty.inputMode='decimal';qty.placeholder='เช่น 500';}
+ if(price){price.inputMode='decimal';price.placeholder='เช่น 120';}
+ const expiry=card.querySelector('#lotExpiry');if(expiry&&!card.querySelector('.nc-purchase-hint'))expiry.insertAdjacentHTML('afterend','<small class="nc-purchase-hint">ไม่ทราบวันหมดอายุ เว้นว่างได้</small>');
+};
+})();
+</script></body></html>
