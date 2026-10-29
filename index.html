@@ -1559,7 +1559,7 @@ drawInventory=function(){
 <div id="nc-release-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="nc-release-title"><div id="nc-release-card"><div style="font-size:29px">✨</div><h2 id="nc-release-title">NutriCost อัปเดตแล้ว</h2><p id="nc-release-version"></p><ol id="nc-release-items"></ol><button type="button" id="nc-release-close">เข้าใจแล้ว เริ่มใช้งาน</button></div></div>
 <script>
 (function(){
-const release={version:'2026.10.30.6',notes:[
+const release={version:'2026.10.30.7',notes:[
 'แก้ไขวัตถุดิบ: เลือกหมวดหมู่ก่อน แล้วค่อยเลือกวัตถุดิบที่ต้องการแก้',
 'แถบหมวดหมู่: ปรับให้จำตำแหน่งที่เลื่อนบนมือถือ',
 'คลังวัตถุดิบ: ปรับแบบฟอร์มเพิ่มวัตถุดิบที่ซื้อให้อ่านง่ายและกดสะดวก',
@@ -1651,5 +1651,26 @@ drawInventory=function(){
   const b=e.target.closest('#inventory [data-nc-stock-filter]');
   if(b){const strip=b.closest('.nc-stock-filters');if(strip)inventoryScrollLeft=strip.scrollLeft}
  },true);
+})();
+</script><style>
+/* Hide legacy stock adjustment list in the purchase panel even before JS initializes. */
+#inventory #nc-stock-original>.list,#inventory #nc-stock-original>h2{display:none!important}
+#inventory .nc-stock-filters{overscroll-behavior-x:contain;scroll-behavior:auto}
+</style>
+<script>
+(function(){
+ const key='nutricost.inventory.categoryScroll';
+ const old=drawInventory;
+ drawInventory=function(){
+  const strip=document.querySelector('#inventory .nc-stock-filters');
+  if(strip)try{sessionStorage.setItem(key,String(strip.scrollLeft))}catch(e){}
+  old();
+  const next=document.querySelector('#inventory .nc-stock-filters');
+  if(!next)return;
+  let x=0;try{x=Number(sessionStorage.getItem(key))||0}catch(e){}
+  next.scrollLeft=x;
+  requestAnimationFrame(()=>{if(next.isConnected)next.scrollLeft=x});
+  next.addEventListener('scroll',()=>{try{sessionStorage.setItem(key,String(next.scrollLeft))}catch(e){}},{passive:true});
+ };
 })();
 </script></body></html>
