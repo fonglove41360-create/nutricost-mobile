@@ -1,7 +1,7 @@
 name: Verify NutriCost Mobile
 on:
   push:
-    branches: [main, codex/nutricost-20261102]
+    branches: [main, codex/nutricost-20261103]
 permissions:
   contents: read
 jobs:
@@ -30,7 +30,7 @@ jobs:
       - name: Verify deployed production in an isolated browser
         if: github.ref == 'refs/heads/main'
         env:
-          NUTRICOST_URL: https://fonglove41360-create.github.io/nutricost-mobile/?verify=20261102
+          NUTRICOST_URL: https://fonglove41360-create.github.io/nutricost-mobile/?verify=20261103
         run: node tests/mobile-release.cjs
       - uses: actions/upload-artifact@v4
         if: always()

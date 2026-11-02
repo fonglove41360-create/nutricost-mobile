@@ -73,6 +73,30 @@ const stored={
   await p.emulateMedia({reducedMotion:'no-preference'});await p.waitForFunction(()=>document.documentElement.dataset.motion==='true');assert.equal(await p.locator('html').getAttribute('data-motion'),'true');await navigate(p,'dashboard');await p.screenshot({path:'test-results/home-390.png',fullPage:true});
   for(const tab of ['meals','catalog','inventory','settings']){await navigate(p,tab);await noOverflow(p)}
   await navigate(p,'meals');await p.screenshot({path:'test-results/meals-390.png',fullPage:true});
+
+  // Visual release: compact views, persistent summary and independent presentation-only storage.
+  const untouched=(await snapshot(p))['nutricost.v1'];
+  await navigate(p,'dashboard');assert.equal(await p.locator('.nc-home-macro > small:first-child svg').count(),3);
+  assert.equal(await p.locator('.nc-energy-heading svg').count(),1);await p.waitForTimeout(750);await p.screenshot({path:'test-results/home-390.png',fullPage:true});
+  for(const scope of ['inventory','catalog']){
+   await navigate(p,scope);const grid=p.locator('#'+scope+' .nc-compact-grid');
+   assert.equal(await grid.getAttribute('data-layout'),'mini');
+   assert.equal(await grid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),3);
+   const miniHeight=await grid.locator('.nc-food-card').first().evaluate(el=>el.getBoundingClientRect().height);
+   await p.locator('#'+scope+' .nc-layout-picker [data-layout=cards]').click();
+   assert.equal(await grid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2);
+   const cardHeight=await grid.locator('.nc-food-card').first().evaluate(el=>el.getBoundingClientRect().height);assert(miniHeight<cardHeight,'mini cards must be shorter');
+   await p.locator('#'+scope+' .nc-layout-picker [data-layout=rows]').click();assert.equal(await grid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1);
+   await noOverflow(p);await p.reload();await p.evaluate(()=>document.getElementById('nc-release-overlay').hidden=true);await navigate(p,scope);assert.equal(await p.locator('#'+scope+' .nc-compact-grid').getAttribute('data-layout'),'rows');
+   await p.locator('#'+scope+' .nc-layout-picker [data-layout=mini]').click();
+   if(scope==='inventory'){
+    const summary=p.locator('.nc-stock-summary-fold');assert.equal(await summary.evaluate(el=>el.open),false);await summary.locator('summary').click();assert.equal(await summary.evaluate(el=>el.open),true);await p.waitForTimeout(100);
+    await navigate(p,'dashboard');await navigate(p,'inventory');assert.equal(await p.locator('.nc-stock-summary-fold').evaluate(el=>el.open),true);await p.locator('.nc-stock-summary-fold > summary').click();await p.waitForTimeout(100);
+   }
+   await p.waitForTimeout(700);await p.screenshot({path:'test-results/'+scope+'-390.png',fullPage:true});
+  }
+  assert.equal((await snapshot(p))['nutricost.v1'],untouched,'presentation must not alter food bytes');
+
   assert.deepEqual(consoleErrors,[],'console/page errors');
   for(const name of ['home','catalog','inventory','meals'])console.log('REVIEW_'+name+':'+fs.readFileSync('test-results/'+name+'-390.png').toString('base64'));
   console.log('PASS: original storage byte preservation; baseline nutrition/cost; presets and favorites; search and create fold; card details/edit; picker units/categories; merge allocations and cross-lot cost; deletion fully restores stock; inventory adjustment; independent effect preferences; Reduce Motion; 390px layout; zero console errors.');

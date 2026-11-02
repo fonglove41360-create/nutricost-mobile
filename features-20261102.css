@@ -22,8 +22,8 @@
 [data-rainbow=true] header:after{content:"";position:absolute;bottom:0;left:20px;right:20px;height:2px;border-radius:3px;background:linear-gradient(90deg,#6be3b3,#67c9ff,#c09aff,#ff9ec9,#ffd98e,#6be3b3);background-size:200% 100%;animation:nc-spectrum 8s linear infinite}
 [data-rainbow=true] .nc-food-card{opacity:1;transform:none;transition:box-shadow .4s,border-color .4s}
 [data-rainbow=true] .nc-food-card.nc-revealed{opacity:1;transform:translateY(0);border-color:color-mix(in srgb,var(--nc-accent) 45%,var(--nc-border));box-shadow:0 6px 20px color-mix(in srgb,var(--nc-accent) 9%,transparent)}
-[data-rainbow=true] .nc-home-hero{position:relative;isolation:isolate;overflow:hidden;border:2px solid transparent;background:linear-gradient(#143e37,#143e37) padding-box,conic-gradient(from var(--nc-orbit),#6be3b3,#67c9ff,#c09aff,#ff9ec9,#ffd98e,#6be3b3) border-box;animation:nc-orbit 12s linear infinite}
-[data-rainbow=true] .nc-home-hero:after{content:"✦";position:absolute;right:24px;top:20px;font-size:23px;color:#d9edb9;animation:nc-twinkle 3s ease-in-out infinite;pointer-events:none}
+[data-rainbow=true] .nc-home-hero{border:2px solid transparent;background:radial-gradient(ellipse at 100% 0%,#ad83ff38,transparent 65%) padding-box,radial-gradient(ellipse at 0 100%,#28d5c733,transparent 60%) padding-box,linear-gradient(135deg,#102e36,#171a32) padding-box,conic-gradient(from var(--nc-orbit),#85f2ce,#86ceff,#c4a2ff,#ffc3db,#ffe6ad,#85f2ce) border-box;animation:nc-orbit 10s linear infinite}
+[data-rainbow=true] .nc-home-hero:after{content:"✦";position:absolute;right:30px;top:87px;font-size:23px;color:#d9edb9;animation:nc-twinkle 3s ease-in-out infinite;pointer-events:none}
 [data-rainbow=true] .btn:not(.danger){position:relative;overflow:hidden}
 [data-rainbow=true] .btn:not(.danger):after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 20%,#ffffff30 45%,#dec7ff30 50%,transparent 75%);transform:translateX(-140%);animation:nc-shine 7s ease-in-out infinite}
 [data-rainbow=true] .progress span{background:linear-gradient(90deg,var(--nc-accent),#72c8dd,#ad9feb,var(--nc-accent));background-size:200% 100%;animation:nc-spectrum 6s linear infinite}
@@ -38,3 +38,56 @@
 [data-rainbow=true][data-motion=true] .nc-food-card.nc-revealed{animation:nc-card-enter .45s ease-out both;animation-delay:var(--nc-stagger,0ms)}
 @keyframes nc-card-enter{from{opacity:.7;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 [data-motion=false] .nc-food-card{animation:none}
+
+/* Energy presentation and selectable density. Values stay in the original model. */
+.nc-data-icon{display:inline-block;width:18px;height:18px;flex-shrink:0;vertical-align:-3px;margin-right:6px;fill:none}
+.nc-icon-p{color:#81dcb3}.nc-icon-c{color:#efc485}.nc-icon-f{color:#bba7fb}.nc-icon-k{color:#f6ce82}
+.nc-home-macro>small:first-child{display:flex;align-items:center;gap:0;color:var(--nc-text);font-weight:600}
+.nc-home-macro>small:first-child .nc-data-icon{width:23px;height:23px;margin-right:5px;padding:3px;border-radius:7px;background:var(--nc-panel2)}
+.nc-home-hero{position:relative;isolation:isolate;overflow:hidden;padding:23px;border-radius:27px;border:1px solid #7bcebd55;background:radial-gradient(ellipse at 100% 0%,#ad83ff38,transparent 65%),radial-gradient(ellipse at 0 100%,#28d5c733,transparent 60%),linear-gradient(135deg,#102e36,#171a32);box-shadow:0 16px 36px #11243825,inset 0 1px #ffffff20}
+.nc-energy-aura{position:absolute;width:185px;height:185px;right:-48px;top:38px;z-index:-1;border:1px solid #e0deff22;border-radius:50%;box-shadow:0 0 0 24px #bbb7ff06,0 0 0 50px #bbb7ff04;background:radial-gradient(circle,#9e8df71a,transparent 70%)}
+.nc-energy-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:20px;color:#cfdbeb;font-size:10px;letter-spacing:1.5px;font-weight:650}
+.nc-energy-top>.nc-energy-badge{font-size:10px;letter-spacing:0;padding:6px 9px;border-radius:20px;background:#ffffff0d;border:1px solid #ffffff25;color:#f4e1b6;white-space:nowrap}
+.nc-energy-top .nc-data-icon{width:15px;height:15px;color:#ffe5ac}
+.nc-energy-heading{font-size:14px;color:#e5f3f1;font-weight:500}
+.nc-home-hero .nc-home-energy{font-size:54px;letter-spacing:-2.2px;line-height:1.2;margin:12px 0 9px;color:#fff7df;text-shadow:0 0 28px #fff4b326;font-variant-numeric:tabular-nums}
+.nc-home-hero .nc-home-energy small{color:#c0d7da;font-size:15px;letter-spacing:0}
+.nc-home-hero p{color:#b9ccd2;font-size:12px;margin:0 0 16px}
+.nc-energy-track{height:5px;border-radius:10px;background:#ffffff17;overflow:hidden;margin:0 0 19px}
+.nc-energy-track span{display:block;height:100%;border-radius:10px;background:linear-gradient(90deg,#7eecc7,#b2b6ff,#ffe4a7);box-shadow:0 0 10px #b6ffdd55}
+.nc-home-hero .nc-home-cost{margin-top:0;padding-top:15px;border-color:#ffffff1c;align-items:center;color:#d7e4e4;font-size:12px}
+.nc-home-hero .nc-home-cost strong{color:#fff1cc;font-size:20px;letter-spacing:-.3px}
+[data-rainbow=true] .nc-energy-aura:before{content:"✧";position:absolute;top:12px;left:32px;font-size:32px;color:#e0dbff;animation:nc-twinkle 3.5s ease-in-out infinite}
+[data-rainbow=true] .nc-energy-track span{background-size:200% 100%;animation:nc-spectrum 5s linear infinite}
+.nc-stock-summary-fold{border:1px solid var(--nc-border);border-radius:16px;background:var(--nc-panel);margin:8px 0 16px;padding:0 13px}
+.nc-stock-summary-fold>summary{display:flex;align-items:center;gap:5px;min-height:48px;list-style:none;color:var(--nc-text);font-size:14px;font-weight:650;cursor:pointer}
+.nc-stock-summary-fold>summary::-webkit-details-marker{display:none}.nc-stock-summary-fold>summary:after{content:"⌄";font-size:20px;margin-left:3px;transition:transform .2s}
+.nc-stock-summary-fold[open]>summary:after{transform:rotate(180deg)}
+.nc-stock-summary-fold>summary small{margin-left:auto;color:var(--nc-muted);font-size:10px;font-weight:400}
+.nc-stock-summary-fold>.nc-extra-card{padding:0 0 12px;margin:0;border:0;box-shadow:none;background:transparent}
+.nc-layout-picker{display:flex;align-items:center;gap:5px;margin:12px 0 8px;padding:4px;border:1px solid var(--nc-border);border-radius:13px;background:var(--nc-panel);width:fit-content;max-width:100%}
+.nc-layout-picker button{display:flex;gap:4px;align-items:center;justify-content:center;min-height:36px;border:0;border-radius:9px;padding:7px 11px;background:transparent;color:var(--nc-muted);font:inherit;font-size:11px;cursor:pointer}
+.nc-layout-picker button .nc-data-icon{margin:0;width:15px;height:15px}
+.nc-layout-picker button[aria-pressed=true]{background:var(--nc-panel2);color:var(--nc-accent);box-shadow:0 1px 5px #0001}
+.nc-layout-picker button:focus-visible{outline:2px solid var(--nc-accent)}
+.nc-compact-grid[data-layout=mini]{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.nc-compact-grid[data-layout=mini] .nc-food-card{padding:10px 8px;border-radius:13px;gap:5px;box-shadow:none}
+.nc-compact-grid[data-layout=mini] .nc-food-card strong{font-size:12px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:0}
+.nc-compact-grid[data-layout=mini] .nc-card-category{font-size:9px;line-height:1.4}
+.nc-compact-grid[data-layout=mini] .nc-data-icon{width:13px;height:13px;margin-right:3px;vertical-align:-2px}
+.nc-compact-grid[data-layout=mini] .nc-card-numbers{font-size:18px;line-height:1.3}
+.nc-compact-grid[data-layout=mini] .nc-food-card small{font-size:9px}
+.nc-compact-grid[data-layout=mini] .nc-card-numbers>span{font-size:9px}
+.nc-compact-grid[data-layout=mini] .nc-card-more{font-size:9px}
+.nc-compact-grid[data-layout=cards]{grid-template-columns:repeat(2,minmax(0,1fr))}
+.nc-compact-grid[data-layout=rows]{grid-template-columns:minmax(0,1fr);gap:7px}
+.nc-compact-grid[data-layout=rows] .nc-food-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:11px 13px;align-items:center;border-radius:13px}
+.nc-compact-grid[data-layout=rows] .nc-card-category{grid-column:1;font-size:10px}
+.nc-compact-grid[data-layout=rows] .nc-food-card strong{grid-column:1;grid-row:2;font-size:13px}
+.nc-compact-grid[data-layout=rows] .nc-card-numbers{grid-column:2;grid-row:1 / 3;font-size:20px;text-align:right}
+.nc-compact-grid[data-layout=rows] .nc-food-card>small{grid-column:1 / -1;font-size:10px}
+.nc-compact-grid[data-layout=rows] .nc-card-more{display:none}
+@media(min-width:680px){.nc-compact-grid[data-layout=mini]{grid-template-columns:repeat(4,minmax(0,1fr))}.nc-compact-grid[data-layout=cards]{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){.nc-energy-aura:before,.nc-home-hero:after{animation:none!important}}
+
+.nc-compact-grid[data-layout=mini] .nc-card-more{display:none}

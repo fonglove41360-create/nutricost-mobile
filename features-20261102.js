@@ -37,12 +37,43 @@ function ncMergeMealLines(lines){
   oldSettings();
   const panel=document.createElement('div');panel.className='card nc-feature-settings';
   panel.innerHTML='<h2>การแสดงผล</h2>'+[['presets','แสดงมื้อประจำ','ซ่อนหรือแสดง โดยไม่ลบสูตรที่บันทึก'],['motion','แอนิเมชัน','การเคลื่อนไหว เมนู และการฉลอง'],['rainbow','เอฟเฟกต์สีรุ้ง','แสง ขอบการ์ด และประกายดาว']].map(([key,title,help])=>'<label class="nc-switch-row"><span><strong>'+title+'</strong><small>'+help+'</small></span><input type="checkbox" role="switch" data-feature="'+key+'" aria-label="'+title+'" '+((key==='presets'||!reduced.matches)&&ncFeatureEnabled(key,true)?'checked':'')+' '+(reduced.matches&&key!=='presets'?'disabled':'')+'></label>').join('')+(reduced.matches?'<p class="sub">ระบบเปิด Reduce Motion อยู่ แอนิเมชันและสีรุ้งจึงปิดอัตโนมัติ</p>':'');
-  $('#settings').prepend(panel);
+  $('#settings').prepend(panel);decorateIcons($('#settings'));
   $$('[data-feature]',panel).forEach(input=>input.onchange=()=>{
    try{localStorage.setItem('nutricost.ui.'+input.dataset.feature+'.v1',String(input.checked));applyEffects()}
    catch(e){input.checked=!input.checked;toast('บันทึกการตั้งค่าไม่สำเร็จ')}
   });
  };
+
+ function decorateIcons(root=document){
+  const rules=[['โปรตีน','p'],['คาร์บ','c'],['ไขมัน','f'],['พลังงาน','k'],['แคลอรี','k'],['ต้นทุน','money'],['ราคา','money'],['หมวด','grid'],['วัตถุดิบ','stock'],['คลัง','stock'],['วันที่','date'],['หมดอายุ','date'],['ค้นหา','search'],['มื้อ','meal'],['ตั้งค่า','settings']];
+  $$('label,h2,h3,.nc-detail-grid small,.nc-card-category,.nc-card-more,.nc-extra-title',root).forEach(el=>{
+   if(el.querySelector('svg')||el.querySelector('input,select,button'))return;
+   const key=rules.find(([word])=>el.textContent.includes(word))?.[1];if(key)el.insertAdjacentHTML('afterbegin',ncUiIcon(key));
+  });
+ }
+ function layoutPicker(grid,scope){
+  const key='nutricost.ui.'+scope+'-layout.v1';
+  let selected='mini';try{const value=localStorage.getItem(key);if(['mini','cards','rows'].includes(value))selected=value}catch(e){}
+  const bar=document.createElement('div');bar.className='nc-layout-picker';bar.setAttribute('role','group');bar.setAttribute('aria-label','รูปแบบการแสดง'+(scope==='inventory'?'คลัง':'วัตถุดิบ'));
+  function apply(){
+   grid.dataset.layout=selected;
+   $$('button',bar).forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.layout===selected)));
+  }
+  for(const [value,label,icon] of [['mini','จิ๋ว','mini'],['cards','การ์ด','grid'],['rows','รายการ','rows']]){
+   const button=document.createElement('button');button.type='button';button.dataset.layout=value;button.innerHTML=ncUiIcon(icon)+'<span>'+label+'</span>';
+   button.onclick=()=>{try{localStorage.setItem(key,value);selected=value;apply()}catch(e){toast('บันทึกรูปแบบไม่สำเร็จ')}};bar.append(button);
+  }
+  grid.before(bar);apply();
+ }
+ function foldStockSummary(root){
+  const title=$$('.nc-extra-title',root).find(el=>el.textContent.includes('สรุปคลัง'));
+  const card=title?.closest('.nc-extra-card');if(!card)return;
+  const fold=document.createElement('details');fold.className='nc-stock-summary-fold';fold.open=ncFeatureEnabled('inventory-summary',false);
+  fold.innerHTML='<summary>'+ncUiIcon('stock')+'<span>สรุปคลัง</span><small>แตะเพื่อเปิด / ปิด</small></summary>';
+  card.before(fold);title.remove();fold.append(card);
+  fold.ontoggle=()=>{if(!fold.isConnected)return;try{localStorage.setItem('nutricost.ui.inventory-summary.v1',String(fold.open))}catch(e){toast('บันทึกการแสดงสรุปไม่สำเร็จ')}};
+ }
+
  // Keep the original preset implementation and its storage key. Visibility is read at render time.
  const originalSaveIngredient=window.ncSaveIngredient;
  window.ncSaveIngredient=function(){const before=JSON.stringify(db.foods);originalSaveIngredient();if(before!==JSON.stringify(db.foods))$('#nc-food-dialog')?.close()};
@@ -59,12 +90,12 @@ function ncMergeMealLines(lines){
   $('.nc-detail-edit',body).onclick=()=>{
    const editor=window.ncOpenIngredient(f.id);
    if(!editor)return toast('เปิดแบบฟอร์มไม่สำเร็จ');
-   body.replaceChildren(editor);editor.classList.add('nc-active-editor');
+   body.replaceChildren(editor);editor.classList.add('nc-active-editor');decorateIcons(editor);
    const cancel=editor.querySelector('button[onclick="ncCloseIngredient()"]');
    if(cancel){cancel.className='btn secondary';cancel.onclick=()=>{window.ncCloseIngredient();dialog.close()}}
    $('h2',dialog).textContent='แก้ไข '+f.name;
   };
-  document.body.append(dialog);dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>window.ncCloseIngredient?.(),{once:true});dialog.showModal();
+  decorateIcons(dialog);document.body.append(dialog);dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>window.ncCloseIngredient?.(),{once:true});dialog.showModal();
  }
  const oldCatalog=drawCatalog;
  drawCatalog=function(){
@@ -92,7 +123,7 @@ function ncMergeMealLines(lines){
    $('.nc-result-count',search).textContent=foods.length+' รายการ';
    for(const f of foods){
     const b=document.createElement('button');b.type='button';b.className='nc-food-card';b.dataset.foodId=f.id;
-    b.innerHTML='<span class="nc-card-category">'+esc(f.group)+'</span><strong>'+esc(f.name)+'</strong><span class="nc-card-numbers">'+num(f.k)+' <small>kcal</small><span>'+num(f.p)+' g โปรตีน</span></span><small>ต่อ '+num(f.base)+' '+esc(unit(f))+' · คงเหลือ '+num(stock(f.id))+'</small><span class="nc-card-more">รายละเอียด ↗</span>';
+    b.innerHTML='<span class="nc-card-category">'+ncUiIcon('stock')+esc(f.group)+'</span><strong>'+esc(f.name)+'</strong><span class="nc-card-numbers">'+ncUiIcon('k')+num(f.k)+' <small>kcal</small><span>'+ncUiIcon('p')+num(f.p)+' g โปรตีน</span></span><small>ต่อ '+num(f.base)+' '+esc(unit(f))+' · คงเหลือ '+num(stock(f.id))+'</small><span class="nc-card-more">รายละเอียด ↗</span>';
     b.onclick=()=>openFood(f);list.append(b);
    }
    if(!foods.length){
@@ -104,7 +135,7 @@ function ncMergeMealLines(lines){
    }
    observeCards(list);
   }
-  input.oninput=()=>{searchText=input.value;results()};results();
+  layoutPicker(list,'catalog');input.oninput=()=>{searchText=input.value;results()};results();decorateIcons(root);
  };
  const originalAdd=addFood;
  addFood=function(){
@@ -114,7 +145,7 @@ function ncMergeMealLines(lines){
  // Compact inventory: replace tile contents, retaining the current category filtering.
  const oldInventory=drawInventory;
  drawInventory=function(){
-  oldInventory();const root=$('#inventory'),grid=$('.nc-stock-grid',root);
+  oldInventory();const root=$('#inventory'),grid=$('.nc-stock-grid',root);foldStockSummary(root);
   if(grid){
    const foods=db.foods.filter(f=>stock(f.id)>0);
    const tiles=$$('.nc-stock-tile',grid);
@@ -122,10 +153,11 @@ function ncMergeMealLines(lines){
     const f=foods[i];if(!f)return;
     const button=document.createElement('button');button.type='button';button.className='nc-food-card';button.style.display=tile.style.display;button.dataset.foodId=f.id;
     const lots=db.lots.filter(l=>l.foodId===f.id&&remaining(l)>0),expiry=lots.map(l=>l.expiry).filter(Boolean).sort()[0];
-    button.innerHTML='<span class="nc-card-category">'+esc(f.group)+'</span><strong>'+esc(f.name)+'</strong><span class="nc-card-numbers">'+num(stock(f.id))+' <small>'+esc(unit(f))+'</small></span><small>'+(expiry?'หมดอายุ '+esc(expiry):lots.length+' ล็อต')+'</small>';
+    button.innerHTML='<span class="nc-card-category">'+ncUiIcon('stock')+esc(f.group)+'</span><strong>'+esc(f.name)+'</strong><span class="nc-card-numbers">'+num(stock(f.id))+' <small>'+esc(unit(f))+'</small></span><small>'+(expiry?'หมดอายุ '+esc(expiry):lots.length+' ล็อต')+'</small>';
     button.onclick=()=>openFood(f);tile.replaceWith(button);
-   });grid.className='nc-compact-grid nc-inventory-grid';observeCards(grid);
+   });grid.className='nc-compact-grid nc-inventory-grid';layoutPicker(grid,'inventory');observeCards(grid);
   }
+  decorateIcons(root);
   const option=$('.nc-adjust-option',root);
   if(option){
    const trigger=document.createElement('button');trigger.type='button';trigger.className='btn secondary small nc-inventory-options';trigger.textContent='ตัวเลือก ⋯';trigger.setAttribute('aria-expanded','false');
@@ -190,7 +222,7 @@ function ncMergeMealLines(lines){
    }
    if(!list.children.length)list.innerHTML='<p class="sub">ไม่มีมื้ออาหารในวันที่เลือก</p>';
   }
-  historyDate.onchange=renderHistory;renderHistory();
+  historyDate.onchange=renderHistory;renderHistory();decorateIcons(root);
 
  };
  const previousCommit=commitMeal;
@@ -203,7 +235,7 @@ function ncMergeMealLines(lines){
  drawDashboard=function(){
   oldDashboard();
   const root=$('#dashboard');root.insertAdjacentHTML('beforeend','<details class="nc-home-extras"><summary>สถิติและรายการโปรด</summary><div id="nc-stats"></div><div id="nc-favorites"></div></details>');
-  window.ncRenderStats?.();window.ncRenderFavorites?.();
+  window.ncRenderStats?.();window.ncRenderFavorites?.();decorateIcons(root);
  };
  // Motion is decorative; model mutations stay synchronous and use the original actions.
  let observer;
