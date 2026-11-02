@@ -235,7 +235,7 @@ function ncMergeMealLines(lines){
    const box=previous.getBoundingClientRect();Object.assign(ghost.style,{top:box.top+'px',left:box.left+'px',width:box.width+'px'});document.body.append(ghost);
    ghost.animate([{opacity:.65,transform:'translateX(0)'},{opacity:0,transform:'translateX(-28px)'}],{duration:180,easing:'ease-out'}).finished.catch(()=>{}).finally(()=>ghost.remove());
   }
-  originalShow(next);slideNav(next);
+  originalShow(next);if(changing)window.scrollTo({top:0,behavior:'instant'});slideNav(next);
   if(changing&&enabled('motion')){const el=document.getElementById(next);el.dataset.ncAnimate='true';el.animate([{opacity:0,transform:'translateX(24px) scale(.985)'},{opacity:1,transform:'translateX(-3px) scale(1)'},{opacity:1,transform:'translateX(0) scale(1)'}],{duration:430,easing:'cubic-bezier(.2,.8,.2,1)'});}
  };
  let navBlob;

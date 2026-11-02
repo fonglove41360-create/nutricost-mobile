@@ -1313,17 +1313,17 @@ drawDashboard=function(){
  };
 })();
 </script><style id="nc-meal-presets-style">
-.nc-presets{margin:14px 0 20px;padding:17px;border:1px solid #e0e9e4;border-radius:22px;background:#fffefa;color:#14233e;box-shadow:0 8px 22px #223e3210}
-.nc-presets h3{margin:0 0 6px;color:#14233e;font-size:19px}
-.nc-presets p{font-size:12px;color:#52617a;margin:4px 0 12px}
-.nc-preset-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 0;border-top:1px solid #e8ede9}
-.nc-preset-row strong{display:block;color:#14233e;font-size:14px}
-.nc-preset-row small{display:block;color:#52617a;font-size:12px;margin-top:4px}
+.nc-presets{margin:14px 0 20px;padding:17px;border:1px solid var(--nc-border);border-radius:22px;background:var(--nc-panel);color:var(--nc-text);box-shadow:0 8px 22px #223e3210}
+.nc-presets h3{margin:0 0 6px;color:var(--nc-text);font-size:19px}
+.nc-presets p{font-size:12px;color:var(--nc-muted);margin:4px 0 12px}
+.nc-preset-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 0;border-top:1px solid var(--nc-border)}
+.nc-preset-row strong{display:block;color:var(--nc-text);font-size:14px}
+.nc-preset-row small{display:block;color:var(--nc-muted);font-size:12px;margin-top:4px}
 .nc-preset-buttons{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
 .nc-preset-buttons button,.nc-preset-save{border:0;border-radius:12px;padding:9px 11px;background:#dcf8e9;color:#086e51;font-weight:750;font-size:12px;cursor:pointer}
 .nc-preset-buttons button:last-child{background:#fff0ef;color:#9d3939}
 .nc-preset-save{width:100%;margin-top:10px;background:#6658e9;color:white;font-size:14px;padding:13px}
-.nc-presets input{width:100%;background:#fff!important;color:#14233e!important;border:1px solid #cddbd4!important;border-radius:12px;padding:11px;box-sizing:border-box}
+.nc-presets input{width:100%;background:var(--nc-panel2)!important;color:var(--nc-text)!important;border:1px solid var(--nc-border)!important;border-radius:12px;padding:11px;box-sizing:border-box}
 </style>
 <script>
 (function(){
@@ -1344,7 +1344,7 @@ function showPresets(){
  return '<div class="nc-preset-row"><div><strong>'+esc(x.name)+'</strong><small>'+valid.length+' วัตถุดิบ · '+num(t.k)+' kcal · โปรตีน '+num(t.p)+' g</small></div><div class="nc-preset-buttons"><button data-preset-use="'+i+'">ใช้มื้อนี้</button><button data-preset-edit="'+i+'">แก้ไข</button><button data-preset-delete="'+i+'">ลบ</button></div></div>';
  }).join(''):'<p>ยังไม่มีมื้อประจำ ลองเพิ่มวัตถุดิบในมื้อด้านล่างแล้วกดบันทึกเป็นมื้อประจำ</p>')+
  '<label for="nc-preset-name">ชื่อมื้อประจำ</label><input id="nc-preset-name" maxlength="80" placeholder="เช่น ข้าวไก่ไข่ต้มประจำวัน" value="'+(editing!==null&&items[editing]?esc(items[editing].name):'')+'"><button type="button" class="nc-preset-save" id="nc-preset-save">'+(editing!==null?'บันทึกการแก้ไขมื้อประจำ':'＋ บันทึกชุดวัตถุดิบปัจจุบันเป็นมื้อประจำ')+'</button>';
- const heading=root.querySelector('h2');if(heading)heading.insertAdjacentElement('afterend',panel);else root.prepend(panel);
+ const heading=root.querySelector('.nc-meal-v3-head')||root.querySelector('h2');if(heading)heading.insertAdjacentElement('afterend',panel);else root.prepend(panel);
  panel.addEventListener('click',e=>{
  const button=e.target.closest('button');if(!button)return;
  if(button.id==='nc-preset-save'){
