@@ -93,3 +93,5 @@
 .nc-compact-grid[data-layout=mini] .nc-card-more{display:none}
 
 .nc-stock-header h2,.nc-catalog-top h2{font-size:20px}.nc-stock-header{margin:10px 0 12px}
+
+[data-nc-theme=ivory] .nc-icon-p{color:#187859}[data-nc-theme=ivory] .nc-icon-c{color:#93600b}[data-nc-theme=ivory] .nc-icon-f{color:#7252be}[data-nc-theme=ivory] .nc-icon-k{color:#a45f15}[data-nc-theme=ivory] .nc-home-hero .nc-icon-k{color:#f6ce82}

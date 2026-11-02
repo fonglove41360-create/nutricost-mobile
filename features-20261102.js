@@ -45,7 +45,7 @@ function ncMergeMealLines(lines){
  };
 
  function decorateIcons(root=document){
-  const rules=[['โปรตีน','p'],['คาร์บ','c'],['ไขมัน','f'],['พลังงาน','k'],['แคลอรี','k'],['ต้นทุน','money'],['ราคา','money'],['หมวด','grid'],['วัตถุดิบ','stock'],['คลัง','stock'],['วันที่','date'],['หมดอายุ','date'],['ค้นหา','search'],['มื้อ','meal'],['ตั้งค่า','settings']];
+  const rules=[['ค้นหา','search'],['โปรตีน','p'],['คาร์บ','c'],['ไขมัน','f'],['พลังงาน','k'],['แคลอรี','k'],['ต้นทุน','money'],['ราคา','money'],['หมวด','grid'],['วัตถุดิบ','stock'],['คลัง','stock'],['วันที่','date'],['หมดอายุ','date'],['ค้นหา','search'],['มื้อ','meal'],['ตั้งค่า','settings']];
   $$('label,h2,h3,.nc-detail-grid small,.nc-card-category,.nc-card-more,.nc-extra-title',root).forEach(el=>{
    if(el.querySelector('svg')||el.querySelector('input,select,button'))return;
    const key=rules.find(([word])=>el.textContent.includes(word))?.[1];if(key){const first=el.firstChild;if(first?.nodeType===Node.TEXT_NODE)first.textContent=first.textContent.replace(/^[\p{Extended_Pictographic}\uFE0F\u200D\s]+/u,'');el.insertAdjacentHTML('afterbegin',ncUiIcon(key));}

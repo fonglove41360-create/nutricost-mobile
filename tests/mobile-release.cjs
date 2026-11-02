@@ -95,6 +95,7 @@ const stored={
    }
    await p.waitForTimeout(700);await p.screenshot({path:'test-results/'+scope+'-390.png',fullPage:true});
   }
+  await p.evaluate(()=>document.documentElement.dataset.ncTheme='ivory');await noOverflow(p);await p.screenshot({path:'test-results/light-catalog-390.png',fullPage:true});console.log('REVIEW_light:'+fs.readFileSync('test-results/light-catalog-390.png').toString('base64'));
   assert.equal((await snapshot(p))['nutricost.v1'],untouched,'presentation must not alter food bytes');
 
   assert.deepEqual(consoleErrors,[],'console/page errors');
