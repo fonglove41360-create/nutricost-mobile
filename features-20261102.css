@@ -20,7 +20,7 @@
 .nc-particle,.nc-tap-star{position:fixed;pointer-events:none;z-index:2147483646}.nc-particle{width:7px;height:11px;border-radius:2px;background:hsl(var(--hue) 85% 65%)}.nc-tap-star{font-size:17px;color:hsl(var(--hue) 90% 70%);text-shadow:0 0 8px currentColor}
 [data-rainbow=true] body{background-image:radial-gradient(ellipse at 10% 5%,hsl(calc(155deg + var(--nc-scroll-hue,0deg)) 65% 55% / .1),transparent 50%),radial-gradient(ellipse at 100% 50%,hsl(calc(270deg + var(--nc-scroll-hue,0deg)) 75% 65% / .09),transparent 60%);background-attachment:fixed}
 [data-rainbow=true] header:after{content:"";position:absolute;bottom:0;left:20px;right:20px;height:2px;border-radius:3px;background:linear-gradient(90deg,#6be3b3,#67c9ff,#c09aff,#ff9ec9,#ffd98e,#6be3b3);background-size:200% 100%;animation:nc-spectrum 8s linear infinite}
-[data-rainbow=true] .nc-food-card{opacity:.1;transform:translateY(14px);transition:opacity .5s var(--nc-stagger,0ms),transform .5s var(--nc-stagger,0ms),box-shadow .4s,border-color .4s}
+[data-rainbow=true] .nc-food-card{opacity:1;transform:none;transition:box-shadow .4s,border-color .4s}
 [data-rainbow=true] .nc-food-card.nc-revealed{opacity:1;transform:translateY(0);border-color:color-mix(in srgb,var(--nc-accent) 45%,var(--nc-border));box-shadow:0 6px 20px color-mix(in srgb,var(--nc-accent) 9%,transparent)}
 [data-rainbow=true] .nc-home-hero{position:relative;isolation:isolate;overflow:hidden;border:2px solid transparent;background:linear-gradient(#143e37,#143e37) padding-box,conic-gradient(from var(--nc-orbit),#6be3b3,#67c9ff,#c09aff,#ff9ec9,#ffd98e,#6be3b3) border-box;animation:nc-orbit 12s linear infinite}
 [data-rainbow=true] .nc-home-hero:after{content:"✦";position:absolute;right:24px;top:20px;font-size:23px;color:#d9edb9;animation:nc-twinkle 3s ease-in-out infinite;pointer-events:none}
@@ -34,3 +34,7 @@
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.nc-food-card{opacity:1!important;transform:none!important}.nc-particle,.nc-tap-star{display:none}}
 
 [data-motion=false] .nc-food-card{transition:none;transform:none}
+
+[data-rainbow=true][data-motion=true] .nc-food-card.nc-revealed{animation:nc-card-enter .45s ease-out both;animation-delay:var(--nc-stagger,0ms)}
+@keyframes nc-card-enter{from{opacity:.7;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+[data-motion=false] .nc-food-card{animation:none}

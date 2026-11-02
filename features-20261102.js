@@ -75,7 +75,7 @@ function ncMergeMealLines(lines){
   const fold=document.createElement('details');fold.className='nc-create-fold';fold.open=createOpen;
   fold.innerHTML='<summary>＋ เพิ่มวัตถุดิบใหม่</summary>';
   fold.append(form);form.style.display='block';form.querySelectorAll('.nc-catalog-edit').forEach(el=>el.remove());
-  root.append(fold);fold.ontoggle=()=>{createOpen=fold.open};
+  root.append(fold);fold.ontoggle=()=>{if(fold.isConnected)createOpen=fold.open};
   const createAction=root.querySelector('[data-action="add"]');
   if(createAction)createAction.onclick=()=>{fold.open=!fold.open;createOpen=fold.open;$('.nc-manage-options',root).hidden=true;if(fold.open)$('#newName',fold).focus()};
   const editAction=root.querySelector('[data-action="edit"]');if(editAction)editAction.onclick=()=>{root.querySelector('.nc-manage-options').hidden=true;toast('แตะการ์ดวัตถุดิบ แล้วเลือกแก้ไขได้เลย');document.getElementById('nc-catalog-query')?.focus()};
