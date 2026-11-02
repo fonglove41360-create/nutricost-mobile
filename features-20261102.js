@@ -185,7 +185,7 @@ function ncMergeMealLines(lines){
    for(const m of db.meals.filter(m=>m.date===filterDate)){
     const row=document.createElement('article');row.className='item';
     row.innerHTML='<strong>'+esc(m.name)+'</strong><p class="sub">'+num(totals(m.lines).k)+' kcal · '+money(totals(m.lines).cost)+'</p><div class="actions"><button type="button" class="btn secondary small">☆ รายการโปรด</button><button type="button" class="btn danger small">ลบและคืนสต็อก</button></div>';
-    const buttons=$('button',row);buttons[0].onclick=()=>window.ncSaveFavorite(m.id);
+    const buttons=$$('button',row);buttons[0].onclick=()=>window.ncSaveFavorite(m.id);
     buttons[1].dataset.deleteMeal=m.id;buttons[1].onclick=()=>deleteMeal(m.id);list.append(row);
    }
    if(!list.children.length)list.innerHTML='<p class="sub">ไม่มีมื้ออาหารในวันที่เลือก</p>';
@@ -265,7 +265,7 @@ function ncMergeMealLines(lines){
  const originalDelete=deleteMeal;
  deleteMeal=function(id){
   const before=db.meals.length;let ghost;
-  const button=$('button[data-delete-meal],button[onclick^="deleteMeal("]').find(b=>b.dataset.deleteMeal===id||(b.getAttribute('onclick')||'').includes(id));
+  const button=$$('button[data-delete-meal],button[onclick^="deleteMeal("]').find(b=>b.dataset.deleteMeal===id||(b.getAttribute('onclick')||'').includes(id));
   if(enabled('motion')&&button){const row=button.closest('.item');if(row){ghost=row.cloneNode(true);const box=row.getBoundingClientRect();ghost.inert=true;ghost.classList.add('nc-exit-ghost');Object.assign(ghost.style,{left:box.left+'px',top:box.top+'px',width:box.width+'px'});}}
   originalDelete(id);
   if(db.meals.length<before&&ghost){document.body.append(ghost);ghost.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'translateX(40px) scale(.95)'}],{duration:230}).finished.catch(()=>{}).finally(()=>ghost.remove())}

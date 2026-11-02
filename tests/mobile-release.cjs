@@ -33,7 +33,7 @@ const stored={
  async function noOverflow(p){assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'page overflow')}
  try{
   const oldPage=await pageFor();await oldPage.goto('http://localhost:8137/baseline');const originalTotals=await oldPage.evaluate(()=>totals(db.meals.flatMap(m=>m.lines)));await oldPage.context().close();
-  const p=await pageFor();await p.goto('http://localhost:8137/');await p.waitForFunction(()=>typeof ncMergeMealLines==='function');
+  const p=await pageFor();await p.goto(process.env.NUTRICOST_URL||'http://localhost:8137/');await p.waitForFunction(()=>typeof ncMergeMealLines==='function');
   // No key that existed before upgrading may change, even whitespace or unknown keys.
   const loaded=await snapshot(p);for(const [k,v] of Object.entries(stored))assert.equal(loaded[k],v,'storage byte changed: '+k);
   assert.deepEqual(await p.evaluate(()=>totals(db.meals.flatMap(m=>m.lines))),originalTotals);
