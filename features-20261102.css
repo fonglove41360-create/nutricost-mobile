@@ -32,3 +32,5 @@
 [data-motion=false] #nc-toast{transition:none}[data-rainbow=false] .nc-food-card{opacity:1}
 @media(min-width:680px){.nc-compact-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.nc-food-card{opacity:1!important;transform:none!important}.nc-particle,.nc-tap-star{display:none}}
+
+[data-motion=false] .nc-food-card{transition:none;transform:none}

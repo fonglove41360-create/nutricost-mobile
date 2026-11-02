@@ -2,7 +2,7 @@ const {chromium}=require('playwright');
 const fs=require('node:fs'),http=require('node:http'),assert=require('node:assert/strict'),{execFileSync}=require('node:child_process');
 const baseline=execFileSync('git',['show','c56760bef62a3dca21ccbba258ede549320c99ab:index.html'],{encoding:'utf8'});
 const fixture={foods:[{id:'chicken',name:'อกไก่',group:'เนื้อสัตว์',unit:'g',base:100,k:120,p:23,c:0,f:2.6},{id:'eggs',name:'ไข่ไก่',group:'ไข่',unit:'ฟอง',base:1,k:72,p:6.3,c:.4,f:4.8},{id:'empty',name:'ผักไม่มีสต็อก',group:'ผัก',unit:'g',base:100,k:25,p:2,c:3,f:.1}],lots:[{id:'a',foodId:'chicken',qty:200,used:50,price:40,created:'2026-01-01',expiry:'2026-12-01'},{id:'b',foodId:'chicken',qty:500,used:0,price:150,created:'2026-01-02',expiry:'2027-01-01'},{id:'egg-lot',foodId:'eggs',qty:12,used:0,price:60,created:'2026-01-02',expiry:'2027-01-01'}],meals:[],goals:{k:2200,p:150,c:220,f:70},version:1,stockAdjustments:[],customUnknownField:{preserved:true}};
-const today=()=>new Date().toISOString().slice(0,10);
+const today=()=>new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Bangkok'});
 fixture.meals=[{id:'old',date:today(),name:'มื้อ 1',lines:[{foodId:'chicken',qty:50,cost:10,allocations:[{lotId:'a',qty:50,cost:10}]}]}];
 const stored={
  'nutricost.v1':JSON.stringify(fixture,null,2),
@@ -20,13 +20,13 @@ const stored={
   const file=url.pathname==='/'?'index.html':url.pathname.slice(1);if(file.includes('..'))throw Error('path');
   const type=file.endsWith('.js')?'text/javascript':file.endsWith('.css')?'text/css':file.endsWith('.png')?'image/png':'text/html; charset=utf-8';res.setHeader('content-type',type);res.end(fs.readFileSync(file));
  }catch(e){res.statusCode=404;res.end('Not found')}}).listen(8137);
- const browser=await chromium.launch({headless:true});const consoleErrors=[];
+ const browser=await chromium.launch({headless:true});const consoleErrors=[];let activePage;
  async function pageFor(reduceMotion='no-preference'){
   const context=await browser.newContext({viewport:{width:390,height:844},reducedMotion:reduceMotion,timezoneId:'Asia/Bangkok'});
   await context.addInitScript(data=>{if(!sessionStorage.getItem('fixture-loaded')){for(const [k,v] of Object.entries(data))localStorage.setItem(k,v);sessionStorage.setItem('fixture-loaded','true')}},stored);
   await context.route(/https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/,r=>r.fulfill({status:200,contentType:'text/css',body:''}));
   const page=await context.newPage();page.on('pageerror',e=>consoleErrors.push(e.message));page.on('console',msg=>{if(msg.type()==='error')consoleErrors.push(msg.text())});page.on('dialog',dialog=>dialog.accept());
-  return page;
+  activePage=page;return page;
  }
  async function navigate(p,tab){await p.locator('.tabs [data-tab="'+tab+'"]').click();await p.waitForTimeout(500)}
  function snapshot(p){return p.evaluate(()=>Object.fromEntries(Object.keys(localStorage).map(k=>[k,localStorage.getItem(k)])))}
@@ -42,7 +42,7 @@ const stored={
   assert.equal(await p.locator('#nc-period').count(),1,'statistics retained');
   await navigate(p,'settings');assert.equal(await p.locator('#nc-sound-switch').count(),1);assert.equal(await p.locator('.nc-theme-button').count(),1);
   await p.locator('[data-feature=presets]').uncheck();await navigate(p,'meals');assert.equal(await p.locator('#nc-presets').count(),0);assert.equal((await snapshot(p))['nutricost.meal.presets.v1'],stored['nutricost.meal.presets.v1']);
-  await navigate(p,'settings');await p.locator('[data-feature=presets]').check();await navigate(p,'meals');assert.equal(await p.locator('#nc-presets').count(),1);
+  await navigate(p,'settings');await p.locator('[data-feature=presets]').check();await navigate(p,'meals');assert.equal(await p.locator('#nc-presets').count(),1);await p.locator('[data-meal-tab="0"]').click();
   // Picker searches immediately, and only in-stock categories appear.
   assert(!(await p.locator('.nc-picker-groups').innerText()).includes('ผัก'));
   await p.locator('#nc-meal-query').fill('ไข่');assert.equal(await p.locator('.nc-picker-food').count(),1);await p.locator('.nc-picker-food').click();assert.equal(await p.locator('#eatQty').evaluate(el=>el===document.activeElement),true);assert((await p.locator('.nc-selected-food').innerText()).includes('ฟอง'));
@@ -75,5 +75,5 @@ const stored={
   await navigate(p,'meals');await p.screenshot({path:'test-results/meals-390.png',fullPage:true});
   assert.deepEqual(consoleErrors,[],'console/page errors');
   console.log('PASS: original storage byte preservation; baseline nutrition/cost; presets and favorites; search and create fold; card details/edit; picker units/categories; merge allocations and cross-lot cost; deletion fully restores stock; inventory adjustment; independent effect preferences; Reduce Motion; 390px layout; zero console errors.');
- }finally{await browser.close();server.close()}
+ }catch(error){if(activePage&&!activePage.isClosed()){fs.mkdirSync('test-results',{recursive:true});const shot=await activePage.screenshot({path:'test-results/failure.png',fullPage:true});console.log('SCREENSHOT_BASE64:'+shot.toString('base64'));console.log('STATE:'+JSON.stringify(await activePage.evaluate(()=>({tab,mealName,mealDate,merge:document.getElementById('nc-merge-notice')?.outerHTML}))));}throw error}finally{await browser.close();server.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});

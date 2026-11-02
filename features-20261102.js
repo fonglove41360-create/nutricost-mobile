@@ -22,7 +22,7 @@ function ncMergeMealLines(lines){
  let toastTimer,searchText='',mealQuery='',mealCategory='ทั้งหมด',chosenFood='',createOpen=false;
  function toast(message){
   let el=$('#nc-toast');if(!el){el=document.createElement('div');el.id='nc-toast';el.setAttribute('role','status');el.setAttribute('aria-live','polite');document.body.append(el)}
-  el.textContent=String(message);el.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('visible'),4500);
+  (document.querySelector('dialog[open]')||document.body).append(el);el.textContent=String(message);el.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('visible'),4500);
  }
  window.alert=toast;window.ncToast=toast;
  function applyEffects(){
