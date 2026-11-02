@@ -20,7 +20,7 @@ const stored={
   const file=url.pathname==='/'?'index.html':url.pathname.slice(1);if(file.includes('..'))throw Error('path');
   const type=file.endsWith('.js')?'text/javascript':file.endsWith('.css')?'text/css':file.endsWith('.png')?'image/png':'text/html; charset=utf-8';res.setHeader('content-type',type);res.end(fs.readFileSync(file));
  }catch(e){res.statusCode=404;res.end('Not found')}}).listen(8137);
- const browser=await chromium.launch({headless:true});const consoleErrors=[];let activePage;
+ const browser=await require('playwright')[process.env.NC_BROWSER||'chromium'].launch({headless:true});const consoleErrors=[];let activePage;
  async function pageFor(reduceMotion='no-preference'){
   const context=await browser.newContext({viewport:{width:390,height:844},reducedMotion:reduceMotion,timezoneId:'Asia/Bangkok'});
   await context.addInitScript(data=>{if(!sessionStorage.getItem('fixture-loaded')){for(const [k,v] of Object.entries(data))localStorage.setItem(k,v);sessionStorage.setItem('fixture-loaded','true')}},stored);
