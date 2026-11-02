@@ -91,3 +91,5 @@
 @media(prefers-reduced-motion:reduce){.nc-energy-aura:before,.nc-home-hero:after{animation:none!important}}
 
 .nc-compact-grid[data-layout=mini] .nc-card-more{display:none}
+
+.nc-stock-header h2,.nc-catalog-top h2{font-size:20px}.nc-stock-header{margin:10px 0 12px}
